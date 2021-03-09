@@ -2,14 +2,15 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/gookit/color"
-	"github.com/mamau/starter/libs"
-	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"os/exec"
 	"os/user"
 	"runtime"
+
+	"github.com/gookit/color"
+	"github.com/mamau/starter/libs"
+	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
@@ -23,7 +24,8 @@ func init() {
 }
 
 func Docker(args []string) *exec.Cmd {
-	mainArgs := []string{"run", "-ti", "-u", UserId()}
+	//mainArgs := []string{"run", "-ti", "-u", UserId()}
+	mainArgs := []string{"run", "-ti", "-e", fmt.Sprintf("USER_ID=%s", UserId())}
 	dcCommand := exec.Command("docker", append(mainArgs, args...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand

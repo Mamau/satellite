@@ -36,10 +36,12 @@ func (c *Composer) command() string {
 	if configArgs != "" {
 		configArgs += "; "
 	}
-	fullCommand := configArgs + c.getArgs()
+	fullCommand := configArgs + c.getArgs() + c.getPostCommands()
 	return fullCommand
 }
-
+func (c *Composer) getPostCommands() string {
+	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", c.WorkDir)
+}
 func (c *Composer) getConfigArgs() string {
 	commands := []string{
 		libs.GetConfig().GetComposer().GetRepository().ToCommand(),

@@ -33,7 +33,7 @@ func (y *Yarn) command() string {
 	if configArgs != "" {
 		configArgs += "; "
 	}
-	fullCommand := configArgs + y.getArgs()
+	fullCommand := configArgs + y.getArgs() + y.getPostCommands()
 	return fullCommand
 }
 func (y *Yarn) getArgs() string {
@@ -41,6 +41,9 @@ func (y *Yarn) getArgs() string {
 }
 func (y *Yarn) getConfigArgs() string {
 	return libs.GetConfig().GetYarn().ToCommand()
+}
+func (y *Yarn) getPostCommands() string {
+	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", y.WorkDir)
 }
 func (y *Yarn) getImage() []string {
 	return []string{
