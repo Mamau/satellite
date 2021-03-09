@@ -5,3 +5,7 @@ services:
         url: "github.com"
         username: "mamau"
         token: "some-token"
+  yarn:
+    pre-commands:
+      - "yarn config set strict-ssl false"
+      - "npm config set"

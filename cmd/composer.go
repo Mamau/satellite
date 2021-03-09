@@ -18,7 +18,7 @@ var composerCmd = &cobra.Command{
 		if len(args) == 0 {
 			args = []string{"--version"}
 		}
-		//composer config $(composer-repository) $(username) $(token);
+
 		composer := entity.Composer{
 			Version: composerVersion,
 			WorkDir: "/home/www-data",

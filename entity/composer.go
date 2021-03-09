@@ -37,7 +37,6 @@ func (c *Composer) command() string {
 		configArgs += "; "
 	}
 	fullCommand := configArgs + c.getArgs()
-	fmt.Println(fullCommand)
 	return fullCommand
 }
 

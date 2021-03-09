@@ -17,6 +17,7 @@ var instance *Config
 type Config struct {
 	Services struct {
 		services.Composer `yaml:"composer"`
+		services.Yarn     `yaml:"yarn"`
 	} `yaml:"services"`
 }
 
@@ -30,6 +31,10 @@ func NewConfig() *Config {
 
 func (c *Config) GetComposer() *services.Composer {
 	return &c.Services.Composer
+}
+
+func (c *Config) GetYarn() *services.Yarn {
+	return &c.Services.Yarn
 }
 
 func GetConfig() *Config {
