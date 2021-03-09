@@ -1,0 +1,7 @@
+services:
+  composer:
+    config:
+      repository:
+        url: "github.com"
+        username: "mamau"
+        token: "some-token"
