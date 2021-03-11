@@ -19,7 +19,7 @@ func (g *Gulp) CollectCommand() []string {
 		g.workDirVolume(),
 		g.projectVolume(),
 		g.getImage(),
-		{g.command()},
+		{g.fullCommand()},
 	}
 	for _, command := range commandParts {
 		fullCommand = append(fullCommand, command...)
@@ -27,11 +27,17 @@ func (g *Gulp) CollectCommand() []string {
 
 	return fullCommand
 }
-func (g *Gulp) command() string {
-	return g.getArgs()
+
+func (g *Gulp) fullCommand() string {
+	return g.getMainCommand()
 }
-func (g *Gulp) getArgs() string {
+
+func (g *Gulp) getMainCommand() string {
 	return strings.Join(g.Args, " ")
+}
+
+func (g *Gulp) getPostCommands() string {
+	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", g.WorkDir)
 }
 
 func (g *Gulp) getImage() []string {
@@ -39,7 +45,11 @@ func (g *Gulp) getImage() []string {
 		fmt.Sprintf("mamau/gulp"),
 	}
 }
+
 func (g *Gulp) workDirVolume() []string {
+	if g.WorkDir == "" {
+		g.WorkDir = g.HomeDir
+	}
 	return []string{
 		fmt.Sprintf("--workdir=%s", g.WorkDir),
 	}

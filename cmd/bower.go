@@ -20,7 +20,6 @@ var bowerCmd = &cobra.Command{
 		}
 
 		bower := entity.Bower{
-			WorkDir: "/home/node",
 			HomeDir: "/home/node",
 			Args:    args,
 		}

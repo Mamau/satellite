@@ -20,7 +20,7 @@ func (y *Yarn) CollectCommand() []string {
 		y.workDirVolume(),
 		y.projectVolume(),
 		y.getImage(),
-		{"/bin/bash", "-c", y.command()},
+		{"/bin/bash", "-c", y.fullCommand()},
 	}
 	for _, command := range commandParts {
 		fullCommand = append(fullCommand, command...)
@@ -28,29 +28,38 @@ func (y *Yarn) CollectCommand() []string {
 
 	return fullCommand
 }
-func (y *Yarn) command() string {
-	configArgs := y.getConfigArgs()
-	if configArgs != "" {
-		configArgs += "; "
+
+func (y *Yarn) fullCommand() string {
+	return y.getConfigCommand() + y.getMainCommand() + y.getPostCommands()
+}
+
+func (y *Yarn) getMainCommand() string {
+	mainCommand := append([]string{"yarn"}, y.Args...)
+	return strings.Join(mainCommand, " ")
+}
+
+func (y *Yarn) getConfigCommand() string {
+	configCommand := libs.GetConfig().GetYarn().ToCommand()
+	if configCommand != "" {
+		configCommand += "; "
 	}
-	fullCommand := configArgs + y.getArgs() + y.getPostCommands()
-	return fullCommand
+	return configCommand
 }
-func (y *Yarn) getArgs() string {
-	return strings.Join(y.Args, " ")
-}
-func (y *Yarn) getConfigArgs() string {
-	return libs.GetConfig().GetYarn().ToCommand()
-}
+
 func (y *Yarn) getPostCommands() string {
 	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", y.WorkDir)
 }
+
 func (y *Yarn) getImage() []string {
 	return []string{
 		fmt.Sprintf("node:%s", y.Version),
 	}
 }
+
 func (y *Yarn) workDirVolume() []string {
+	if y.WorkDir == "" {
+		y.WorkDir = y.HomeDir
+	}
 	return []string{
 		fmt.Sprintf("--workdir=%s", y.WorkDir),
 	}

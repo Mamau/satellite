@@ -19,7 +19,7 @@ func (b *Bower) CollectCommand() []string {
 		b.workDirVolume(),
 		b.projectVolume(),
 		b.getImage(),
-		{b.command()},
+		{b.fullCommand()},
 	}
 	for _, command := range commandParts {
 		fullCommand = append(fullCommand, command...)
@@ -27,11 +27,17 @@ func (b *Bower) CollectCommand() []string {
 
 	return fullCommand
 }
-func (b *Bower) command() string {
-	return b.getArgs()
+
+func (b *Bower) fullCommand() string {
+	return b.getMainCommand()
 }
-func (b *Bower) getArgs() string {
+
+func (b *Bower) getMainCommand() string {
 	return strings.Join(b.Args, " ")
+}
+
+func (b *Bower) getPostCommands() string {
+	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", b.WorkDir)
 }
 
 func (b *Bower) getImage() []string {
@@ -39,7 +45,11 @@ func (b *Bower) getImage() []string {
 		fmt.Sprintf("mamau/bower"),
 	}
 }
+
 func (b *Bower) workDirVolume() []string {
+	if b.WorkDir == "" {
+		b.WorkDir = b.HomeDir
+	}
 	return []string{
 		fmt.Sprintf("--workdir=%s", b.WorkDir),
 	}

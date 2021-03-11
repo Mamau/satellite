@@ -22,9 +22,8 @@ var yarnCmd = &cobra.Command{
 
 		yarn := entity.Yarn{
 			Version: nodeForYarnVersion,
-			WorkDir: "/home/node",
 			HomeDir: "/home/node",
-			Args:    append([]string{"yarn"}, args...),
+			Args:    args,
 		}
 
 		libs.RunCommandAtPTY(Docker(yarn.CollectCommand()))

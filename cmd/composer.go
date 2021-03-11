@@ -21,9 +21,8 @@ var composerCmd = &cobra.Command{
 
 		composer := entity.Composer{
 			Version: composerVersion,
-			WorkDir: "/home/www-data",
 			HomeDir: "/home/www-data",
-			Args:    append([]string{"composer"}, args...),
+			Args:    args,
 		}
 
 		libs.RunCommandAtPTY(Docker(composer.CollectCommand()))
