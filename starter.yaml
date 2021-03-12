@@ -1,10 +1,12 @@
 services:
   composer:
-    config:
-      repository:
-        url: "github.com"
-        username: "mamau"
-        token: "some-token"
+    pre-commands:
+      - "composer config github.com mamau some-token"
+#    config:
+#      repository:
+#        url: "github.com"
+#        username: "mamau"
+#        token: "some-token"
   yarn:
     pre-commands:
       - "yarn config set strict-ssl false"

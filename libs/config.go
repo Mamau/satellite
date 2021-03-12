@@ -18,6 +18,8 @@ type Config struct {
 	Services struct {
 		services.Composer `yaml:"composer"`
 		services.Yarn     `yaml:"yarn"`
+		services.Gulp     `yaml:"gulp"`
+		services.Bower    `yaml:"bower"`
 	} `yaml:"services"`
 }
 
@@ -35,6 +37,14 @@ func (c *Config) GetComposer() *services.Composer {
 
 func (c *Config) GetYarn() *services.Yarn {
 	return &c.Services.Yarn
+}
+
+func (c *Config) GetBower() *services.Bower {
+	return &c.Services.Bower
+}
+
+func (c *Config) GetGulp() *services.Gulp {
+	return &c.Services.Gulp
 }
 
 func GetConfig() *Config {

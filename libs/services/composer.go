@@ -1,11 +1,18 @@
 package services
 
-import "github.com/mamau/starter/libs/services/composer"
+import (
+	"strings"
+)
 
 type Composer struct {
-	composer.Config `yaml:"config"`
+	//composer.Config `yaml:"config"`
+	PreCommands []string `yaml:"pre-commands"`
 }
 
-func (c *Composer) GetConfig() *composer.Config {
-	return &c.Config
+//func (c *Composer) GetConfig() *composer.Config {
+//	return &c.Config
+//}
+
+func (c *Composer) ToCommand() string {
+	return strings.Join(c.PreCommands, "; ")
 }

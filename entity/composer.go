@@ -46,7 +46,7 @@ func (c *Composer) getPostCommands() string {
 }
 
 func (c *Composer) getConfigCommand() string {
-	configCommand := libs.GetConfig().GetComposer().GetRepository().ToCommand()
+	configCommand := libs.GetConfig().GetComposer().ToCommand()
 	if configCommand != "" {
 		configCommand += "; "
 	}

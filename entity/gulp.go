@@ -29,7 +29,16 @@ func (g *Gulp) CollectCommand() []string {
 }
 
 func (g *Gulp) fullCommand() string {
-	return g.getMainCommand()
+	return g.getConfigCommand() + g.getMainCommand()
+}
+
+func (g *Gulp) getConfigCommand() string {
+	configCommand := libs.GetConfig().GetGulp().ToCommand()
+	if configCommand != "" {
+		configCommand += "; "
+	}
+
+	return configCommand
 }
 
 func (g *Gulp) getMainCommand() string {

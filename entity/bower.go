@@ -29,7 +29,16 @@ func (b *Bower) CollectCommand() []string {
 }
 
 func (b *Bower) fullCommand() string {
-	return b.getMainCommand()
+	return b.getConfigCommand() + b.getMainCommand()
+}
+
+func (b *Bower) getConfigCommand() string {
+	configCommand := libs.GetConfig().GetBower().ToCommand()
+	if configCommand != "" {
+		configCommand += "; "
+	}
+
+	return configCommand
 }
 
 func (b *Bower) getMainCommand() string {
