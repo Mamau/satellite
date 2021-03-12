@@ -1,17 +1,11 @@
 package entity
 
 import (
-	"fmt"
 	"strings"
-
-	"github.com/mamau/starter/libs"
 )
 
 type Yarn struct {
-	Version string
-	WorkDir string
-	HomeDir string
-	Args    []string
+	Command
 }
 
 func (y *Yarn) CollectCommand() []string {
@@ -19,7 +13,7 @@ func (y *Yarn) CollectCommand() []string {
 	commandParts := [][]string{
 		y.workDirVolume(),
 		y.projectVolume(),
-		y.getImage(),
+		{y.getImage()},
 		{"/bin/bash", "-c", y.fullCommand()},
 	}
 	for _, command := range commandParts {
@@ -36,38 +30,4 @@ func (y *Yarn) fullCommand() string {
 func (y *Yarn) getMainCommand() string {
 	mainCommand := append([]string{"yarn"}, y.Args...)
 	return strings.Join(mainCommand, " ")
-}
-
-func (y *Yarn) getConfigCommand() string {
-	configCommand := libs.GetConfig().GetYarn().ToCommand()
-	if configCommand != "" {
-		configCommand += "; "
-	}
-	return configCommand
-}
-
-func (y *Yarn) getPostCommands() string {
-	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", y.WorkDir)
-}
-
-func (y *Yarn) getImage() []string {
-	return []string{
-		fmt.Sprintf("node:%s", y.Version),
-	}
-}
-
-func (y *Yarn) workDirVolume() []string {
-	if y.WorkDir == "" {
-		y.WorkDir = y.HomeDir
-	}
-	return []string{
-		fmt.Sprintf("--workdir=%s", y.WorkDir),
-	}
-}
-
-func (y *Yarn) projectVolume() []string {
-	return []string{
-		"-v",
-		fmt.Sprintf("%s:%s", libs.GetPwd(), y.HomeDir),
-	}
 }

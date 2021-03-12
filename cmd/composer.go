@@ -20,12 +20,16 @@ var composerCmd = &cobra.Command{
 		}
 
 		composer := entity.Composer{
-			Version: composerVersion,
-			HomeDir: "/home/www-data",
-			Args:    args,
+			Command: entity.Command{
+				Version:       composerVersion,
+				Image:         "composer",
+				HomeDir:       "/home/www-data",
+				Args:          args,
+				ConfigCommand: libs.GetConfig().GetComposer(),
+			},
 		}
 
-		libs.RunCommandAtPTY(Docker(composer.CollectCommand()))
+		libs.RunCommandAtPTY(Docker(&composer))
 	},
 }
 

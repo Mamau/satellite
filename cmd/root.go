@@ -13,20 +13,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type DockerCommand interface {
+	CollectCommand() []string
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "starter",
 	Short: "All command",
 	Long:  "Show all command",
 }
 
-func init() {
-	//libs.PrepareEnv()
-}
-
-func Docker(args []string) *exec.Cmd {
-	//mainArgs := []string{"run", "-ti", "-u", UserId()}
+func Docker(dc DockerCommand) *exec.Cmd {
 	mainArgs := []string{"run", "-ti", "-e", fmt.Sprintf("USER_ID=%s", UserId())}
-	dcCommand := exec.Command("docker", append(mainArgs, args...)...)
+	dcCommand := exec.Command("docker", append(mainArgs, dc.CollectCommand()...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }

@@ -20,11 +20,15 @@ var gulpCmd = &cobra.Command{
 		}
 
 		gulp := entity.Gulp{
-			HomeDir: "/home/node",
-			Args:    args,
+			Command: entity.Command{
+				Image:         "mamau/gulp",
+				HomeDir:       "/home/node",
+				Args:          args,
+				ConfigCommand: libs.GetConfig().GetGulp(),
+			},
 		}
 
-		libs.RunCommandAtPTY(Docker(gulp.CollectCommand()))
+		libs.RunCommandAtPTY(Docker(&gulp))
 	},
 }
 

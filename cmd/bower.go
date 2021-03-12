@@ -20,11 +20,15 @@ var bowerCmd = &cobra.Command{
 		}
 
 		bower := entity.Bower{
-			HomeDir: "/home/node",
-			Args:    args,
+			Command: entity.Command{
+				Image:         "mamau/bower",
+				HomeDir:       "/home/node",
+				Args:          args,
+				ConfigCommand: libs.GetConfig().GetBower(),
+			},
 		}
 
-		libs.RunCommandAtPTY(Docker(bower.CollectCommand()))
+		libs.RunCommandAtPTY(Docker(&bower))
 	},
 }
 
