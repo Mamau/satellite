@@ -6,3 +6,5 @@ help:
 
 build: ## Build project.
 	GOOS=darwin go build -ldflags "-s -w" -o bin/darwin/$(PROJECT_NAME)
+	GOOS=windows go build -ldflags "-s -w" -o bin/windows/$(PROJECT_NAME).exe
+	GOOS=linux go build -ldflags "-s -w" -o bin/linux/$(PROJECT_NAME)
