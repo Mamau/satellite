@@ -72,7 +72,7 @@ func (c *Composer) cacheVolume() []string {
 }
 
 func (c *Composer) certsVolume() []string {
-	if runtime.GOOS != "windows" {
+	if runtime.GOOS == "windows" {
 		return []string{}
 	}
 
