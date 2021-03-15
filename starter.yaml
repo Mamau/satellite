@@ -14,3 +14,11 @@ services:
     pre-commands:
       - "yarn config set strict-ssl false"
       - "npm config set"
+
+#//TODO: сделать последовательный запуск команд
+#commands:
+#  init:
+#    - "yarn install"
+#    - "composer --version=1.9 i"
+#  build:
+#    - "bower i"
