@@ -61,7 +61,7 @@ func (c *Composer) fullCommand() string {
 
 func (c *Composer) getMainCommand() string {
 	mainCommand := append([]string{"composer"}, c.Args...)
-	return strings.Join(append(mainCommand, "--ignore-platform-reqs"), " ")
+	return strings.Join(mainCommand, " ")
 }
 
 func (c *Composer) cacheVolume() []string {
