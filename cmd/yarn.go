@@ -20,17 +20,8 @@ var yarnCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		yarn := entity.Yarn{
-			Command: entity.Command{
-				Image:         "node",
-				Version:       nodeForYarnVersion,
-				HomeDir:       "/home/node",
-				Args:          args,
-				ConfigCommand: libs.GetConfig().GetYarn(),
-			},
-		}
-
-		libs.RunCommandAtPTY(Docker(&yarn))
+		yarn := entity.GetYarn("node", "/home/node", nodeForYarnVersion, args)
+		libs.RunCommandAtPTY(Docker(yarn))
 	},
 }
 

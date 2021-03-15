@@ -1,16 +1,38 @@
 package entity
 
 import (
+	"github.com/mamau/starter/libs"
 	"strings"
+	"sync"
 )
 
+var once sync.Once
+var instance *Yarn
+
 type Yarn struct {
-	Command
+	*Command
+}
+
+func GetYarn(image, homeDir, version string, args []string) *Yarn {
+	once.Do(func() {
+		instance = &Yarn{
+			Command: &Command{
+				Image:   image,
+				HomeDir: homeDir,
+				Version: version,
+				Args:    args,
+				Config:  libs.GetConfig().GetYarn(),
+			},
+		}
+	})
+
+	return instance
 }
 
 func (y *Yarn) CollectCommand() []string {
 	var fullCommand []string
 	commandParts := [][]string{
+		y.Config.GetDns(),
 		y.workDirVolume(),
 		y.projectVolume(),
 		{y.getImage()},

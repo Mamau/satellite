@@ -9,15 +9,17 @@ import (
 
 type ConfigCommandInterface interface {
 	ToCommand() string
+	GetDns() []string
 }
 
 type Command struct {
-	Version       string
-	Image         string
-	WorkDir       string
-	HomeDir       string
-	Args          []string
-	ConfigCommand ConfigCommandInterface
+	Version string
+	Image   string
+	WorkDir string
+	HomeDir string
+	Dns     []string
+	Args    []string
+	Config  ConfigCommandInterface
 }
 
 func (c *Command) getImage() string {
@@ -36,7 +38,7 @@ func (c *Command) getMainCommand() string {
 }
 
 func (c *Command) getConfigCommand() string {
-	configCommand := c.ConfigCommand.ToCommand()
+	configCommand := c.Config.ToCommand()
 	if configCommand != "" {
 		configCommand += "; "
 	}

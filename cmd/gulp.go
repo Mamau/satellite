@@ -19,16 +19,8 @@ var gulpCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		gulp := entity.Gulp{
-			Command: entity.Command{
-				Image:         "mamau/gulp",
-				HomeDir:       "/home/node",
-				Args:          args,
-				ConfigCommand: libs.GetConfig().GetGulp(),
-			},
-		}
-
-		libs.RunCommandAtPTY(Docker(&gulp))
+		gulp := entity.GetGulp("mamau/gulp", "/home/node", args)
+		libs.RunCommandAtPTY(Docker(gulp))
 	},
 }
 

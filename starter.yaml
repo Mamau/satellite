@@ -8,6 +8,9 @@ services:
 #        username: "mamau"
 #        token: "some-token"
   yarn:
+    dns:
+      - "8.8.8.8"
+      - "8.8.4.4"
     pre-commands:
       - "yarn config set strict-ssl false"
       - "npm config set"

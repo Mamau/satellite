@@ -4,17 +4,38 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/mamau/starter/libs"
 )
 
+var cOnce sync.Once
+var cInstance *Composer
+
 type Composer struct {
-	Command
+	*Command
+}
+
+func GetComposer(image, homeDir, version string, args []string) *Composer {
+	cOnce.Do(func() {
+		cInstance = &Composer{
+			Command: &Command{
+				Image:   image,
+				HomeDir: homeDir,
+				Version: version,
+				Args:    args,
+				Config:  libs.GetConfig().GetComposer(),
+			},
+		}
+	})
+
+	return cInstance
 }
 
 func (c *Composer) CollectCommand() []string {
 	var fullCommand []string
 	commandParts := [][]string{
+		c.Config.GetDns(),
 		c.workDirVolume(),
 		c.projectVolume(),
 		c.certsVolume(),
