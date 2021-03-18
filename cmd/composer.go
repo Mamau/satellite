@@ -19,7 +19,7 @@ var composerCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		composer := entity.GetComposer("composer", "/home/www-data", composerVersion, args)
+		composer := entity.NewComposer(composerVersion, args)
 		libs.RunCommandAtPTY(Docker(composer))
 	},
 }

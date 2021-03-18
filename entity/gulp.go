@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"github.com/mamau/starter/libs"
 	"sync"
+
+	"github.com/mamau/starter/libs"
 )
 
 var gOnce sync.Once
@@ -12,12 +13,12 @@ type Gulp struct {
 	*Command
 }
 
-func GetGulp(image, homeDir string, args []string) *Gulp {
+func NewGulp(args []string) *Gulp {
 	gOnce.Do(func() {
 		gInstance = &Gulp{
 			Command: &Command{
-				Image:   image,
-				HomeDir: homeDir,
+				Image:   "mamau/gulp",
+				HomeDir: "/home/node",
 				Args:    args,
 				Config:  libs.GetConfig().GetGulp(),
 			},
@@ -25,20 +26,4 @@ func GetGulp(image, homeDir string, args []string) *Gulp {
 	})
 
 	return gInstance
-}
-
-func (g *Gulp) CollectCommand() []string {
-	var fullCommand []string
-	commandParts := [][]string{
-		g.Config.GetDns(),
-		g.workDirVolume(),
-		g.projectVolume(),
-		{g.getImage()},
-		{g.fullCommand()},
-	}
-	for _, command := range commandParts {
-		fullCommand = append(fullCommand, command...)
-	}
-
-	return fullCommand
 }

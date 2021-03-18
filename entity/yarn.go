@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"github.com/mamau/starter/libs"
-	"strings"
 	"sync"
+
+	"github.com/mamau/starter/libs"
 )
 
 var once sync.Once
@@ -13,12 +13,13 @@ type Yarn struct {
 	*Command
 }
 
-func GetYarn(image, homeDir, version string, args []string) *Yarn {
+func NewYarn(version string, args []string) *Yarn {
 	once.Do(func() {
 		instance = &Yarn{
 			Command: &Command{
-				Image:   image,
-				HomeDir: homeDir,
+				Name:    "yarn",
+				Image:   "node",
+				HomeDir: "/home/node",
 				Version: version,
 				Args:    args,
 				Config:  libs.GetConfig().GetYarn(),
@@ -27,29 +28,4 @@ func GetYarn(image, homeDir, version string, args []string) *Yarn {
 	})
 
 	return instance
-}
-
-func (y *Yarn) CollectCommand() []string {
-	var fullCommand []string
-	commandParts := [][]string{
-		y.Config.GetDns(),
-		y.workDirVolume(),
-		y.projectVolume(),
-		{y.getImage()},
-		{"/bin/bash", "-c", y.fullCommand()},
-	}
-	for _, command := range commandParts {
-		fullCommand = append(fullCommand, command...)
-	}
-
-	return fullCommand
-}
-
-func (y *Yarn) fullCommand() string {
-	return y.getConfigCommand() + y.getMainCommand() + y.getPostCommands()
-}
-
-func (y *Yarn) getMainCommand() string {
-	mainCommand := append([]string{"yarn"}, y.Args...)
-	return strings.Join(mainCommand, " ")
 }

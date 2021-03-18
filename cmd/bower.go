@@ -19,7 +19,7 @@ var bowerCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		bower := entity.GetBower("mamau/bower", "/home/node", args)
+		bower := entity.NewBower(args)
 		libs.RunCommandAtPTY(Docker(bower))
 	},
 }

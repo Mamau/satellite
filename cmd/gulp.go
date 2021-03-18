@@ -19,7 +19,7 @@ var gulpCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		gulp := entity.GetGulp("mamau/gulp", "/home/node", args)
+		gulp := entity.NewGulp(args)
 		libs.RunCommandAtPTY(Docker(gulp))
 	},
 }
