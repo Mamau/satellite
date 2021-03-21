@@ -6,10 +6,10 @@ import (
 )
 
 type Docker struct {
-	Command      string   `yaml:"command"`
 	Version      string   `yaml:"version"`
 	UserId       string   `yaml:"user-id"`
 	WorkDir      string   `yaml:"work-dir"`
+	CacheDir     string   `yaml:"cache-dir"`
 	PreCommands  []string `yaml:"pre-commands"`
 	PostCommands []string `yaml:"post-commands"`
 	Dns          []string `yaml:"dns"`
@@ -19,16 +19,16 @@ type Docker struct {
 	EnvVars      []string `yaml:"environment-variables"`
 }
 
-func (d *Docker) GetCommand() string {
-	return d.Command
-}
-
 func (d *Docker) GetPreCommands() string {
 	return strings.Join(d.PreCommands, "; ")
 }
 
 func (d *Docker) GetPostCommands() string {
 	return strings.Join(d.PostCommands, "; ")
+}
+
+func (d *Docker) GetCacheDir() string {
+	return d.CacheDir
 }
 
 func (d *Docker) GetWorkDir() string {
@@ -42,7 +42,7 @@ func (d *Docker) GetUserId() []string {
 			d.UserId,
 		}
 	}
-	return []string{}
+	return nil
 }
 
 func (d *Docker) GetEnvironmentVariables() []string {

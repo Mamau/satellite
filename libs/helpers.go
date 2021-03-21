@@ -51,6 +51,16 @@ func Find(slice []string, val string) (int, bool) {
 	return -1, false
 }
 
+func DeleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
 func InsertToSlice(slice []string, target string, index int) []string {
 	return append(slice[:index], append([]string{target}, slice[index:]...)...)
 }

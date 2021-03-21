@@ -17,15 +17,20 @@ func NewYarn(version string, args []string) *Yarn {
 	once.Do(func() {
 		instance = &Yarn{
 			Command: &Command{
-				Name:    "yarn",
-				Image:   "node",
-				HomeDir: "/home/node",
-				Version: version,
-				Args:    args,
-				Config:  libs.GetConfig().GetYarn(),
+				CmdName:      "yarn",
+				Image:        "node",
+				HomeDir:      "/home/node",
+				Version:      version,
+				Args:         args,
+				DockerConfig: libs.GetConfig().GetYarn(),
 			},
 		}
 	})
 
 	return instance
+}
+
+func (y *Yarn) CollectCommand() []string {
+	clientCmd := []string{"/bin/bash", "-c", y.fullCommand()}
+	return append(y.dockerDataToCommand(), clientCmd...)
 }

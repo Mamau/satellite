@@ -17,13 +17,18 @@ func NewBower(args []string) *Bower {
 	bOnce.Do(func() {
 		bInstance = &Bower{
 			Command: &Command{
-				Image:   "mamau/bower",
-				HomeDir: "/home/node",
-				Args:    args,
-				Config:  libs.GetConfig().GetBower(),
+				Image:        "mamau/bower",
+				HomeDir:      "/home/node",
+				Args:         args,
+				DockerConfig: libs.GetConfig().GetBower(),
 			},
 		}
 	})
 
 	return bInstance
+}
+
+func (b *Bower) CollectCommand() []string {
+	clientCmd := []string{"/bin/bash", "-c", b.fullCommand()}
+	return append(b.dockerDataToCommand(), clientCmd...)
 }

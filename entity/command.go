@@ -8,10 +8,10 @@ import (
 )
 
 type DockerInterface interface {
-	GetCommand() string
 	GetPreCommands() string
 	GetPostCommands() string
 	GetWorkDir() string
+	GetCacheDir() string
 	GetUserId() []string
 	GetEnvironmentVariables() []string
 	GetVersion() string
@@ -22,21 +22,18 @@ type DockerInterface interface {
 }
 
 type Command struct {
-	Name    string
-	Version string
-	Image   string
-	WorkDir string
-	HomeDir string
-	Dns     []string
-	Args    []string
-	Config  DockerInterface
+	CmdName      string
+	Version      string
+	Image        string
+	WorkDir      string
+	HomeDir      string
+	Dns          []string
+	Args         []string
+	DockerConfig DockerInterface
 }
 
 func (c *Command) getCommand() string {
-	cmd := c.Config.GetCommand()
-	if cmd == "" {
-		cmd = c.Name
-	}
+	cmd := c.CmdName
 
 	if cmd == "" {
 		return strings.Join(c.Args, " ")
@@ -47,7 +44,7 @@ func (c *Command) getCommand() string {
 }
 
 func (c *Command) getImage() string {
-	if cv := c.Config.GetVersion(); cv != "" {
+	if cv := c.DockerConfig.GetVersion(); cv != "" {
 		c.Version = cv
 	}
 
@@ -62,7 +59,7 @@ func (c *Command) fullCommand() string {
 }
 
 func (c *Command) getPreCommands() string {
-	if cc := c.Config.GetPreCommands(); cc != "" {
+	if cc := c.DockerConfig.GetPreCommands(); cc != "" {
 		return cc + "; "
 	}
 
@@ -70,27 +67,40 @@ func (c *Command) getPreCommands() string {
 }
 
 func (c *Command) getPostCommands() string {
-	if pc := c.Config.GetPostCommands(); pc != "" {
+	if pc := c.DockerConfig.GetPostCommands(); pc != "" {
 		return "; " + pc
 	}
-	if c.Config.GetUserId() != nil {
-		return ""
-	}
-	return fmt.Sprintf("; chown -R $USER_ID:$USER_ID %s", c.WorkDir)
+
+	return ""
 }
 
 func (c *Command) workDir() []string {
-	c.WorkDir = c.Config.GetWorkDir()
+	return []string{
+		fmt.Sprintf("--workdir=%s", c.getWorkDir()),
+	}
+}
+
+func (c *Command) getWorkDir() string {
+	c.WorkDir = c.DockerConfig.GetWorkDir()
 	if c.WorkDir == "" {
 		c.WorkDir = c.HomeDir
 	}
+	return c.WorkDir
+}
+
+func (c *Command) cacheDir() []string {
+	if c.DockerConfig.GetCacheDir() == "" {
+		return nil
+	}
+
 	return []string{
-		fmt.Sprintf("--workdir=%s", c.WorkDir),
+		"-v",
+		fmt.Sprintf("%s:/tmp", c.DockerConfig.GetCacheDir()),
 	}
 }
 
 func (c *Command) projectVolume() []string {
-	volumes := c.Config.GetVolumes()
+	volumes := c.DockerConfig.GetVolumes()
 	currentDir := []string{
 		"-v",
 		fmt.Sprintf("%s:%s", libs.GetPwd(), c.HomeDir),
@@ -99,23 +109,24 @@ func (c *Command) projectVolume() []string {
 	volumes = append(volumes, currentDir...)
 	return volumes
 }
-func (c *Command) configCommandData() [][]string {
+
+func (c *Command) dockerCommandData() [][]string {
 	return [][]string{
-		c.Config.GetUserId(),
-		c.Config.GetEnvironmentVariables(),
-		c.Config.GetHosts(),
-		c.Config.GetPorts(),
-		c.Config.GetDns(),
+		c.DockerConfig.GetUserId(),
+		c.DockerConfig.GetEnvironmentVariables(),
+		c.DockerConfig.GetHosts(),
+		c.DockerConfig.GetPorts(),
+		c.DockerConfig.GetDns(),
 		c.workDir(),
+		c.cacheDir(),
 		c.projectVolume(),
 		{c.getImage()},
-		{"/bin/bash", "-c", c.fullCommand()},
 	}
 }
 
-func (c *Command) CollectCommand() []string {
+func (c *Command) dockerDataToCommand() []string {
 	var fullCommand []string
-	for _, command := range c.configCommandData() {
+	for _, command := range c.dockerCommandData() {
 		fullCommand = append(fullCommand, command...)
 	}
 

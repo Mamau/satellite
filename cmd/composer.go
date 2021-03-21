@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"github.com/mamau/starter/libs"
+
 	"github.com/gookit/color"
 	"github.com/mamau/starter/entity"
-	"github.com/mamau/starter/libs"
 	"github.com/spf13/cobra"
 )
 

@@ -17,13 +17,18 @@ func NewGulp(args []string) *Gulp {
 	gOnce.Do(func() {
 		gInstance = &Gulp{
 			Command: &Command{
-				Image:   "mamau/gulp",
-				HomeDir: "/home/node",
-				Args:    args,
-				Config:  libs.GetConfig().GetGulp(),
+				Image:        "mamau/gulp",
+				HomeDir:      "/home/node",
+				Args:         args,
+				DockerConfig: libs.GetConfig().GetGulp(),
 			},
 		}
 	})
 
 	return gInstance
+}
+
+func (g *Gulp) CollectCommand() []string {
+	clientCmd := []string{"/bin/bash", "-c", g.fullCommand()}
+	return append(g.dockerDataToCommand(), clientCmd...)
 }
