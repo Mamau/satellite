@@ -42,8 +42,6 @@ func (c *Config) GetAll() []string {
 		c.GetRepoAsCommand(),
 		c.GetOptimizeAutoloaderAsCommand(),
 	}
-
-	//return libs.DeleteEmpty(list)
 }
 
 func (c *Config) listToCommand(list []string) string {

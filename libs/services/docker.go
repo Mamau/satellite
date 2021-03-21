@@ -48,7 +48,7 @@ func (d *Docker) GetUserId() []string {
 func (d *Docker) GetEnvironmentVariables() []string {
 	var envVars []string
 	for _, v := range d.EnvVars {
-		envVars = append(envVars, "-e", v)
+		envVars = append(envVars, fmt.Sprintf("-e %s", v))
 	}
 	return envVars
 }
@@ -68,7 +68,7 @@ func (d *Docker) GetHosts() []string {
 func (d *Docker) GetPorts() []string {
 	var ports []string
 	for _, v := range d.Ports {
-		ports = append(ports, "-p", v)
+		ports = append(ports, fmt.Sprintf("-p %s", v))
 	}
 	return ports
 }
@@ -76,7 +76,7 @@ func (d *Docker) GetPorts() []string {
 func (d *Docker) GetVolumes() []string {
 	var volumes []string
 	for _, v := range d.Volumes {
-		volumes = append(volumes, "-v", v)
+		volumes = append(volumes, fmt.Sprintf("-v %s", v))
 	}
 	return volumes
 }

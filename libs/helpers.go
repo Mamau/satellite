@@ -1,8 +1,7 @@
 package libs
 
 import (
-	"bytes"
-	"errors"
+	"fmt"
 	"log"
 	"os"
 )
@@ -13,25 +12,6 @@ func GetPwd() string {
 		log.Fatalf("Can't get dir. error: %v\n", err)
 	}
 	return mydir
-}
-
-func GetDCFile() (string, error) {
-	var rootPath bytes.Buffer
-	DCFile := "/docker-compose.yml"
-	rootPath.WriteString(GetPwd())
-	rootPath.WriteString(DCFile)
-	if FileExists(rootPath.String()) {
-		return rootPath.String(), nil
-	}
-
-	var provisionPath bytes.Buffer
-	provisionPath.WriteString(GetPwd())
-	provisionPath.WriteString("/provisioning")
-	provisionPath.WriteString(DCFile)
-	if FileExists(provisionPath.String()) {
-		return provisionPath.String(), nil
-	}
-	return "", errors.New("docker-compose file not found")
 }
 
 func FileExists(filename string) bool {
@@ -63,4 +43,14 @@ func DeleteEmpty(s []string) []string {
 
 func InsertToSlice(slice []string, target string, index int) []string {
 	return append(slice[:index], append([]string{target}, slice[index:]...)...)
+}
+
+func GetClientConfig(filePath string) string {
+	for _, ext := range []string{"yaml", "yml"} {
+		file := fmt.Sprintf("%s.%s", filePath, ext)
+		if FileExists(file) {
+			return file
+		}
+	}
+	return ""
 }
