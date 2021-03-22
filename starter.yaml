@@ -1,4 +1,4 @@
-services:
+commands:
   composer:
     version: "2"
     cache-dir: "/Users/mamau/go/src/github.com/mamau/starter/cache"

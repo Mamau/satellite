@@ -178,8 +178,8 @@ func getConfig(cn string) *Config {
 
 func cleanServices(nc *Config, t *testing.T) {
 	t.Cleanup(func() {
-		nc.Services.Composer = nil
-		nc.Services.Bower = nil
-		nc.Services.Yarn = nil
+		nc.Commands.Composer = nil
+		nc.Commands.Bower = nil
+		nc.Commands.Yarn = nil
 	})
 }

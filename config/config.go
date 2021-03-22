@@ -15,11 +15,11 @@ var instance *Config
 
 type Config struct {
 	Path     string
-	Services struct {
+	Commands struct {
 		*Composer `yaml:"composer"`
 		*Yarn     `yaml:"yarn"`
 		*Bower    `yaml:"bower"`
-	} `yaml:"services"`
+	} `yaml:"commands"`
 }
 
 func NewConfig() *Config {
@@ -33,15 +33,15 @@ func NewConfig() *Config {
 }
 
 func (c *Config) GetComposer() *Composer {
-	return c.Services.Composer
+	return c.Commands.Composer
 }
 
 func (c *Config) GetYarn() *Yarn {
-	return c.Services.Yarn
+	return c.Commands.Yarn
 }
 
 func (c *Config) GetBower() *Bower {
-	return c.Services.Bower
+	return c.Commands.Bower
 }
 
 func GetConfig() *Config {
