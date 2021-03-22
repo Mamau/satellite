@@ -1,5 +1,7 @@
 package config
 
+import "github.com/mamau/starter/config/docker"
+
 type Bower struct {
-	Docker `yaml:",inline"`
+	docker.Docker `yaml:",inline"`
 }

@@ -2,10 +2,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/mamau/starter/libs"
 	"io/ioutil"
 	"log"
 	"sync"
+
+	"github.com/mamau/starter/config/composer"
+	"github.com/mamau/starter/libs"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,9 +18,9 @@ var instance *Config
 type Config struct {
 	Path     string
 	Commands struct {
-		*Composer `yaml:"composer"`
-		*Yarn     `yaml:"yarn"`
-		*Bower    `yaml:"bower"`
+		*composer.Composer `yaml:"composer"`
+		*Yarn              `yaml:"yarn"`
+		*Bower             `yaml:"bower"`
 	} `yaml:"commands"`
 }
 
@@ -32,7 +34,7 @@ func NewConfig() *Config {
 	return instance
 }
 
-func (c *Config) GetComposer() *Composer {
+func (c *Config) GetComposer() *composer.Composer {
 	return c.Commands.Composer
 }
 

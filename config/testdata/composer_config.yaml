@@ -1,0 +1,8 @@
+commands:
+  composer:
+    config:
+      process-timeout: "400"
+      optimize-autoloader: "false"
+      repositories:
+        - "http-basic.github.com mamau some-token"
+        - "http-basic.gitlab.com mamau some-token"

@@ -1,9 +1,12 @@
 package config
 
 import (
-	"github.com/mamau/starter/libs"
 	"strings"
 	"testing"
+
+	"github.com/mamau/starter/config/composer"
+
+	"github.com/mamau/starter/libs"
 )
 
 func TestGetConfig(t *testing.T) {
@@ -42,8 +45,8 @@ func TestGetBower(t *testing.T) {
 
 func TestGetComposer(t *testing.T) {
 	c := getConfig("/testdata/starter")
-	composer := c.GetComposer()
-	if composer == nil {
+	cr := c.GetComposer()
+	if cr == nil {
 		t.Error("composer is empty")
 	}
 	cleanServices(c, t)
@@ -56,6 +59,48 @@ func TestGetYarn(t *testing.T) {
 		t.Error("yarn is empty")
 	}
 	cleanServices(c, t)
+}
+
+func TestGetProcessTimeoutAsCommand(t *testing.T) {
+	c := getComposerConfig()
+	pt := c.GetProcessTimeoutAsCommand()
+	if pt != "composer config --global process-timeout 400" {
+		t.Errorf("wrong proccess-timeout value, got: %s", pt)
+	}
+
+	c.ProcessTimeout = ""
+	if pt := c.GetProcessTimeoutAsCommand(); pt != "" {
+		t.Errorf("when ProcessTimeout is empty, return value must be is empty string")
+	}
+}
+
+func TestGetRepoAsCommand(t *testing.T) {
+	c := getComposerConfig()
+	r := c.GetRepoAsCommand()
+	if r != "composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token" {
+		t.Error("wrong repositories format")
+	}
+	c.Repositories = nil
+	if r := c.GetRepoAsCommand(); r != "" {
+		t.Error("when repositories is empty, value must be empty string")
+	}
+}
+
+func TestGetOptimizeAutoloaderAsCommand(t *testing.T) {
+	c := getComposerConfig()
+	oa := c.GetOptimizeAutoloaderAsCommand()
+	if oa != "composer config --global optimize-autoloader false" {
+		t.Error("wrong optimize-autoloader format")
+	}
+	c.OptimizeAutoloader = ""
+	if oa := c.GetOptimizeAutoloaderAsCommand(); oa != "" {
+		t.Error("when optimize-autoloader is empty, value must be empty string")
+	}
+}
+
+func getComposerConfig() *composer.Config {
+	c := getConfig("/testdata/composer_config")
+	return c.GetComposer().Config
 }
 
 func TestGetPreCommands(t *testing.T) {

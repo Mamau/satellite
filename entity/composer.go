@@ -1,10 +1,11 @@
 package entity
 
 import (
-	"github.com/mamau/starter/config"
-	"github.com/mamau/starter/config/composer"
 	"strings"
 	"sync"
+
+	"github.com/mamau/starter/config"
+	"github.com/mamau/starter/config/composer"
 
 	"github.com/mamau/starter/libs"
 )
@@ -20,7 +21,7 @@ type Composer struct {
 func NewComposer(version string, args []string) *Composer {
 	cOnce.Do(func() {
 		cInstance = &Composer{
-			Config: &config.GetConfig().GetComposer().Config,
+			Config: config.GetConfig().GetComposer().Config,
 			Command: &Command{
 				CmdName:      "composer",
 				Image:        "composer",
