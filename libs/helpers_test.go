@@ -101,9 +101,8 @@ func TestGetPwd(t *testing.T) {
 }
 
 func TestFileExists(t *testing.T) {
-	fpath := GetPwd() + "/testdata/testFile.txt"
+	fpath := GetPwd() + "/testdata/test_file.txt"
 	exist := FileExists(fpath)
-	t.Log(exist)
 	if exist == false {
 		t.Errorf("file %s is not exists", fpath)
 	}

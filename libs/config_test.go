@@ -67,7 +67,7 @@ func TestGetYarn(t *testing.T) {
 }
 
 func TestGetPreCommands(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	if c.GetComposer().GetPreCommands() != "composer some cmd; composer some cmd2" {
 		t.Error("pre command is not match")
 	}
@@ -76,7 +76,7 @@ func TestGetPreCommands(t *testing.T) {
 }
 
 func TestGetPostCommands(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	if c.GetComposer().GetPostCommands() != "composer some post cmd" {
 		t.Error("post command is not match")
 	}
@@ -85,7 +85,7 @@ func TestGetPostCommands(t *testing.T) {
 }
 
 func TestGetCacheDir(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	if c.GetComposer().GetCacheDir() != "/Users/mamau/go/src/github.com/mamau/starter/cache" {
 		t.Error("cache dir is not match")
 	}
@@ -93,7 +93,7 @@ func TestGetCacheDir(t *testing.T) {
 }
 
 func TestGetWorkDir(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	if c.GetComposer().GetWorkDir() != "/home/www-data" {
 		t.Error("work dir is not match")
 	}
@@ -101,7 +101,7 @@ func TestGetWorkDir(t *testing.T) {
 }
 
 func TestGetUserId(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	uid := strings.Join(c.GetComposer().GetUserId(), " ")
 	if uid != "-u 501" {
 		t.Error("user id is not match")
@@ -110,7 +110,7 @@ func TestGetUserId(t *testing.T) {
 }
 
 func TestGetEnvironmentVariables(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	e := strings.Join(c.GetComposer().GetEnvironmentVariables(), "; ")
 	if e != "-e SOME_VAR=someVal" {
 		t.Error("env vars is not match")
@@ -119,7 +119,7 @@ func TestGetEnvironmentVariables(t *testing.T) {
 }
 
 func TestGetVersion(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	v := c.GetComposer().GetVersion()
 	if v != "2" {
 		t.Error("version is not match")
@@ -128,7 +128,7 @@ func TestGetVersion(t *testing.T) {
 }
 
 func TestGetHosts(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	h := strings.Join(c.GetComposer().GetHosts(), "; ")
 	if h != "--add-host=host.docker.internal:127.0.0.1; --add-host=anotherHost" {
 		t.Error("hosts is not match")
@@ -137,7 +137,7 @@ func TestGetHosts(t *testing.T) {
 }
 
 func TestGetPorts(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	p := strings.Join(c.GetComposer().GetPorts(), "; ")
 	if p != "-p 127.0.0.1:443:443; -p 127.0.0.1:80:80; -p 8080:8080" {
 		t.Error("ports is not match")
@@ -146,7 +146,7 @@ func TestGetPorts(t *testing.T) {
 }
 
 func TestGetVolumes(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	v := strings.Join(c.GetComposer().GetVolumes(), "; ")
 	if v != "-v /Users/mamau/go/src/github.com/mamau/starter:/image/volume; -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2" {
 		t.Error("volumes is not match")
@@ -155,7 +155,7 @@ func TestGetVolumes(t *testing.T) {
 }
 
 func TestGetDns(t *testing.T) {
-	c := getConfig("/testdata/starterComposer")
+	c := getConfig("/testdata/starter_composer")
 	d := strings.Join(c.GetComposer().GetDns(), "; ")
 	if d != "--dns=8.8.8.8; --dns=8.8.4.4" {
 		t.Error("dns is not match")
