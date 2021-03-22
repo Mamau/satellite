@@ -20,7 +20,11 @@ type Docker struct {
 }
 
 func (d *Docker) GetPreCommands() string {
-	return strings.Join(d.PreCommands, "; ")
+	pc := strings.Join(d.PreCommands, "; ")
+	if pc != "" {
+		pc += "; "
+	}
+	return pc
 }
 
 func (d *Docker) GetPostCommands() string {
