@@ -1,9 +1,8 @@
 package entity
 
 import (
+	"github.com/mamau/starter/config"
 	"sync"
-
-	"github.com/mamau/starter/libs"
 )
 
 var bOnce sync.Once
@@ -20,7 +19,7 @@ func NewBower(args []string) *Bower {
 				Image:        "mamau/bower",
 				HomeDir:      "/home/node",
 				Args:         args,
-				DockerConfig: libs.GetConfig().GetBower(),
+				DockerConfig: config.GetConfig().GetBower(),
 			},
 		}
 	})
@@ -29,6 +28,5 @@ func NewBower(args []string) *Bower {
 }
 
 func (b *Bower) CollectCommand() []string {
-	clientCmd := []string{"/bin/bash", "-c", b.fullCommand()}
-	return append(b.dockerDataToCommand(), clientCmd...)
+	return append(b.dockerDataToCommand(), b.fullCommand())
 }

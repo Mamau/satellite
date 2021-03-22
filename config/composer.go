@@ -1,6 +1,6 @@
-package services
+package config
 
-import "github.com/mamau/starter/libs/services/composer"
+import "github.com/mamau/starter/config/composer"
 
 type Composer struct {
 	Docker          `yaml:",inline"`

@@ -1,7 +1,6 @@
 package libs
 
 import (
-	"fmt"
 	"log"
 	"os"
 )
@@ -43,14 +42,4 @@ func DeleteEmpty(s []string) []string {
 
 func InsertToSlice(slice []string, target string, index int) []string {
 	return append(slice[:index], append([]string{target}, slice[index:]...)...)
-}
-
-func GetClientConfig(filePath string) string {
-	for _, ext := range []string{"yaml", "yml"} {
-		file := fmt.Sprintf("%s.%s", filePath, ext)
-		if FileExists(file) {
-			return file
-		}
-	}
-	return ""
 }

@@ -1,9 +1,8 @@
 package entity
 
 import (
+	"github.com/mamau/starter/config"
 	"sync"
-
-	"github.com/mamau/starter/libs"
 )
 
 var once sync.Once
@@ -22,7 +21,7 @@ func NewYarn(version string, args []string) *Yarn {
 				HomeDir:      "/home/node",
 				Version:      version,
 				Args:         args,
-				DockerConfig: libs.GetConfig().GetYarn(),
+				DockerConfig: config.GetConfig().GetYarn(),
 			},
 		}
 	})

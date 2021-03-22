@@ -8,21 +8,6 @@ import (
 	"time"
 )
 
-func TestGetClientConfig(t *testing.T) {
-	fp := GetPwd() + "/testdata/starter"
-	result := GetClientConfig(fp)
-
-	if result != fp+".yaml" {
-		t.Errorf("file %s is not exist", fp)
-	}
-
-	fp = GetPwd() + "/testdata/starter_not_exists"
-	result = GetClientConfig(fp)
-	if result != "" {
-		t.Errorf("file %s not exists and return non empty string", fp)
-	}
-}
-
 func TestDeleteEmpty(t *testing.T) {
 	expectedItems := 3
 	data := []string{

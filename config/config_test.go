@@ -1,13 +1,14 @@
-package libs
+package config
 
 import (
+	"github.com/mamau/starter/libs"
 	"strings"
 	"testing"
 )
 
 func TestGetConfig(t *testing.T) {
 	nc := NewConfig()
-	nc.Path = GetPwd() + "/starter_not_exists"
+	nc.Path = libs.GetPwd() + "/starter_not_exists"
 	c := GetConfig()
 	if c != nc {
 		t.Errorf("on not exists file config must be empty")
@@ -17,7 +18,7 @@ func TestGetConfig(t *testing.T) {
 		t.Error("on empty file starter composer must be nil")
 	}
 
-	c.Path = GetPwd() + "/testdata/starter"
+	c.Path = libs.GetPwd() + "/testdata/starter"
 	c = GetConfig()
 	if c.GetComposer() == nil {
 		t.Error("composer is nil")
@@ -154,9 +155,24 @@ func TestGetDns(t *testing.T) {
 	cleanServices(c, t)
 }
 
+func TestGetClientConfig(t *testing.T) {
+	fp := libs.GetPwd() + "/testdata/starter"
+	result := GetClientConfig(fp)
+
+	if result != fp+".yaml" {
+		t.Errorf("file %s is not exist", fp)
+	}
+
+	fp = libs.GetPwd() + "/testdata/starter_not_exists"
+	result = GetClientConfig(fp)
+	if result != "" {
+		t.Errorf("file %s not exists and return non empty string", fp)
+	}
+}
+
 func getConfig(cn string) *Config {
 	c := NewConfig()
-	c.Path = GetPwd() + cn
+	c.Path = libs.GetPwd() + cn
 	return GetConfig()
 }
 
