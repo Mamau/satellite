@@ -10,8 +10,6 @@ services:
         - "http-basic.gitlab.com mamau some-token"
   bower:
     user-id: "501"
-  gulp:
-    user-id: "501"
   yarn:
     version: "10"
     user-id: "501"

@@ -30,19 +30,10 @@ func TestGetConfig(t *testing.T) {
 	cleanServices(nc, t)
 }
 
-func TestGetGulp(t *testing.T) {
-	c := getConfig("/testdata/starter")
-	gulp := c.GetGulp()
-	if gulp == nil {
-		t.Error("gulp is empty")
-	}
-	cleanServices(c, t)
-}
-
 func TestGetBower(t *testing.T) {
 	c := getConfig("/testdata/starter")
-	gulp := c.GetBower()
-	if gulp == nil {
+	bower := c.GetBower()
+	if bower == nil {
 		t.Error("bower is empty")
 	}
 	cleanServices(c, t)
@@ -50,8 +41,8 @@ func TestGetBower(t *testing.T) {
 
 func TestGetComposer(t *testing.T) {
 	c := getConfig("/testdata/starter")
-	gulp := c.GetComposer()
-	if gulp == nil {
+	composer := c.GetComposer()
+	if composer == nil {
 		t.Error("composer is empty")
 	}
 	cleanServices(c, t)
@@ -59,8 +50,8 @@ func TestGetComposer(t *testing.T) {
 
 func TestGetYarn(t *testing.T) {
 	c := getConfig("/testdata/starter")
-	gulp := c.GetYarn()
-	if gulp == nil {
+	yarn := c.GetYarn()
+	if yarn == nil {
 		t.Error("yarn is empty")
 	}
 	cleanServices(c, t)
@@ -173,7 +164,6 @@ func cleanServices(nc *Config, t *testing.T) {
 	t.Cleanup(func() {
 		nc.Services.Composer = nil
 		nc.Services.Bower = nil
-		nc.Services.Gulp = nil
 		nc.Services.Yarn = nil
 	})
 }
