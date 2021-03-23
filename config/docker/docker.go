@@ -20,11 +20,19 @@ type Docker struct {
 }
 
 func (d *Docker) GetPreCommands() string {
-	pc := strings.Join(d.PreCommands, "; ")
-	if pc != "" {
-		pc += "; "
+	if pc := strings.Join(d.PreCommands, "; "); pc != "" {
+		return pc
 	}
-	return pc
+
+	return ""
+}
+
+func (d *Docker) SetPreCommands(pc []string) {
+	d.PreCommands = pc
+}
+
+func (d *Docker) SetPostCommands(pc []string) {
+	d.PostCommands = pc
 }
 
 func (d *Docker) GetPostCommands() string {
@@ -37,6 +45,10 @@ func (d *Docker) GetCacheDir() string {
 
 func (d *Docker) GetWorkDir() string {
 	return d.WorkDir
+}
+
+func (d *Docker) SetWorkDir(wd string) {
+	d.WorkDir = wd
 }
 
 func (d *Docker) GetUserId() []string {
@@ -55,6 +67,10 @@ func (d *Docker) GetEnvironmentVariables() []string {
 		envVars = append(envVars, fmt.Sprintf("-e %s", v))
 	}
 	return envVars
+}
+
+func (d *Docker) SetVersion(v string) {
+	d.Version = v
 }
 
 func (d *Docker) GetVersion() string {

@@ -9,12 +9,16 @@ import (
 
 type DockerInterface interface {
 	GetPreCommands() string
+	SetPreCommands([]string)
 	GetPostCommands() string
+	SetPostCommands([]string)
 	GetWorkDir() string
+	SetWorkDir(string)
 	GetCacheDir() string
 	GetUserId() []string
 	GetEnvironmentVariables() []string
 	GetVersion() string
+	SetVersion(string)
 	GetHosts() []string
 	GetPorts() []string
 	GetVolumes() []string

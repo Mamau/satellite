@@ -105,7 +105,7 @@ func getComposerConfig() *composer.Config {
 
 func TestGetPreCommands(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	if c.GetComposer().GetPreCommands() != "composer some cmd; composer some cmd2; " {
+	if c.GetComposer().GetPreCommands() != "composer some cmd; composer some cmd2" {
 		t.Error("pre command is not match")
 	}
 
