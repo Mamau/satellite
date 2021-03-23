@@ -9,12 +9,6 @@ import (
 	"github.com/mamau/starter/libs"
 )
 
-func TestDockerCommandData(t *testing.T) {
-	getComposerDockerCommandData(t)
-	getYarnDockerCommandData(t)
-	getBowerDockerCommandData(t)
-}
-
 func TestGetCommand(t *testing.T) {
 	getBowerCommand(t)
 	getComposerCommand(t)
@@ -57,9 +51,16 @@ func TestProjectVolume(t *testing.T) {
 	getBowerProjectVolume(t)
 }
 
+func TestDockerCommandData(t *testing.T) {
+	getComposerDockerCommandData(t)
+	getYarnDockerCommandData(t)
+	getBowerDockerCommandData(t)
+}
+
 func getBowerDockerCommandData(t *testing.T) {
 	b := getBower([]string{})
 	b.Args = []string{"install"}
+	b.HomeDir = "/home/node"
 	dbd := b.CollectCommand()
 	bd := fmt.Sprintf("%s:%s", libs.GetPwd(), b.getWorkDir())
 	needle := fmt.Sprintf("-u 501 --workdir=/home/node -v %s mamau/bower some bower command; bower install; some bower post cmd", bd)
@@ -73,6 +74,7 @@ func getBowerDockerCommandData(t *testing.T) {
 func getYarnDockerCommandData(t *testing.T) {
 	y := getYarn("", []string{})
 	y.Args = []string{"install"}
+	y.HomeDir = "/home/node"
 	dyd := y.CollectCommand()
 	yd := fmt.Sprintf("%s:%s", libs.GetPwd(), y.getWorkDir())
 	needle := fmt.Sprintf("-u 501 -e SOME_VAR=someVal --add-host=host.docker.internal:127.0.0.1 -p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080 --dns=8.8.8.8 --dns=8.8.4.4 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v %s node:10 /bin/bash -c yarn config set strict-ssl false; npm config set; yarn install; npm config set; npm config second post cmd", yd)
@@ -84,7 +86,7 @@ func getYarnDockerCommandData(t *testing.T) {
 func getComposerDockerCommandData(t *testing.T) {
 	c := getComposer("", []string{})
 	c.Args = []string{"install --ignore-platform-reqs"}
-	//c.HomeDir = "/home/www-data"
+	c.HomeDir = "/home/www-data"
 	dcd := c.CollectCommand()
 
 	wd := fmt.Sprintf("%s:%s", libs.GetPwd(), c.getWorkDir())
