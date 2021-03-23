@@ -61,7 +61,8 @@ func getBowerDockerCommandData(t *testing.T) {
 	b := getBower([]string{})
 	b.Args = []string{"install"}
 	dbd := b.CollectCommand()
-	needle := "-u 501 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/entity:/any/work/dir mamau/bower some bower command; bower install; some bower post cmd"
+	bd := fmt.Sprintf("%s:%s", libs.GetPwd(), b.getWorkDir())
+	needle := fmt.Sprintf("-u 501 --workdir=/home/node -v %s mamau/bower some bower command; bower install; some bower post cmd", bd)
 	if strings.Join(dbd, " ") != needle {
 		t.Errorf("wrong full command for bower, got %q", dbd)
 	}
@@ -71,19 +72,20 @@ func getYarnDockerCommandData(t *testing.T) {
 	y := getYarn("", []string{})
 	y.Args = []string{"install"}
 	dyd := y.CollectCommand()
-	needle := "-u 501 -e SOME_VAR=someVal --add-host=host.docker.internal:127.0.0.1 -p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080 --dns=8.8.8.8 --dns=8.8.4.4 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v /Users/mamau/go/src/github.com/mamau/starter/entity:/any/work/dir node:10 /bin/bash -c yarn config set strict-ssl false; npm config set; yarn install; npm config set; npm config second post cmd"
+	yd := fmt.Sprintf("%s:%s", libs.GetPwd(), y.getWorkDir())
+	needle := fmt.Sprintf("-u 501 -e SOME_VAR=someVal --add-host=host.docker.internal:127.0.0.1 -p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080 --dns=8.8.8.8 --dns=8.8.4.4 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v %s node:10 /bin/bash -c yarn config set strict-ssl false; npm config set; yarn install; npm config set; npm config second post cmd", yd)
 	if strings.Join(dyd, " ") != needle {
 		t.Errorf("wrong full command for yarn, got %q", dyd)
 	}
 }
 
-//--workdir=/home/www-data -v "/Users/mamau/go/src/github.com/mamau/starter/cache:/tmp" "-v /Users/mamau/go/src/github.com/mamau/starter:/image/volume" "-v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2" "-v" "/home/runner/work/starter/starter/entity:/any/work/dir" "composer:2" "/bin/bash" "-c" "composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false; composer config set any; composer command; composer install --ignore-platform-reqs; composer post cmd; composer post cmd2
-//--workdir=/home/www-data -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2 -v /home/runner/work/starter/starter/entity:/any/work/dir composer:2 /bin/bash -c composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false; composer config set any; composer command; composer install --ignore-platform-reqs; composer post cmd; composer post cmd2
 func getComposerDockerCommandData(t *testing.T) {
 	c := getComposer("", []string{})
 	c.Args = []string{"install --ignore-platform-reqs"}
 	dcd := c.CollectCommand()
-	needle := "--workdir=/home/www-data -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2 -v /Users/mamau/go/src/github.com/mamau/starter/entity:/any/work/dir composer:2 /bin/bash -c composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false; composer config set any; composer command; composer install --ignore-platform-reqs; composer post cmd; composer post cmd2"
+
+	wd := fmt.Sprintf("%s:%s", libs.GetPwd(), c.getWorkDir())
+	needle := fmt.Sprintf("--workdir=/home/www-data -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2 -v %s composer:2 /bin/bash -c composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false; composer config set any; composer command; composer install --ignore-platform-reqs; composer post cmd; composer post cmd2", wd)
 	if strings.Join(dcd, " ") != needle {
 		t.Errorf("wrong full command for composer, got %q, need %q", strings.Join(dcd, " "), needle)
 	}
