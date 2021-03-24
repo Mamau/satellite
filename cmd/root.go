@@ -24,9 +24,8 @@ var rootCmd = &cobra.Command{
 }
 
 func Docker(dc DockerCommand) *exec.Cmd {
-	//mainArgs := []string{"run", "-ti", "-e", fmt.Sprintf("USER_ID=%s", UserId())}
 	mainArgs := []string{"run", "-ti"}
-	dcCommand := exec.Command("docker", append(mainArgs, dc.CollectCommand()...)...)
+	dcCommand := exec.Command("docker", append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
