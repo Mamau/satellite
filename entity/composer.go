@@ -14,21 +14,20 @@ var cOnce sync.Once
 var cInstance *Composer
 
 type Composer struct {
-	*composer.Config
+	Config *composer.Composer
 	*Command
 }
 
 func NewComposer(version string, args []string) *Composer {
 	cOnce.Do(func() {
 		cInstance = &Composer{
-			Config: config.GetConfig().GetComposer().Config,
+			Config: config.GetConfig().GetComposer(),
 			Command: &Command{
-				CmdName:      "composer",
-				Image:        "composer",
-				HomeDir:      "/home/www-data",
-				Version:      version,
-				Args:         args,
-				DockerConfig: config.GetConfig().GetComposer(),
+				CmdName: "composer",
+				Image:   "composer",
+				HomeDir: "/home/www-data",
+				Version: version,
+				Args:    args,
 			},
 		}
 	})
@@ -37,18 +36,71 @@ func NewComposer(version string, args []string) *Composer {
 }
 
 func (c *Composer) CollectCommand() []string {
-	clientCmd := []string{"/bin/bash", "-c", c.fullCommand()}
-	return append(c.dockerDataToCommand(), clientCmd...)
+	dockerConfig := c.dockerConfigCommand()
+	clientCmd := []string{"/bin/bash", "-c", strings.Join(c.ClientCommand(), "; ")}
+	return append(dockerConfig, clientCmd...)
 }
 
-func (c *Composer) fullCommand() string {
-	return c.configToCommand() + c.getPreCommands() + c.getCommand() + c.getPostCommands()
+func (c *Composer) dockerConfigCommand() []string {
+	var userId,
+		workDir,
+		cacheVolume,
+		envVars,
+		imgVersion,
+		hosts,
+		ports,
+		dns,
+		volumes string
+
+	if c.Config != nil {
+		userId = c.Config.GetUserId()
+		workDir = c.Config.GetWorkDir()
+		cacheVolume = c.Config.GetCacheVolume()
+		envVars = c.Config.GetEnvironmentVariables()
+		imgVersion = c.Config.GetVersion()
+		hosts = c.Config.GetHosts()
+		ports = c.Config.GetPorts()
+		volumes = c.Config.GetVolumes()
+		dns = c.Config.GetDns()
+	}
+	if imgVersion != "" {
+		c.Version = imgVersion
+	}
+
+	return libs.MergeSliceOfString([]string{
+		userId,
+		envVars,
+		hosts,
+		ports,
+		dns,
+		workDir,
+		cacheVolume,
+		volumes,
+		c.GetImage(),
+	})
+}
+
+func (c *Composer) ClientCommand() []string {
+	var preCmd string
+	var postCmd string
+
+	if c.Config != nil {
+		preCmd = c.Config.GetPreCommands()
+		postCmd = c.Config.GetPostCommands()
+	}
+
+	return libs.DeleteEmpty([]string{
+		c.configToCommand(),
+		preCmd,
+		c.GetClientCommand(),
+		postCmd,
+	})
 }
 
 func (c *Composer) configToCommand() string {
 	configCommands := libs.DeleteEmpty(c.Config.GetAll())
 	if all := configCommands; all != nil {
-		return strings.Join(configCommands, "; ") + "; "
+		return strings.Join(configCommands, "; ")
 	}
 
 	return ""

@@ -20,11 +20,7 @@ type Docker struct {
 }
 
 func (d *Docker) GetPreCommands() string {
-	if pc := strings.Join(d.PreCommands, "; "); pc != "" {
-		return pc
-	}
-
-	return ""
+	return strings.Join(d.PreCommands, "; ")
 }
 
 func (d *Docker) SetPreCommands(pc []string) {
@@ -39,34 +35,53 @@ func (d *Docker) GetPostCommands() string {
 	return strings.Join(d.PostCommands, "; ")
 }
 
-func (d *Docker) GetCacheDir() string {
-	return d.CacheDir
+//func (d *Docker) workDir(dirname string) []string {
+//	dir := dirname
+//	if d.WorkDir != "" {
+//		dir = d.WorkDir
+//	}
+//	if dir == "" {
+//		return nil
+//	}
+//	return []string{
+//		fmt.Sprintf("--workdir=%s", dirname),
+//	}
+//}
+
+func (d *Docker) GetCacheVolume() string {
+	if d.CacheDir == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("-v %s:/tmp", d.CacheDir)
 }
 
 func (d *Docker) GetWorkDir() string {
-	return d.WorkDir
+	if d.WorkDir == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("--workdir=%s", d.WorkDir)
 }
 
 func (d *Docker) SetWorkDir(wd string) {
 	d.WorkDir = wd
 }
 
-func (d *Docker) GetUserId() []string {
-	if id := d.UserId; id != "" {
-		return []string{
-			"-u",
-			d.UserId,
-		}
+func (d *Docker) GetUserId() string {
+	if d.UserId == "" {
+		return ""
 	}
-	return nil
+
+	return fmt.Sprintf("-u %s", d.UserId)
 }
 
-func (d *Docker) GetEnvironmentVariables() []string {
+func (d *Docker) GetEnvironmentVariables() string {
 	var envVars []string
 	for _, v := range d.EnvVars {
 		envVars = append(envVars, fmt.Sprintf("-e %s", v))
 	}
-	return envVars
+	return strings.Join(envVars, " ")
 }
 
 func (d *Docker) SetVersion(v string) {
@@ -77,35 +92,35 @@ func (d *Docker) GetVersion() string {
 	return d.Version
 }
 
-func (d *Docker) GetHosts() []string {
+func (d *Docker) GetHosts() string {
 	var hosts []string
 	for _, v := range d.AddHosts {
 		hosts = append(hosts, fmt.Sprintf("--add-host=%s", v))
 	}
-	return hosts
+	return strings.Join(hosts, " ")
 }
 
-func (d *Docker) GetPorts() []string {
+func (d *Docker) GetPorts() string {
 	var ports []string
 	for _, v := range d.Ports {
 		ports = append(ports, fmt.Sprintf("-p %s", v))
 	}
-	return ports
+	return strings.Join(ports, " ")
 }
 
-func (d *Docker) GetVolumes() []string {
+func (d *Docker) GetVolumes() string {
 	var volumes []string
 	for _, v := range d.Volumes {
 		volumes = append(volumes, fmt.Sprintf("-v %s", v))
 	}
-	return volumes
+	return strings.Join(volumes, " ")
 }
 
-func (d *Docker) GetDns() []string {
+func (d *Docker) GetDns() string {
 	var dns []string
 	for _, v := range d.Dns {
 		dns = append(dns, fmt.Sprintf("--dns=%s", v))
 	}
 
-	return dns
+	return strings.Join(dns, " ")
 }

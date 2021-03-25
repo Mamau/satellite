@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"github.com/mamau/starter/libs"
-
+	"fmt"
 	"github.com/gookit/color"
 	"github.com/mamau/starter/entity"
 	"github.com/spf13/cobra"
@@ -21,7 +20,9 @@ var composerCmd = &cobra.Command{
 		}
 
 		composer := entity.NewComposer(composerVersion, args)
-		libs.RunCommandAtPTY(Docker(composer))
+		fmt.Println(composer.CollectCommand())
+		//fmt.Println(config.GetConfig().GetComposer().Config.ProcessTimeout)
+		//libs.RunCommandAtPTY(Docker(composer))
 	},
 }
 
