@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"github.com/gookit/color"
+	"github.com/mamau/starter/entity"
+	"github.com/mamau/starter/libs"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +18,8 @@ var bowerCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		//bower := entity.NewBower(args)
-		//libs.RunCommandAtPTY(Docker(bower))
+		bower := entity.NewBower(args)
+		libs.RunCommandAtPTY(Docker(bower))
 	},
 }
 

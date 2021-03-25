@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"github.com/gookit/color"
+	"github.com/mamau/starter/entity"
+	"github.com/mamau/starter/libs"
 	"github.com/spf13/cobra"
 )
 
@@ -17,8 +19,8 @@ var yarnCmd = &cobra.Command{
 			args = []string{"--version"}
 		}
 
-		//yarn := entity.NewYarn(nodeForYarnVersion, args)
-		//libs.RunCommandAtPTY(Docker(yarn))
+		yarn := entity.NewYarn(nodeForYarnVersion, args)
+		libs.RunCommandAtPTY(Docker(yarn))
 	},
 }
 
