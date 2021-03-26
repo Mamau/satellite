@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -61,8 +62,13 @@ func (y *Yarn) dockerConfigCommand() []string {
 		volumes = y.Config.GetVolumes()
 		dns = y.Config.GetDns()
 	}
+
 	if imgVersion != "" {
 		y.Version = imgVersion
+	}
+
+	if workDir == "" {
+		workDir = fmt.Sprintf("--workdir=%s", y.HomeDir)
 	}
 
 	return libs.MergeSliceOfString([]string{

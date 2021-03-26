@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/mamau/starter/libs"
@@ -59,8 +60,13 @@ func (b *Bower) dockerConfigCommand() []string {
 		volumes = b.Config.GetVolumes()
 		dns = b.Config.GetDns()
 	}
+
 	if imgVersion != "" {
 		b.Version = imgVersion
+	}
+
+	if workDir == "" {
+		workDir = fmt.Sprintf("--workdir=%s", b.HomeDir)
 	}
 
 	return libs.MergeSliceOfString([]string{

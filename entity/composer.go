@@ -42,7 +42,6 @@ func (c *Composer) CollectCommand() []string {
 	return append(dockerConfig, clientCmd...)
 }
 
-//TODO: Обратить внимание на workdir, чтобы можно было без конфига использовать
 func (c *Composer) dockerConfigCommand() []string {
 	var userId,
 		workDir,
@@ -65,8 +64,13 @@ func (c *Composer) dockerConfigCommand() []string {
 		volumes = c.Config.GetVolumes()
 		dns = c.Config.GetDns()
 	}
+
 	if imgVersion != "" {
 		c.Version = imgVersion
+	}
+
+	if workDir == "" {
+		workDir = fmt.Sprintf("--workdir=%s", c.HomeDir)
 	}
 
 	return libs.MergeSliceOfString([]string{
