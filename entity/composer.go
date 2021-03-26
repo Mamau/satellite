@@ -41,6 +41,7 @@ func (c *Composer) CollectCommand() []string {
 	return append(dockerConfig, clientCmd...)
 }
 
+//TODO: Обратить внимание на workdir, чтобы можно было без конфига использовать
 func (c *Composer) dockerConfigCommand() []string {
 	var userId,
 		workDir,
@@ -104,4 +105,9 @@ func (c *Composer) configToCommand() string {
 	}
 
 	return ""
+}
+
+func (c *Composer) GetImage() string {
+	version := c.Config.GetVersion()
+
 }

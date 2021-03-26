@@ -75,11 +75,8 @@ func (c *Command) GetImage() string {
 //	}
 //}
 
-func (c *Command) GetProjectVolume() []string {
-	return []string{
-		"-v",
-		fmt.Sprintf("%s:%s", libs.GetPwd(), c.HomeDir),
-	}
+func (c *Command) GetProjectVolume() string {
+	return fmt.Sprintf("-v %s:%s", libs.GetPwd(), c.HomeDir)
 }
 
 //func (c *Command) dockerCommandData() [][]string {
