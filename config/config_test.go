@@ -1,7 +1,6 @@
 package config
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/mamau/starter/config/composer"
@@ -123,34 +122,35 @@ func TestGetPostCommands(t *testing.T) {
 
 func TestGetCacheDir(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	if c.GetComposer().GetCacheDir() != "/Users/mamau/go/src/github.com/mamau/starter/cache" {
-		t.Error("cache dir is not match")
+	expected := "-v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp"
+	if v := c.GetComposer().GetCacheVolume(); v != expected {
+		t.Errorf("cache dir must bet %q, got %q", expected, v)
 	}
 	cleanServices(c, t)
 }
 
 func TestGetWorkDir(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	if c.GetComposer().GetWorkDir() != "/home/www-data" {
-		t.Error("work dir is not match")
+	if c.GetComposer().GetWorkDir() != "--workdir=/home/www-data" {
+		t.Errorf("work dir must be %q, got %q", "--workdir=/home/www-data", c.GetComposer().GetWorkDir())
 	}
 	cleanServices(c, t)
 }
 
 func TestGetUserId(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	uid := strings.Join(c.GetComposer().GetUserId(), " ")
-	if uid != "-u 501" {
-		t.Error("user id is not match")
+	expected := "-u 501"
+	if uid := c.GetComposer().GetUserId(); uid != expected {
+		t.Errorf("user id must be %q, got %q", expected, uid)
 	}
 	cleanServices(c, t)
 }
 
 func TestGetEnvironmentVariables(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	e := strings.Join(c.GetComposer().GetEnvironmentVariables(), "; ")
-	if e != "-e SOME_VAR=someVal" {
-		t.Error("env vars is not match")
+	expected := "-e SOME_VAR=someVal"
+	if e := c.GetComposer().GetEnvironmentVariables(); e != expected {
+		t.Errorf("env vars must be %q, got %q", expected, e)
 	}
 	cleanServices(c, t)
 }
@@ -166,36 +166,36 @@ func TestGetVersion(t *testing.T) {
 
 func TestGetHosts(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	h := strings.Join(c.GetComposer().GetHosts(), "; ")
-	if h != "--add-host=host.docker.internal:127.0.0.1; --add-host=anotherHost" {
-		t.Error("hosts is not match")
+	expected := "--add-host=host.docker.internal:127.0.0.1 --add-host=anotherHost"
+	if h := c.GetComposer().GetHosts(); h != expected {
+		t.Errorf("hosts must be %q, got %q", expected, h)
 	}
 	cleanServices(c, t)
 }
 
 func TestGetPorts(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	p := strings.Join(c.GetComposer().GetPorts(), "; ")
-	if p != "-p 127.0.0.1:443:443; -p 127.0.0.1:80:80; -p 8080:8080" {
-		t.Error("ports is not match")
+	expected := "-p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080"
+	if p := c.GetComposer().GetPorts(); p != expected {
+		t.Errorf("ports must be %q, got %q", expected, p)
 	}
 	cleanServices(c, t)
 }
 
 func TestGetVolumes(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	v := strings.Join(c.GetComposer().GetVolumes(), "; ")
-	if v != "-v /Users/mamau/go/src/github.com/mamau/starter:/image/volume; -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2" {
-		t.Error("volumes is not match")
+	expected := "-v /Users/mamau/go/src/github.com/mamau/starter:/image/volume -v /Users/mamau/go/src/github.com/mamau/starter2:/image/volume2"
+	if v := c.GetComposer().GetVolumes(); v != expected {
+		t.Errorf("volumes must be %q, got %q", expected, v)
 	}
 	cleanServices(c, t)
 }
 
 func TestGetDns(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
-	d := strings.Join(c.GetComposer().GetDns(), "; ")
-	if d != "--dns=8.8.8.8; --dns=8.8.4.4" {
-		t.Error("dns is not match")
+	expected := "--dns=8.8.8.8 --dns=8.8.4.4"
+	if d := c.GetComposer().GetDns(); d != expected {
+		t.Errorf("dns must be %q, got %q", expected, d)
 	}
 	cleanServices(c, t)
 }

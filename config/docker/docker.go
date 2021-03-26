@@ -35,19 +35,6 @@ func (d *Docker) GetPostCommands() string {
 	return strings.Join(d.PostCommands, "; ")
 }
 
-//func (d *Docker) workDir(dirname string) []string {
-//	dir := dirname
-//	if d.WorkDir != "" {
-//		dir = d.WorkDir
-//	}
-//	if dir == "" {
-//		return nil
-//	}
-//	return []string{
-//		fmt.Sprintf("--workdir=%s", dirname),
-//	}
-//}
-
 func (d *Docker) GetCacheVolume() string {
 	if d.CacheDir == "" {
 		return ""
