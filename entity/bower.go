@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"strings"
 	"sync"
 
 	"github.com/mamau/starter/libs"
@@ -35,8 +34,7 @@ func NewBower(args []string) *Bower {
 
 func (b *Bower) CollectCommand() []string {
 	dockerConfig := b.dockerConfigCommand()
-	clientCmd := []string{"/bin/bash", "-c", strings.Join(b.ClientCommand(), "; ")}
-	return append(dockerConfig, clientCmd...)
+	return append(dockerConfig, b.ClientCommand()...)
 }
 
 func (b *Bower) dockerConfigCommand() []string {
@@ -74,22 +72,38 @@ func (b *Bower) dockerConfigCommand() []string {
 		workDir,
 		cacheVolume,
 		volumes,
+		b.GetProjectVolume(),
 		b.GetImage(),
 	})
 }
 
+func (b *Bower) GetImage() string {
+	return b.Image
+}
+
 func (b *Bower) ClientCommand() []string {
-	var preCmd string
-	var postCmd string
+	var preCmd []string
+	var postCmd []string
 
 	if b.Config != nil {
-		preCmd = b.Config.GetPreCommands()
-		postCmd = b.Config.GetPostCommands()
+		cmd := b.Config.GetPreCommands()
+		if len(cmd) > 0 {
+			cmd += ";"
+		}
+
+		preCmd = libs.MergeSliceOfString([]string{cmd})
+		postCmd = libs.MergeSliceOfString([]string{b.Config.GetPostCommands()})
 	}
 
-	return libs.DeleteEmpty([]string{
-		preCmd,
-		b.GetClientCommand(),
-		postCmd,
-	})
+	ccmd := b.GetClientCommand()
+	if len(postCmd) > 0 {
+		ccmd += ";"
+	}
+
+	clientCmd := libs.MergeSliceOfString([]string{ccmd})
+
+	preCmd = append(preCmd, clientCmd...)
+	preCmd = append(preCmd, postCmd...)
+
+	return libs.DeleteEmpty(preCmd)
 }

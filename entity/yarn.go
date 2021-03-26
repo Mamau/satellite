@@ -35,7 +35,7 @@ func NewYarn(version string, args []string) *Yarn {
 
 func (y *Yarn) CollectCommand() []string {
 	dockerConfig := y.dockerConfigCommand()
-	clientCmd := []string{"/bin/bash", "-c", strings.Join(y.ClientCommand(), "; ")}
+	clientCmd := []string{"/bin/bash", "-c", strings.Join(y.ClientCommand(), " ")}
 	return append(dockerConfig, clientCmd...)
 }
 
@@ -74,22 +74,34 @@ func (y *Yarn) dockerConfigCommand() []string {
 		workDir,
 		cacheVolume,
 		volumes,
+		y.GetProjectVolume(),
 		y.GetImage(),
 	})
 }
 
 func (y *Yarn) ClientCommand() []string {
-	var preCmd string
-	var postCmd string
+	var preCmd []string
+	var postCmd []string
 
 	if y.Config != nil {
-		preCmd = y.Config.GetPreCommands()
-		postCmd = y.Config.GetPostCommands()
+		cmd := y.Config.GetPreCommands()
+		if len(cmd) > 0 {
+			cmd += ";"
+		}
+
+		preCmd = libs.MergeSliceOfString([]string{cmd})
+		postCmd = libs.MergeSliceOfString([]string{y.Config.GetPostCommands()})
 	}
 
-	return libs.DeleteEmpty([]string{
-		preCmd,
-		y.GetClientCommand(),
-		postCmd,
-	})
+	ccmd := y.GetClientCommand()
+	if len(postCmd) > 0 {
+		ccmd += ";"
+	}
+
+	clientCmd := libs.MergeSliceOfString([]string{ccmd})
+
+	preCmd = append(preCmd, clientCmd...)
+	preCmd = append(preCmd, postCmd...)
+
+	return libs.DeleteEmpty(preCmd)
 }

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 
@@ -37,7 +38,7 @@ func NewComposer(version string, args []string) *Composer {
 
 func (c *Composer) CollectCommand() []string {
 	dockerConfig := c.dockerConfigCommand()
-	clientCmd := []string{"/bin/bash", "-c", strings.Join(c.ClientCommand(), "; ")}
+	clientCmd := []string{"/bin/bash", "-c", strings.Join(c.ClientCommand(), " ")}
 	return append(dockerConfig, clientCmd...)
 }
 
@@ -77,37 +78,56 @@ func (c *Composer) dockerConfigCommand() []string {
 		workDir,
 		cacheVolume,
 		volumes,
+		c.GetProjectVolume(),
 		c.GetImage(),
 	})
 }
 
 func (c *Composer) ClientCommand() []string {
-	var preCmd string
-	var postCmd string
+	mainCmd := c.configToCommand()
+	var preCmd []string
+	var postCmd []string
 
 	if c.Config != nil {
-		preCmd = c.Config.GetPreCommands()
-		postCmd = c.Config.GetPostCommands()
+		cmd := c.Config.GetPreCommands()
+		if len(cmd) > 0 {
+			cmd += ";"
+		}
+
+		preCmd = libs.MergeSliceOfString([]string{cmd})
+		postCmd = libs.MergeSliceOfString([]string{c.Config.GetPostCommands()})
 	}
 
-	return libs.DeleteEmpty([]string{
-		c.configToCommand(),
-		preCmd,
-		c.GetClientCommand(),
-		postCmd,
-	})
+	ccmd := c.GetClientCommand()
+	if len(postCmd) > 0 {
+		ccmd += ";"
+	}
+
+	clientCmd := libs.MergeSliceOfString([]string{ccmd})
+
+	mainCmd = append(mainCmd, preCmd...)
+	mainCmd = append(mainCmd, clientCmd...)
+	mainCmd = append(mainCmd, postCmd...)
+
+	return libs.DeleteEmpty(mainCmd)
 }
 
-func (c *Composer) configToCommand() string {
+func (c *Composer) configToCommand() []string {
 	configCommands := libs.DeleteEmpty(c.Config.GetAll())
-	if all := configCommands; all != nil {
-		return strings.Join(configCommands, "; ")
+	if len(configCommands) == 0 {
+		return []string{}
 	}
 
-	return ""
+	for i, v := range configCommands {
+		configCommands[i] = v + ";"
+	}
+
+	return libs.MergeSliceOfString(configCommands)
 }
 
 func (c *Composer) GetImage() string {
-	version := c.Config.GetVersion()
-
+	if v := c.Config.GetVersion(); v != "" {
+		return fmt.Sprintf("%s:%s", c.Image, v)
+	}
+	return c.Command.GetImage()
 }
