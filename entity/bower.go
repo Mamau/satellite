@@ -1,10 +1,9 @@
 package entity
 
 import (
-	"fmt"
 	"sync"
 
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/starter/config/docker"
 
 	"github.com/mamau/starter/config"
 )
@@ -33,83 +32,18 @@ func NewBower(args []string) *Bower {
 	return bInstance
 }
 
-func (b *Bower) CollectCommand() []string {
-	dockerConfig := b.dockerConfigCommand()
-	return append(dockerConfig, b.ClientCommand()...)
+func (b *Bower) GetDockerConfig() *docker.Docker {
+	return &b.Config.Docker
 }
 
-func (b *Bower) dockerConfigCommand() []string {
-	var userId,
-		workDir,
-		cacheVolume,
-		envVars,
-		imgVersion,
-		hosts,
-		ports,
-		dns,
-		volumes string
+func (b *Bower) GetCommandConfig() *Command {
+	return b.Command
+}
 
-	if b.Config != nil {
-		userId = b.Config.GetUserId()
-		workDir = b.Config.GetWorkDir()
-		cacheVolume = b.Config.GetCacheVolume()
-		envVars = b.Config.GetEnvironmentVariables()
-		imgVersion = b.Config.GetVersion()
-		hosts = b.Config.GetHosts()
-		ports = b.Config.GetPorts()
-		volumes = b.Config.GetVolumes()
-		dns = b.Config.GetDns()
-	}
-
-	if imgVersion != "" {
-		b.Version = imgVersion
-	}
-
-	if workDir == "" {
-		workDir = fmt.Sprintf("--workdir=%s", b.HomeDir)
-	}
-
-	return libs.MergeSliceOfString([]string{
-		userId,
-		envVars,
-		hosts,
-		ports,
-		dns,
-		workDir,
-		cacheVolume,
-		volumes,
-		b.GetProjectVolume(),
-		b.GetImage(),
-	})
+func (b *Bower) GetClientSignature(cmd []string) []string {
+	return cmd
 }
 
 func (b *Bower) GetImage() string {
 	return b.Image
-}
-
-func (b *Bower) ClientCommand() []string {
-	var preCmd []string
-	var postCmd []string
-
-	if b.Config != nil {
-		cmd := b.Config.GetPreCommands()
-		if len(cmd) > 0 {
-			cmd += ";"
-		}
-
-		preCmd = libs.MergeSliceOfString([]string{cmd})
-		postCmd = libs.MergeSliceOfString([]string{b.Config.GetPostCommands()})
-	}
-
-	ccmd := b.GetClientCommand()
-	if len(postCmd) > 0 {
-		ccmd += ";"
-	}
-
-	clientCmd := libs.MergeSliceOfString([]string{ccmd})
-
-	preCmd = append(preCmd, clientCmd...)
-	preCmd = append(preCmd, postCmd...)
-
-	return libs.DeleteEmpty(preCmd)
 }

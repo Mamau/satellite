@@ -4,6 +4,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/mamau/starter/entity"
 	"github.com/mamau/starter/libs"
+	"github.com/mamau/starter/services"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +21,8 @@ var yarnCmd = &cobra.Command{
 		}
 
 		yarn := entity.NewYarn(nodeForYarnVersion, args)
-		libs.RunCommandAtPTY(Docker(yarn))
+		collector := services.NewCollector(yarn)
+		libs.RunCommandAtPTY(Docker(collector))
 	},
 }
 

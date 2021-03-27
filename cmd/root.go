@@ -13,17 +13,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type DockerCommand interface {
-	CollectCommand() []string
-}
-
 var rootCmd = &cobra.Command{
 	Use:   "starter",
 	Short: "All command",
 	Long:  "Show all command",
 }
 
-func Docker(dc DockerCommand) *exec.Cmd {
+func Docker(dc Runnable) *exec.Cmd {
 	mainArgs := []string{"run", "-ti"}
 	dcCommand := exec.Command("docker", append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())

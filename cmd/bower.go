@@ -4,6 +4,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/mamau/starter/entity"
 	"github.com/mamau/starter/libs"
+	"github.com/mamau/starter/services"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,8 @@ var bowerCmd = &cobra.Command{
 		}
 
 		bower := entity.NewBower(args)
-		libs.RunCommandAtPTY(Docker(bower))
+		collector := services.NewCollector(bower)
+		libs.RunCommandAtPTY(Docker(collector))
 	},
 }
 

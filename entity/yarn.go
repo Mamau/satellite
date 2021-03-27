@@ -5,8 +5,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/mamau/starter/config/docker"
+
 	"github.com/mamau/starter/config"
-	"github.com/mamau/starter/libs"
 )
 
 var once sync.Once
@@ -34,80 +35,21 @@ func NewYarn(version string, args []string) *Yarn {
 	return instance
 }
 
-func (y *Yarn) CollectCommand() []string {
-	dockerConfig := y.dockerConfigCommand()
-	clientCmd := []string{"/bin/bash", "-c", strings.Join(y.ClientCommand(), " ")}
-	return append(dockerConfig, clientCmd...)
+func (y *Yarn) GetDockerConfig() *docker.Docker {
+	return &y.Config.Docker
 }
 
-func (y *Yarn) dockerConfigCommand() []string {
-	var userId,
-		workDir,
-		cacheVolume,
-		envVars,
-		imgVersion,
-		hosts,
-		ports,
-		dns,
-		volumes string
-
-	if y.Config != nil {
-		userId = y.Config.GetUserId()
-		workDir = y.Config.GetWorkDir()
-		cacheVolume = y.Config.GetCacheVolume()
-		envVars = y.Config.GetEnvironmentVariables()
-		imgVersion = y.Config.GetVersion()
-		hosts = y.Config.GetHosts()
-		ports = y.Config.GetPorts()
-		volumes = y.Config.GetVolumes()
-		dns = y.Config.GetDns()
-	}
-
-	if imgVersion != "" {
-		y.Version = imgVersion
-	}
-
-	if workDir == "" {
-		workDir = fmt.Sprintf("--workdir=%s", y.HomeDir)
-	}
-
-	return libs.MergeSliceOfString([]string{
-		userId,
-		envVars,
-		hosts,
-		ports,
-		dns,
-		workDir,
-		cacheVolume,
-		volumes,
-		y.GetProjectVolume(),
-		y.GetImage(),
-	})
+func (y *Yarn) GetCommandConfig() *Command {
+	return y.Command
 }
 
-func (y *Yarn) ClientCommand() []string {
-	var preCmd []string
-	var postCmd []string
+func (y *Yarn) GetClientSignature(cmd []string) []string {
+	return []string{"/bin/bash", "-c", strings.Join(cmd, " ")}
+}
 
-	if y.Config != nil {
-		cmd := y.Config.GetPreCommands()
-		if len(cmd) > 0 {
-			cmd += ";"
-		}
-
-		preCmd = libs.MergeSliceOfString([]string{cmd})
-		postCmd = libs.MergeSliceOfString([]string{y.Config.GetPostCommands()})
+func (y *Yarn) GetImage() string {
+	if v := y.Config.GetVersion(); v != "" {
+		return fmt.Sprintf("%s:%s", y.Image, v)
 	}
-
-	ccmd := y.GetClientCommand()
-	if len(postCmd) > 0 {
-		ccmd += ";"
-	}
-
-	clientCmd := libs.MergeSliceOfString([]string{ccmd})
-
-	preCmd = append(preCmd, clientCmd...)
-	preCmd = append(preCmd, postCmd...)
-
-	return libs.DeleteEmpty(preCmd)
+	return y.Command.GetImage()
 }

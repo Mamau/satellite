@@ -52,52 +52,6 @@ func (c *Command) GetImage() string {
 	return c.Image
 }
 
-//func (c *Command) fullCommand() string {
-//	return c.getCommand()
-//}
-
-//func (c *Command) getWorkDir() string {
-//	//c.WorkDir = c.DockerConfig.GetWorkDir()
-//	if c.WorkDir == "" {
-//		c.WorkDir = c.HomeDir
-//	}
-//	return c.WorkDir
-//}
-
-//func (c *Command) cacheDir() []string {
-//	//if c.DockerConfig.GetCacheDir() == "" {
-//	//	return nil
-//	//}
-//
-//	return []string{
-//		"-v",
-//		fmt.Sprintf("%s:/tmp", c.DockerConfig.GetCacheDir()),
-//	}
-//}
-
 func (c *Command) GetProjectVolume() string {
 	return fmt.Sprintf("-v %s:%s", libs.GetPwd(), c.HomeDir)
 }
-
-//func (c *Command) dockerCommandData() [][]string {
-//	return [][]string{
-//		//c.DockerConfig.GetUserId(),
-//		//c.DockerConfig.GetEnvironmentVariables(),
-//		//c.DockerConfig.GetHosts(),
-//		//c.DockerConfig.GetPorts(),
-//		//c.DockerConfig.GetDns(),
-//		//c.workDir(),
-//		//c.cacheDir(),
-//		c.projectVolume(),
-//		{c.getImage()},
-//	}
-//}
-
-//func (c *Command) dockerDataToCommand() []string {
-//	var fullCommand []string
-//	for _, command := range c.dockerCommandData() {
-//		fullCommand = append(fullCommand, command...)
-//	}
-//
-//	return fullCommand
-//}
