@@ -3,6 +3,8 @@ package entity
 import (
 	"sync"
 
+	"github.com/mamau/starter/config/docker"
+
 	"github.com/mamau/starter/config"
 )
 
@@ -10,18 +12,19 @@ var bOnce sync.Once
 var bInstance *Bower
 
 type Bower struct {
+	Config *config.Bower
 	*Command
 }
 
 func NewBower(args []string) *Bower {
 	bOnce.Do(func() {
 		bInstance = &Bower{
+			Config: config.GetConfig().GetBower(),
 			Command: &Command{
-				CmdName:      "bower",
-				Image:        "mamau/bower",
-				HomeDir:      "/home/node",
-				Args:         args,
-				DockerConfig: config.GetConfig().GetBower(),
+				CmdName: "bower",
+				Image:   "mamau/bower",
+				HomeDir: "/home/node",
+				Args:    args,
 			},
 		}
 	})
@@ -29,33 +32,18 @@ func NewBower(args []string) *Bower {
 	return bInstance
 }
 
-func (b *Bower) dockerCommandData() [][]string {
-	return [][]string{
-		b.DockerConfig.GetUserId(),
-		b.DockerConfig.GetEnvironmentVariables(),
-		b.DockerConfig.GetHosts(),
-		b.DockerConfig.GetPorts(),
-		b.DockerConfig.GetDns(),
-		b.workDir(),
-		b.cacheDir(),
-		b.projectVolume(),
-		{b.getImage()},
-	}
+func (b *Bower) GetDockerConfig() *docker.Docker {
+	return &b.Config.Docker
 }
 
-func (b *Bower) dockerDataToCommand() []string {
-	var fullCommand []string
-	for _, command := range b.dockerCommandData() {
-		fullCommand = append(fullCommand, command...)
-	}
-
-	return fullCommand
+func (b *Bower) GetCommandConfig() *Command {
+	return b.Command
 }
 
-func (b *Bower) CollectCommand() []string {
-	return append(b.dockerDataToCommand(), b.fullCommand())
+func (b *Bower) GetClientSignature(cmd []string) []string {
+	return cmd
 }
 
-func (b *Bower) getImage() string {
+func (b *Bower) GetImage() string {
 	return b.Image
 }

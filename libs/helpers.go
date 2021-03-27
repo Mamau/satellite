@@ -78,3 +78,7 @@ func LoadEnv() {
 		log.Fatal("Error loading .env file")
 	}
 }
+
+func MergeSliceOfString(data []string) []string {
+	return DeleteEmpty(strings.Split(strings.Join(data, " "), " "))
+}

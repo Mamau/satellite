@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/mamau/starter/libs"
-
 	"github.com/gookit/color"
 	"github.com/mamau/starter/entity"
+	"github.com/mamau/starter/libs"
+	"github.com/mamau/starter/services"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,8 @@ var composerCmd = &cobra.Command{
 		}
 
 		composer := entity.NewComposer(composerVersion, args)
-		libs.RunCommandAtPTY(Docker(composer))
+		collector := services.NewCollector(composer)
+		libs.RunCommandAtPTY(Docker(collector))
 	},
 }
 
