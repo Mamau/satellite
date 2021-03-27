@@ -2,11 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
-	"os/user"
-	"runtime"
 
 	"github.com/gookit/color"
 	"github.com/mamau/starter/libs"
@@ -24,31 +21,6 @@ func Docker(dc Runnable) *exec.Cmd {
 	dcCommand := exec.Command("docker", append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
-}
-
-// Add -T flag for windows commands
-func prepareForOs(args []string) []string {
-	if runtime.GOOS != "windows" {
-		return args
-	}
-	indexExec, isSet := libs.Find(args, "exec")
-	if !isSet {
-		log.Fatalf("Arguments %v not have exec key word", args)
-	}
-
-	return libs.InsertToSlice(args, "-T", indexExec+1)
-}
-
-func UserId() string {
-	if runtime.GOOS == "windows" {
-		return "1000"
-	}
-	currentUser, err := user.Current()
-	if err != nil {
-		log.Fatalf("cant get user. error: %s\n", err)
-	}
-
-	return currentUser.Uid
 }
 
 func Execute() {
