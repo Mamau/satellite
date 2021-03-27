@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"sync"
 
@@ -39,6 +40,12 @@ func NewComposer(version string, args []string) *Composer {
 }
 
 func (c *Composer) GetDockerConfig() *docker.Docker {
+	if c.Config == nil {
+		return nil
+	}
+	if reflect.DeepEqual(c.Config.Docker, docker.Docker{}) {
+		return nil
+	}
 	return &c.Config.Docker
 }
 
@@ -52,6 +59,9 @@ func (c *Composer) GetClientSignature(cmd []string) []string {
 }
 
 func (c *Composer) configToCommand() []string {
+	if c.Config.Config == nil {
+		return []string{}
+	}
 	configCommands := libs.DeleteEmpty(c.Config.GetAll())
 	if len(configCommands) == 0 {
 		return []string{}
@@ -65,6 +75,9 @@ func (c *Composer) configToCommand() []string {
 }
 
 func (c *Composer) GetImage() string {
+	if c.Config.Config == nil {
+		return ""
+	}
 	if v := c.Config.GetVersion(); v != "" {
 		return fmt.Sprintf("%s:%s", c.Image, v)
 	}
