@@ -5,6 +5,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/mamau/starter/libs"
+
+	"github.com/mamau/starter/config/yarn"
+
 	"github.com/mamau/starter/config/docker"
 
 	"github.com/mamau/starter/config"
@@ -14,7 +18,7 @@ var once sync.Once
 var instance *Yarn
 
 type Yarn struct {
-	Config *config.Yarn
+	Config *yarn.Yarn
 	*Command
 }
 
@@ -44,7 +48,24 @@ func (y *Yarn) GetCommandConfig() *Command {
 }
 
 func (y *Yarn) GetClientSignature(cmd []string) []string {
-	return []string{"/bin/bash", "-c", strings.Join(cmd, " ")}
+	command := append(y.configToCommand(), cmd...)
+	return []string{"/bin/bash", "-c", strings.Join(command, " ")}
+}
+
+func (y *Yarn) configToCommand() []string {
+	if y.Config.Config == nil {
+		return []string{}
+	}
+	configCommands := libs.DeleteEmpty(y.Config.GetAll())
+	if len(configCommands) == 0 {
+		return []string{}
+	}
+
+	for i, v := range configCommands {
+		configCommands[i] = v + ";"
+	}
+
+	return libs.MergeSliceOfString(configCommands)
 }
 
 func (y *Yarn) GetImage() string {

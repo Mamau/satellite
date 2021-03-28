@@ -6,6 +6,8 @@ import (
 	"log"
 	"sync"
 
+	"github.com/mamau/starter/config/yarn"
+
 	"github.com/mamau/starter/config/composer"
 	"github.com/mamau/starter/libs"
 
@@ -19,7 +21,7 @@ type Config struct {
 	Path     string
 	Commands struct {
 		*composer.Composer `yaml:"composer"`
-		*Yarn              `yaml:"yarn"`
+		*yarn.Yarn         `yaml:"yarn"`
 		*Bower             `yaml:"bower"`
 	} `yaml:"commands"`
 }
@@ -38,7 +40,7 @@ func (c *Config) GetComposer() *composer.Composer {
 	return c.Commands.Composer
 }
 
-func (c *Config) GetYarn() *Yarn {
+func (c *Config) GetYarn() *yarn.Yarn {
 	return c.Commands.Yarn
 }
 

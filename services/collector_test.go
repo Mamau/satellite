@@ -49,16 +49,24 @@ func getBowerCollectCommand(t *testing.T) {
 func getYarnCollectCommand(t *testing.T) {
 	yarn := getYarn()
 	c := NewCollector(yarn)
-	e := fmt.Sprintf("-u 501 -e SOME_VAR=someVal --add-host=host.docker.internal:127.0.0.1 -p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080 --dns=8.8.8.8 --dns=8.8.4.4 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume %s node:10 /bin/bash -c yarn config set strict-ssl false; npm config set; yarn install; npm config set; npm config second post cmd", yarn.GetProjectVolume())
+	e := fmt.Sprintf("-u 501 -e SOME_VAR=someVal --add-host=host.docker.internal:127.0.0.1 -p 127.0.0.1:443:443 -p 127.0.0.1:80:80 -p 8080:8080 --dns=8.8.8.8 --dns=8.8.4.4 --workdir=/home/node -v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp -v /Users/mamau/go/src/github.com/mamau/starter:/image/volume %s node:10 /bin/bash -c yarn config set strict-ssl false --global; yarn config set version-tag-prefix v --global; yarn config set version-git-tag true --global; yarn config set version-commit-hooks true --global; yarn config set version-git-sign false --global; yarn config set bin-links true --global; yarn config set ignore-scripts false --global; yarn config set ignore-optional false --global; yarn config set strict-ssl false; npm config set; yarn install; npm config set; npm config second post cmd", yarn.GetProjectVolume())
 	if cc := c.CollectCommand(); strings.Join(cc, " ") != e {
 		t.Errorf("wrong yarn collect command, expected: %q \n got: %q \n", e, strings.Join(cc, " "))
 	}
 
 	yarn.Config.Docker = docker.Docker{}
 	c = NewCollector(yarn)
-	e = fmt.Sprintf("--workdir=/home/node %s node:12 /bin/bash -c yarn install", yarn.GetProjectVolume())
+	e = fmt.Sprintf("--workdir=/home/node %s node:12 /bin/bash -c yarn config set strict-ssl false --global; yarn config set version-tag-prefix v --global; yarn config set version-git-tag true --global; yarn config set version-commit-hooks true --global; yarn config set version-git-sign false --global; yarn config set bin-links true --global; yarn config set ignore-scripts false --global; yarn config set ignore-optional false --global; yarn install", yarn.GetProjectVolume())
 	if cc := c.CollectCommand(); strings.Join(cc, " ") != e {
 		t.Errorf("wrong yarn collect command with docker empty config, expected: %q \n got: %q \n", e, strings.Join(cc, " "))
+	}
+
+	yarn.Config.Docker = docker.Docker{}
+	yarn.Config.Config = nil
+	c = NewCollector(yarn)
+	e = fmt.Sprintf("--workdir=/home/node %s node:12 /bin/bash -c yarn install", yarn.GetProjectVolume())
+	if cc := c.CollectCommand(); strings.Join(cc, " ") != e {
+		t.Errorf("wrong yarn collect command with docker empty and config empty, expected: %q \n got: %q \n", e, strings.Join(cc, " "))
 	}
 }
 
