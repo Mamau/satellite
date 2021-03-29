@@ -88,7 +88,7 @@ func getComposerCollectCommand(t *testing.T) {
 	composer.Config.Docker = docker.Docker{}
 	composer.Config.Config = nil
 	c = NewCollector(composer)
-	e = fmt.Sprintf("--workdir=/home/www-data %s /bin/bash -c composer install --ignore-platform-reqs", composer.GetProjectVolume())
+	e = fmt.Sprintf("--workdir=/home/www-data %s composer:1.9 /bin/bash -c composer install --ignore-platform-reqs", composer.GetProjectVolume())
 	if cc := c.CollectCommand(); strings.Join(cc, " ") != e {
 		t.Errorf("wrong composer collect command with docker empty and config empty, expected: %q \n got: %q \n", e, strings.Join(cc, " "))
 	}

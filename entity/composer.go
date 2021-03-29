@@ -83,9 +83,6 @@ func (c *Composer) GetImage() string {
 		return c.Command.GetImage()
 	}
 
-	if c.Config.Config == nil {
-		return ""
-	}
 	if v := c.Config.GetVersion(); v != "" {
 		return fmt.Sprintf("%s:%s", c.Image, v)
 	}
