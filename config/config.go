@@ -19,6 +19,7 @@ var instance *Config
 
 type Config struct {
 	Path     string
+	Macros   []string `yaml:"macros"`
 	Commands struct {
 		*composer.Composer `yaml:"composer"`
 		*yarn.Yarn         `yaml:"yarn"`
@@ -34,6 +35,10 @@ func NewConfig() *Config {
 	})
 
 	return instance
+}
+
+func (c *Config) GetMacrosGroup() []string {
+	return c.Macros
 }
 
 func (c *Config) GetComposer() *composer.Composer {

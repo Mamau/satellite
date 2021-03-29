@@ -9,6 +9,42 @@ type Config struct {
 	Repositories       []string `yaml:"repositories"`
 	ProcessTimeout     string   `yaml:"process-timeout"`
 	OptimizeAutoloader string   `yaml:"optimize-autoloader"`
+	GithubOauth        string   `yaml:"github-oauth"`
+	GitlabOauth        string   `yaml:"gitlab-oauth"`
+	GitlabToken        string   `yaml:"gitlab-token"`
+	Lock               string   `yaml:"lock"`
+}
+
+func (c *Config) GetLock() string {
+	if c.Lock == "" {
+		return ""
+	}
+	cmd := fmt.Sprintf("lock %s", c.Lock)
+	return c.valueToCommand(cmd)
+}
+
+func (c *Config) GetGitlabToken() string {
+	if c.GitlabToken == "" {
+		return ""
+	}
+	cmd := fmt.Sprintf("gitlab-token %s", c.GitlabToken)
+	return c.valueToCommand(cmd)
+}
+
+func (c *Config) GetGitlabOauth() string {
+	if c.GitlabOauth == "" {
+		return ""
+	}
+	cmd := fmt.Sprintf("gitlab-oauth %s", c.GitlabOauth)
+	return c.valueToCommand(cmd)
+}
+
+func (c *Config) GetGithubOauth() string {
+	if c.GithubOauth == "" {
+		return ""
+	}
+	cmd := fmt.Sprintf("github-oauth %s", c.GithubOauth)
+	return c.valueToCommand(cmd)
 }
 
 func (c *Config) GetProcessTimeoutAsCommand() string {
@@ -41,6 +77,10 @@ func (c *Config) GetAll() []string {
 		c.GetProcessTimeoutAsCommand(),
 		c.GetRepoAsCommand(),
 		c.GetOptimizeAutoloaderAsCommand(),
+		c.GetGithubOauth(),
+		c.GetGitlabOauth(),
+		c.GetGitlabToken(),
+		c.GetLock(),
 	}
 }
 
