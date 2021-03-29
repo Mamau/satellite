@@ -40,6 +40,9 @@ func NewYarn(version string, args []string) *Yarn {
 }
 
 func (y *Yarn) GetDockerConfig() *docker.Docker {
+	if y.Config == nil {
+		return nil
+	}
 	return &y.Config.Docker
 }
 
@@ -53,6 +56,10 @@ func (y *Yarn) GetClientSignature(cmd []string) []string {
 }
 
 func (y *Yarn) configToCommand() []string {
+	if y.Config == nil {
+		return []string{}
+	}
+
 	if y.Config.Config == nil {
 		return []string{}
 	}
@@ -69,6 +76,9 @@ func (y *Yarn) configToCommand() []string {
 }
 
 func (y *Yarn) GetImage() string {
+	if y.Config == nil {
+		return y.Command.GetImage()
+	}
 	if v := y.Config.GetVersion(); v != "" {
 		return fmt.Sprintf("%s:%s", y.Image, v)
 	}

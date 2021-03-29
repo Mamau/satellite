@@ -59,6 +59,10 @@ func (c *Composer) GetClientSignature(cmd []string) []string {
 }
 
 func (c *Composer) configToCommand() []string {
+	if c.Config == nil {
+		return []string{}
+	}
+
 	if c.Config.Config == nil {
 		return []string{}
 	}
@@ -75,6 +79,10 @@ func (c *Composer) configToCommand() []string {
 }
 
 func (c *Composer) GetImage() string {
+	if c.Config == nil {
+		return c.Command.GetImage()
+	}
+
 	if c.Config.Config == nil {
 		return ""
 	}

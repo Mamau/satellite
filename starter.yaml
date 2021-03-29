@@ -1,44 +1,9 @@
 commands:
   composer:
     version: "2"
-    cache-dir: "/Users/mamau/go/src/github.com/mamau/starter/cache"
-    config:
-      process-timeout: "400"
-      optimize-autoloader: "false"
-      repositories:
-        - "http-basic.github.com mamau some-token"
-        - "http-basic.gitlab.com mamau some-token"
+    user-id: "1000"
   bower:
-    user-id: "501"
+    user-id: "1000"
   yarn:
     version: "10"
-    user-id: "501"
-    cache-dir: "/Users/mamau/go/src/github.com/mamau/starter/cache"
-    work-dir: "/home/node"
-    config:
-      strict-ssl: "false"
-      version-tag-prefix: "v"
-      version-git-tag: "true"
-      version-commit-hooks: "true"
-      version-git-sign: "false"
-      bin-links: "true"
-      ignore-scripts: "false"
-      ignore-optional: "false"
-#    environment-variables:
-#      - "SOME_VAR=someVal"
-#    add-hosts:
-#      - "host.docker.internal:127.0.0.1"
-#    ports:
-#      - "127.0.0.1:443:443"
-#      - "127.0.0.1:80:80"
-#      - "8080:8080"
-#    volumes:
-#      - "/Users/mamau/go/src/github.com/mamau/starter:/image/volume"
-#    dns:
-#      - "8.8.8.8"
-#      - "8.8.4.4"
-#    post-commands:
-#      - "npm config set2"
-#    pre-commands:
-#      - "yarn config set strict-ssl false"
-#      - "npm config set"
+    user-id: "1000"

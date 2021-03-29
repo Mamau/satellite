@@ -33,6 +33,9 @@ func NewBower(args []string) *Bower {
 }
 
 func (b *Bower) GetDockerConfig() *docker.Docker {
+	if b.Config == nil {
+		return nil
+	}
 	return &b.Config.Docker
 }
 
