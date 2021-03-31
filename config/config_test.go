@@ -1,6 +1,7 @@
 package config
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/mamau/starter/config/composer"
@@ -40,6 +41,15 @@ func TestGetBower(t *testing.T) {
 		t.Error("bower is empty")
 	}
 	cleanServices(c, t)
+}
+
+func TestGetMacrosGroup(t *testing.T) {
+	c := getConfig("/testdata/starter")
+	m := c.GetMacrosGroup()
+	e := "yarn install composer install --ignore-platform-reqs"
+	if e != strings.Join(m, " ") {
+		t.Errorf("expect %q\n got %q\n", e, strings.Join(m, " "))
+	}
 }
 
 func TestGetComposer(t *testing.T) {

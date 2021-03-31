@@ -1,18 +1,15 @@
 package libs
 
 import (
-	"log"
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 func GetPwd() string {
 	mydir, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("Can't get dir. error: %v\n", err)
+		return ""
 	}
 	return mydir
 }
@@ -66,17 +63,7 @@ func replaceEnv(target, pattern string) string {
 	if ev := os.Getenv(trimmed); ev != "" {
 		return strings.Replace(target, pattern, ev, 1)
 	}
-	return pattern
-}
-
-func LoadEnv() {
-	if !FileExists(".env") {
-		return
-	}
-
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	return target
 }
 
 func MergeSliceOfString(data []string) []string {

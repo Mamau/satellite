@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/mamau/starter/config"
@@ -36,6 +37,130 @@ func TestProjectVolume(t *testing.T) {
 	getComposerProjectVolume(t)
 	getYarnProjectVolume(t)
 	getBowerProjectVolume(t)
+}
+
+func TestGetClientSignature(t *testing.T) {
+	getBowerClientSignature(t)
+	getComposerClientSignature(t)
+	getYarnClientSignature(t)
+}
+
+func TestConfigToCommand(t *testing.T) {
+	c := getComposer("", []string{})
+	data := c.configToCommand()
+	e := "composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false;"
+	if e != strings.Join(data, " ") {
+		t.Errorf("error composer config to config, expect %q\n got %q\n", e, strings.Join(data, " "))
+	}
+	c.Config.Config = nil
+	if d := c.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+}
+
+func getYarnClientSignature(t *testing.T) {
+	data := []string{"some", "data"}
+	y := getYarn("", []string{})
+	r := y.GetClientSignature(data)
+	e := "/bin/bash -c yarn config set strict-ssl false --global; yarn config set version-tag-prefix v --global; yarn config set version-git-tag true --global; yarn config set version-commit-hooks true --global; yarn config set version-git-sign false --global; yarn config set bin-links true --global; yarn config set ignore-scripts false --global; yarn config set ignore-optional false --global; some data"
+	if e != strings.Join(r, " ") {
+		t.Errorf("yarn client signature must be %q\n got %q", e, strings.Join(r, " "))
+	}
+}
+
+func getComposerClientSignature(t *testing.T) {
+	data := []string{"some", "data"}
+	c := getComposer("", []string{})
+	r := c.GetClientSignature(data)
+	e := "/bin/bash -c composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false; some data"
+	if e != strings.Join(r, " ") {
+		t.Errorf("composer client signature must be %q\n got %q", e, strings.Join(r, " "))
+	}
+}
+
+func getBowerClientSignature(t *testing.T) {
+	data := []string{"some", "data"}
+	b := getBower([]string{})
+	c := b.GetClientSignature(data)
+	e := "some data"
+	if e != strings.Join(c, " ") {
+		t.Errorf("bower client signature must be %q\n got %q", e, strings.Join(c, " "))
+	}
+}
+
+func TestGetCommandConfig(t *testing.T) {
+	getBowerCommandConfig(t)
+	getComposerCommandConfig(t)
+	getYarnCommandConfig(t)
+}
+
+func getYarnCommandConfig(t *testing.T) {
+	y := getYarn("", []string{})
+	c := y.GetCommandConfig()
+	if c == nil {
+		t.Error("command yarn cannot be empty")
+	}
+}
+
+func getComposerCommandConfig(t *testing.T) {
+	c := getComposer("", []string{})
+	cc := c.GetCommandConfig()
+	if cc == nil {
+		t.Error("command composer cannot be empty")
+	}
+}
+
+func getBowerCommandConfig(t *testing.T) {
+	b := getBower([]string{})
+	c := b.GetCommandConfig()
+	if c == nil {
+		t.Error("command bower cannot be empty")
+	}
+}
+
+func TestGetDockerConfig(t *testing.T) {
+	getBowerDockerConfig(t)
+	getComposerDockerConfig(t)
+	getYarnDockerConfig(t)
+}
+
+func getYarnDockerConfig(t *testing.T) {
+	y := getYarn("", []string{})
+	c := y.GetDockerConfig()
+	if c == nil {
+		t.Errorf("docker config for yarn incorrect")
+	}
+	y.Config = nil
+	c = y.GetDockerConfig()
+	if c != nil {
+		t.Errorf("docker config for yarn incorrect when config is empty")
+	}
+}
+
+func getComposerDockerConfig(t *testing.T) {
+	c := getComposer("", []string{})
+	cc := c.GetDockerConfig()
+	if cc == nil {
+		t.Errorf("docker config for composer incorrect")
+	}
+	c.Config = nil
+	cc = c.GetDockerConfig()
+	if cc != nil {
+		t.Errorf("docker config for composer incorrect when config is empty")
+	}
+}
+
+func getBowerDockerConfig(t *testing.T) {
+	b := getBower([]string{})
+	c := b.GetDockerConfig()
+	if c == nil {
+		t.Errorf("docker config for bower incorrect")
+	}
+	b.Config = nil
+	c = b.GetDockerConfig()
+	if c != nil {
+		t.Errorf("docker config for bower incorrect when config is empty")
+	}
 }
 
 func getBowerProjectVolume(t *testing.T) {
@@ -188,6 +313,12 @@ func getBowerCommand(t *testing.T) {
 		t.Error("wrong command")
 	}
 
+	b.CmdName = ""
+	if b := b.GetClientCommand(); b != "--help --version" {
+		t.Error("error client command when empty CmdName")
+	}
+
+	b.CmdName = "bower"
 	b.Args = []string{}
 	if b := b.GetClientCommand(); b != "bower" {
 		t.Error("empty bower command must have default command: --version")
@@ -200,6 +331,12 @@ func getComposerCommand(t *testing.T) {
 		t.Errorf("wrong composer command, got: %s", cmd)
 	}
 
+	c.CmdName = ""
+	if b := c.GetClientCommand(); b != "install --ignore-platform-reqs" {
+		t.Error("error client command when empty CmdName")
+	}
+
+	c.CmdName = "composer"
 	c.Args = []string{}
 	if cmd := c.GetClientCommand(); cmd != "composer" {
 		t.Errorf("composer with empty args must have command name %q", "composer")
@@ -212,6 +349,12 @@ func getYarnCommand(t *testing.T) {
 		t.Errorf("yarn must be %q, got %s", "yarn install", cmd)
 	}
 
+	y.CmdName = ""
+	if b := y.GetClientCommand(); b != "install" {
+		t.Error("error client command when empty CmdName")
+	}
+
+	y.CmdName = "yarn"
 	y.Args = []string{}
 	if cmd := y.GetClientCommand(); cmd != "yarn" {
 		t.Errorf("yarn with empty args must have command name %q", "yarn")

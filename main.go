@@ -1,11 +1,16 @@
 package main
 
 import (
+	"log"
+
 	"github.com/mamau/starter/cmd"
-	"github.com/mamau/starter/libs"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	libs.LoadEnv()
+	if err := godotenv.Load(); err != nil {
+		log.Println("no .env file")
+	}
 	cmd.Execute()
 }

@@ -92,6 +92,10 @@ func TestFileExists(t *testing.T) {
 	if exist == false {
 		t.Errorf("file %s is not exists", fpath)
 	}
+	fpath = GetPwd() + "/not_exist.txt"
+	if FileExists(fpath) != false {
+		t.Error("should be false when file not exist")
+	}
 }
 
 func TestReplaceEnvVariables(t *testing.T) {
@@ -112,6 +116,29 @@ func TestReplaceEnv(t *testing.T) {
 	expected := "some-stringTEST_VALfor change"
 	if result := replaceEnv(target, "{TEST_VAR}"); result != expected {
 		t.Errorf("error while replace env var, expected: %q, got %q", expected, result)
+	}
+
+	target = "no vars"
+	expected = "no vars"
+	if result := replaceEnv(target, "{NOT_EXISTS_VAR}"); result != expected {
+		t.Errorf("error while replace env var, expected: %q, got %q", expected, result)
+	}
+}
+
+func TestMergeSliceOfString(t *testing.T) {
+	data := []string{
+		"data", "", "param",
+		"data2", "",
+		"data3", "param3", "",
+	}
+	e := "data param data2 data3 param3"
+	r := MergeSliceOfString(data)
+	if len(r) != 5 {
+		t.Errorf("slice must be length 5")
+	}
+
+	if e != strings.Join(r, " ") {
+		t.Errorf("error merge expect %q\n got %q", e, strings.Join(r, " "))
 	}
 }
 

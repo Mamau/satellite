@@ -42,3 +42,6 @@ commands:
     pre-commands:
       - "yarn config set strict-ssl false"
       - "npm config set"
+macros:
+  - "yarn install"
+  - "composer install --ignore-platform-reqs"
