@@ -5,6 +5,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/mamau/starter/config/yarn"
+
+	"github.com/mamau/starter/config/composer"
+
+	"github.com/mamau/starter/config/docker"
+
 	"github.com/mamau/starter/config"
 	"github.com/mamau/starter/libs"
 )
@@ -46,6 +52,34 @@ func TestGetClientSignature(t *testing.T) {
 }
 
 func TestConfigToCommand(t *testing.T) {
+	getComposerConfigToCommand(t)
+	getYarnConfigToCommand(t)
+}
+
+func getYarnConfigToCommand(t *testing.T) {
+	y := getYarn("", []string{})
+	data := y.configToCommand()
+	e := "yarn config set strict-ssl false --global; yarn config set version-tag-prefix v --global; yarn config set version-git-tag true --global; yarn config set version-commit-hooks true --global; yarn config set version-git-sign false --global; yarn config set bin-links true --global; yarn config set ignore-scripts false --global; yarn config set ignore-optional false --global;"
+	if e != strings.Join(data, " ") {
+		t.Errorf("error yarn config to config, expect %q\n got %q\n", e, strings.Join(data, " "))
+	}
+	y.Config.Config = nil
+	if d := y.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+
+	y.Config.Config = &yarn.Config{}
+	if d := y.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+
+	y.Config = nil
+	if d := y.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+}
+
+func getComposerConfigToCommand(t *testing.T) {
 	c := getComposer("", []string{})
 	data := c.configToCommand()
 	e := "composer config --global process-timeout 400; composer config --global http-basic.github.com mamau some-token; composer config --global http-basic.gitlab.com mamau some-token; composer config --global optimize-autoloader false;"
@@ -53,6 +87,16 @@ func TestConfigToCommand(t *testing.T) {
 		t.Errorf("error composer config to config, expect %q\n got %q\n", e, strings.Join(data, " "))
 	}
 	c.Config.Config = nil
+	if d := c.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+
+	c.Config.Config = &composer.Config{}
+	if d := c.configToCommand(); len(d) != 0 {
+		t.Errorf("config must be empty got %q", d)
+	}
+
+	c.Config = nil
 	if d := c.configToCommand(); len(d) != 0 {
 		t.Errorf("config must be empty got %q", d)
 	}
@@ -143,6 +187,13 @@ func getComposerDockerConfig(t *testing.T) {
 	if cc == nil {
 		t.Errorf("docker config for composer incorrect")
 	}
+
+	c.Config.Docker = docker.Docker{}
+	cc = c.GetDockerConfig()
+	if cc != nil {
+		t.Errorf("docker config for composer incorrect when config docker is empty")
+	}
+
 	c.Config = nil
 	cc = c.GetDockerConfig()
 	if cc != nil {
@@ -288,6 +339,10 @@ func getYarnImage(t *testing.T) {
 	if i := y.GetImage(); i != "node:10" {
 		t.Errorf("yarn image name must be %q, got: %s", "node:10", i)
 	}
+	y.Config = nil
+	if i := y.GetImage(); i != "node:10" {
+		t.Errorf("yarn image name must be %q, got: %s", "composer:1.9", i)
+	}
 }
 
 func getComposerImage(t *testing.T) {
@@ -301,6 +356,11 @@ func getComposerImage(t *testing.T) {
 		t.Errorf("composer image name without version must be %q, got: %s", "composer", i)
 	}
 	c.Version = "1.9"
+	if i := c.GetImage(); i != "composer:1.9" {
+		t.Errorf("composer image name must be %q, got: %s", "composer:1.9", i)
+	}
+
+	c.Config = nil
 	if i := c.GetImage(); i != "composer:1.9" {
 		t.Errorf("composer image name must be %q, got: %s", "composer:1.9", i)
 	}

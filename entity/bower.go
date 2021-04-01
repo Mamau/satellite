@@ -1,15 +1,10 @@
 package entity
 
 import (
-	"sync"
-
 	"github.com/mamau/starter/config/docker"
 
 	"github.com/mamau/starter/config"
 )
-
-var bOnce sync.Once
-var bInstance *Bower
 
 type Bower struct {
 	Config *config.Bower
@@ -17,19 +12,15 @@ type Bower struct {
 }
 
 func NewBower(args []string) *Bower {
-	bOnce.Do(func() {
-		bInstance = &Bower{
-			Config: config.GetConfig().GetBower(),
-			Command: &Command{
-				CmdName: "bower",
-				Image:   "mamau/bower",
-				HomeDir: "/home/node",
-				Args:    args,
-			},
-		}
-	})
-
-	return bInstance
+	return &Bower{
+		Config: config.GetConfig().GetBower(),
+		Command: &Command{
+			CmdName: "bower",
+			Image:   "mamau/bower",
+			HomeDir: "/home/node",
+			Args:    args,
+		},
+	}
 }
 
 func (b *Bower) GetDockerConfig() *docker.Docker {

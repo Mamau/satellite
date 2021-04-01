@@ -3,7 +3,6 @@ package entity
 import (
 	"fmt"
 	"strings"
-	"sync"
 
 	"github.com/mamau/starter/libs"
 
@@ -14,29 +13,22 @@ import (
 	"github.com/mamau/starter/config"
 )
 
-var once sync.Once
-var instance *Yarn
-
 type Yarn struct {
 	Config *yarn.Yarn
 	*Command
 }
 
 func NewYarn(version string, args []string) *Yarn {
-	once.Do(func() {
-		instance = &Yarn{
-			Config: config.GetConfig().GetYarn(),
-			Command: &Command{
-				CmdName: "yarn",
-				Image:   "node",
-				HomeDir: "/home/node",
-				Version: version,
-				Args:    args,
-			},
-		}
-	})
-
-	return instance
+	return &Yarn{
+		Config: config.GetConfig().GetYarn(),
+		Command: &Command{
+			CmdName: "yarn",
+			Image:   "node",
+			HomeDir: "/home/node",
+			Version: version,
+			Args:    args,
+		},
+	}
 }
 
 func (y *Yarn) GetDockerConfig() *docker.Docker {

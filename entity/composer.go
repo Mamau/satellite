@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"sync"
 
 	"github.com/mamau/starter/config/docker"
 
@@ -14,29 +13,22 @@ import (
 	"github.com/mamau/starter/libs"
 )
 
-var cOnce sync.Once
-var cInstance *Composer
-
 type Composer struct {
 	Config *composer.Composer
 	*Command
 }
 
 func NewComposer(version string, args []string) *Composer {
-	cOnce.Do(func() {
-		cInstance = &Composer{
-			Config: config.GetConfig().GetComposer(),
-			Command: &Command{
-				CmdName: "composer",
-				Image:   "composer",
-				HomeDir: "/home/www-data",
-				Version: version,
-				Args:    args,
-			},
-		}
-	})
-
-	return cInstance
+	return &Composer{
+		Config: config.GetConfig().GetComposer(),
+		Command: &Command{
+			CmdName: "composer",
+			Image:   "composer",
+			HomeDir: "/home/www-data",
+			Version: version,
+			Args:    args,
+		},
+	}
 }
 
 func (c *Composer) GetDockerConfig() *docker.Docker {
