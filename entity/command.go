@@ -14,15 +14,15 @@ type DockerInterface interface {
 	SetPostCommands([]string)
 	GetWorkDir() string
 	SetWorkDir(string)
-	GetCacheDir() string
-	GetUserId() []string
-	GetEnvironmentVariables() []string
+	GetCacheVolume() string
+	GetUserId() string
+	GetEnvironmentVariables() string
 	GetVersion() string
 	SetVersion(string)
-	GetHosts() []string
-	GetPorts() []string
-	GetVolumes() []string
-	GetDns() []string
+	GetHosts() string
+	GetPorts() string
+	GetVolumes() string
+	GetDns() string
 }
 
 type Command struct {
