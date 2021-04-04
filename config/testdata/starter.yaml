@@ -45,3 +45,11 @@ commands:
 macros:
   - "yarn install"
   - "composer install --ignore-platform-reqs"
+
+services:
+  - php:
+    name: "php"
+    version: "7.4"
+  - mysql:
+    name: "mysql"
+    version: "5.7"

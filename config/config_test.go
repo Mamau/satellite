@@ -52,6 +52,24 @@ func TestGetMacrosGroup(t *testing.T) {
 	}
 }
 
+func TestGetService(t *testing.T) {
+	c := getConfig("/testdata/starter")
+	if s := c.GetService("php"); s.Name != "php" {
+		t.Error("got wrong service")
+	}
+
+	if s := c.GetService("unknown"); s != nil {
+		t.Error("unknown service must be nil")
+	}
+}
+
+func TestGetServices(t *testing.T) {
+	c := getConfig("/testdata/starter")
+	if list := c.GetServices(); strings.Join(list, " ") != "php mysql" {
+		t.Errorf("services expected %q", "php mysql")
+	}
+}
+
 func TestGetComposer(t *testing.T) {
 	c := getConfig("/testdata/starter")
 	cr := c.GetComposer()

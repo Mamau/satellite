@@ -6,6 +6,8 @@ import (
 )
 
 type Docker struct {
+	Name         string   `yaml:"name"`
+	HomeDir      string   `yaml:"home-dir"`
 	Version      string   `yaml:"version"`
 	UserId       string   `yaml:"user-id"`
 	WorkDir      string   `yaml:"work-dir"`

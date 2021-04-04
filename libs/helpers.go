@@ -69,3 +69,10 @@ func replaceEnv(target, pattern string) string {
 func MergeSliceOfString(data []string) []string {
 	return DeleteEmpty(strings.Split(strings.Join(data, " "), " "))
 }
+
+func IndexExists(slice []string, index int) bool {
+	if (len(slice) - 1) >= index {
+		return true
+	}
+	return false
+}

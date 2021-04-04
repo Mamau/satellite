@@ -6,6 +6,8 @@ import (
 	"log"
 	"sync"
 
+	"github.com/mamau/starter/config/docker"
+
 	"github.com/mamau/starter/config/yarn"
 
 	"github.com/mamau/starter/config/composer"
@@ -19,12 +21,30 @@ var instance *Config
 
 type Config struct {
 	Path     string
-	Macros   []string `yaml:"macros"`
+	Macros   []string        `yaml:"macros"`
+	Services []docker.Docker `yaml:"services"`
 	Commands struct {
 		*composer.Composer `yaml:"composer"`
 		*yarn.Yarn         `yaml:"yarn"`
 		*Bower             `yaml:"bower"`
 	} `yaml:"commands"`
+}
+
+func (c *Config) GetService(name string) *docker.Docker {
+	for _, v := range c.Services {
+		if v.Name == name {
+			return &v
+		}
+	}
+	return nil
+}
+
+func (c *Config) GetServices() []string {
+	var list []string
+	for _, v := range c.Services {
+		list = append(list, v.Name)
+	}
+	return list
 }
 
 func NewConfig() *Config {

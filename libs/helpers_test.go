@@ -142,6 +142,19 @@ func TestMergeSliceOfString(t *testing.T) {
 	}
 }
 
+func TestIndexExists(t *testing.T) {
+	data := []string{
+		"data",
+		"data2",
+	}
+	if isSet := IndexExists(data, 1); isSet != true {
+		t.Error("index must be exists")
+	}
+	if isSet := IndexExists(data, 3); isSet != false {
+		t.Error("index must be not exists")
+	}
+}
+
 func setEnvVar(name, value string, t *testing.T) {
 	if err := os.Setenv(name, value); err != nil {
 		t.Error("error while setting env variable")

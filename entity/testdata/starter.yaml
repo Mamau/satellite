@@ -59,3 +59,11 @@ commands:
     pre-commands:
       - "yarn config set strict-ssl false"
       - "npm config set"
+
+services:
+  - php:
+    name: "php"
+    version: "7.4"
+  - mysql:
+    name: "mysql"
+    version: "5.7"

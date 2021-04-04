@@ -49,11 +49,42 @@ func TestGetClientSignature(t *testing.T) {
 	getBowerClientSignature(t)
 	getComposerClientSignature(t)
 	getYarnClientSignature(t)
+	getServiceClientSignature(t)
+}
+
+func getServiceClientSignature(t *testing.T) {
+	data := []string{"some", "data"}
+	s := getService("php", []string{"-v"})
+	r := s.GetClientSignature(data)
+	e := "some data"
+	if e != strings.Join(r, " ") {
+		t.Errorf("service client signature must be %q\n got %q", e, strings.Join(r, " "))
+	}
 }
 
 func TestConfigToCommand(t *testing.T) {
 	getComposerConfigToCommand(t)
 	getYarnConfigToCommand(t)
+}
+
+func TestNewService(t *testing.T) {
+	service := NewService(nil, []string{})
+	if service != nil {
+		t.Error("service must be nil")
+	}
+	c := config.GetConfig()
+	s := c.GetService("php")
+	s.WorkDir = "/any/path"
+	service = NewService(s, []string{})
+	if service.WorkDir != "/any/path" {
+		t.Error("wrong workdir for service")
+	}
+
+	s.HomeDir = "/any/home/path"
+	service = NewService(s, []string{})
+	if service.HomeDir != "/any/home/path" {
+		t.Error("wrong homedir for service")
+	}
 }
 
 func getYarnConfigToCommand(t *testing.T) {
@@ -136,6 +167,15 @@ func TestGetCommandConfig(t *testing.T) {
 	getBowerCommandConfig(t)
 	getComposerCommandConfig(t)
 	getYarnCommandConfig(t)
+	getServiceCommandConfig(t)
+}
+
+func getServiceCommandConfig(t *testing.T) {
+	s := getService("php", []string{"-v"})
+	c := s.GetCommandConfig()
+	if c == nil {
+		t.Error("command service cannot be empty")
+	}
 }
 
 func getYarnCommandConfig(t *testing.T) {
@@ -166,6 +206,20 @@ func TestGetDockerConfig(t *testing.T) {
 	getBowerDockerConfig(t)
 	getComposerDockerConfig(t)
 	getYarnDockerConfig(t)
+	getServiceDockerConfig(t)
+}
+
+func getServiceDockerConfig(t *testing.T) {
+	s := getService("php", []string{"-v"})
+
+	if c := s.GetDockerConfig(); c == nil {
+		t.Errorf("docker config for service incorrect")
+	}
+
+	s.Config = nil
+	if c := s.GetDockerConfig(); c != nil {
+		t.Errorf("docker config for service must be empty")
+	}
 }
 
 func getYarnDockerConfig(t *testing.T) {
@@ -436,7 +490,14 @@ func getYarn(v string, args []string) *Yarn {
 	return NewYarn(v, args)
 }
 
-func setConfig() {
+func getService(n string, args []string) *Service {
+	c := setConfig()
+	s := c.GetService(n)
+	return NewService(s, args)
+}
+
+func setConfig() *config.Config {
 	c := config.GetConfig()
 	c.Path = libs.GetPwd() + "/testdata/starter"
+	return c
 }
