@@ -21,13 +21,22 @@ var instance *Config
 
 type Config struct {
 	Path     string
-	Macros   []string        `yaml:"macros"`
+	Macros   []Macros        `yaml:"macros"`
 	Services []docker.Docker `yaml:"services"`
 	Commands struct {
 		*composer.Composer `yaml:"composer"`
 		*yarn.Yarn         `yaml:"yarn"`
 		*Bower             `yaml:"bower"`
 	} `yaml:"commands"`
+}
+
+func (c *Config) GetMacros(name string) *Macros {
+	for _, v := range c.Macros {
+		if v.Name == name {
+			return &v
+		}
+	}
+	return nil
 }
 
 func (c *Config) GetService(name string) *docker.Docker {
@@ -55,10 +64,6 @@ func NewConfig() *Config {
 	})
 
 	return instance
-}
-
-func (c *Config) GetMacrosGroup() []string {
-	return c.Macros
 }
 
 func (c *Config) GetComposer() *composer.Composer {

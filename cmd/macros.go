@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
-
 	"github.com/mamau/starter/config"
 
 	"github.com/spf13/cobra"
@@ -15,9 +14,19 @@ var macrosCmd = &cobra.Command{
 	Short: "Run group of commands",
 	Long:  "Run group of commands",
 	Run: func(cmd *cobra.Command, args []string) {
+		macrosName := args[0]
+
 		var cl []string
+
 		c := config.GetConfig()
-		for _, v := range c.GetMacrosGroup() {
+		macros := c.GetMacros(macrosName)
+
+		if macros == nil {
+			color.Danger.Println("Macros not found")
+			return
+		}
+
+		for _, v := range macros.List {
 			cml := strings.Split(v, " ")
 			for _, vv := range rootCmd.Commands() {
 				if cml[0] == vv.Name() {

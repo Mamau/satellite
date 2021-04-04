@@ -9,8 +9,15 @@ commands:
     user-id: "1000"
 
 macros:
-  - "yarn install"
-  - "composer install --ignore-platform-reqs"
+  - test:
+    name: "test"
+    commands:
+      - "yarn install"
+      - "composer install --ignore-platform-reqs"
+  - test2:
+    name: "test2"
+    commands:
+      - "yarn install"
 
 services:
   - php:

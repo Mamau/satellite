@@ -43,8 +43,15 @@ commands:
       - "yarn config set strict-ssl false"
       - "npm config set"
 macros:
-  - "yarn install"
-  - "composer install --ignore-platform-reqs"
+  - test:
+    name: "test"
+    commands:
+      - "yarn install"
+      - "composer install --ignore-platform-reqs"
+  - test2:
+    name: "test2"
+    commands:
+      - "yarn install"
 
 services:
   - php:

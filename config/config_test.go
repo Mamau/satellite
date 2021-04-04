@@ -43,12 +43,14 @@ func TestGetBower(t *testing.T) {
 	cleanServices(c, t)
 }
 
-func TestGetMacrosGroup(t *testing.T) {
+func TestGetMacros(t *testing.T) {
 	c := getConfig("/testdata/starter")
-	m := c.GetMacrosGroup()
-	e := "yarn install composer install --ignore-platform-reqs"
-	if e != strings.Join(m, " ") {
-		t.Errorf("expect %q\n got %q\n", e, strings.Join(m, " "))
+	if m := c.GetMacros("test_not_found"); m != nil {
+		t.Errorf("macros must be empty")
+	}
+
+	if m := c.GetMacros("test"); m == nil {
+		t.Errorf("macros must be not empty")
 	}
 }
 
