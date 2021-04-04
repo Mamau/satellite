@@ -2,6 +2,52 @@
 
 Позволяет не устанавливать на свой компьютер программы которые 
 сопутствуют разработке, такие как: composer, bower, yarn.  
+Так же позволяет описать в yaml файле в разделе **services** нужные образы и использовать их.  
+Через раздел **macros** можно задать часто используемые команды и запускать все одной командой. 
+```yaml
+commands:
+  composer:
+    version: "2"
+    user-id: "1000"
+  bower:
+    user-id: "1000"
+  yarn:
+    version: "10"
+    user-id: "1000"
+
+macros:
+  - init:
+    name: "init"
+    commands:
+      - "composer install --ignore-platform-reqs"
+      - "yarn install"
+      - "bower install"
+  - build:
+    name: "build-front"
+    commands:
+      - "yarn build-dev"
+  - dump:
+    name: "dump-and-show-php-version"
+    commands:
+      - "php -v"
+      - "mysql mysqldump -u username -ppassword database_name  > db.sql"
+
+services:
+  - php:
+    name: "php"
+    version: "7.4"
+  - mysql:
+    name: "mysql"
+    version: "5.7"
+
+```
+Исходя из этого конфига можно запускать одной командой группы действий:
+```bash
+./starter macros init # запустит установку composer, yarn и bower
+./starter macros build-front # запустить сборку фронта
+./starter macros dump-and-show-php-version # покажет версию php и сделает дамп mysql
+```
+Отличие блоков commands от services в том, что в commands заранее определены сервисы и у них можно описать конфиг, в блоке services можно описать только запуск докер команды с использованием pre и post-commands.  
 На машине необходим только Docker.  
 Для php есть [композер пакет wkit](https://github.com/Mamau/web-kit) через этот
 пакет можно скачать последнюю версию   
