@@ -21,6 +21,7 @@ macros:
 
 services:
   - php:
+    detach: true
     name: "php"
     version: "7.4"
   - mysql:

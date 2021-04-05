@@ -7,11 +7,15 @@ import (
 
 type Docker struct {
 	Name         string   `yaml:"name"`
+	Image        string   `yaml:"image"`
+	Command      string   `yaml:"command"`
+	Flags        string   `yaml:"flags"`
 	HomeDir      string   `yaml:"home-dir"`
 	Version      string   `yaml:"version"`
 	UserId       string   `yaml:"user-id"`
 	WorkDir      string   `yaml:"work-dir"`
 	CacheDir     string   `yaml:"cache-dir"`
+	Detach       bool     `yaml:"detach"`
 	PreCommands  []string `yaml:"pre-commands"`
 	PostCommands []string `yaml:"post-commands"`
 	Dns          []string `yaml:"dns"`
@@ -19,6 +23,35 @@ type Docker struct {
 	Ports        []string `yaml:"ports"`
 	AddHosts     []string `yaml:"add-hosts"`
 	EnvVars      []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetDockerCommand() string {
+	if d.Command != "" {
+		return d.Command
+	}
+	return "run"
+}
+
+func (d *Docker) GetDetached() string {
+	if d.GetDockerCommand() == "pull" {
+		return ""
+	}
+
+	if d.Detach {
+		return "-d"
+	}
+	return ""
+}
+
+func (d *Docker) GetFlags() string {
+	if d.GetDockerCommand() == "pull" || d.Detach {
+		return ""
+	}
+
+	if d.Flags != "" {
+		return d.Flags
+	}
+	return "-ti"
 }
 
 func (d *Docker) GetPreCommands() string {

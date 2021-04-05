@@ -94,3 +94,13 @@ func (c *Collector) ClientCommand() []string {
 func (c *Collector) CollectCommand() []string {
 	return append(c.DockerConfigCommand(), c.entity.GetClientSignature(c.ClientCommand())...)
 }
+
+func (c *Collector) GetBeginCommand() []string {
+	var bc []string
+
+	bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())
+	bc = append(bc, c.entity.GetDockerConfig().GetFlags())
+	bc = append(bc, c.entity.GetDockerConfig().GetDetached())
+
+	return bc
+}

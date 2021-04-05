@@ -18,9 +18,11 @@ var rootCmd = &cobra.Command{
 	Long:  "Show all command",
 }
 
+const commandName = "docker"
+
 func Docker(dc Runnable) *exec.Cmd {
-	mainArgs := []string{"run", "-ti"}
-	dcCommand := exec.Command("docker", append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
+	mainArgs := dc.GetBeginCommand()
+	dcCommand := exec.Command(commandName, append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
