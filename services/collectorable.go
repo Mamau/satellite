@@ -6,6 +6,7 @@ import (
 )
 
 type Collectorable interface {
+	GetProjectVolume() string
 	GetDockerConfig() *docker.Docker
 	GetCommandConfig() *entity.Command
 	GetClientSignature(cmd []string) []string

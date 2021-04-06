@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/mamau/starter/entity"
 
 	"github.com/mamau/starter/libs"
@@ -22,7 +20,6 @@ func NewCollector(c Collectorable) *Collector {
 func (c *Collector) DockerConfigCommand() []string {
 	var userId,
 		workDir,
-		cacheVolume,
 		envVars,
 		imgVersion,
 		hosts,
@@ -33,7 +30,6 @@ func (c *Collector) DockerConfigCommand() []string {
 	if c.entity.GetDockerConfig() != nil {
 		userId = c.entity.GetDockerConfig().GetUserId()
 		workDir = c.entity.GetDockerConfig().GetWorkDir()
-		cacheVolume = c.entity.GetDockerConfig().GetCacheVolume()
 		envVars = c.entity.GetDockerConfig().GetEnvironmentVariables()
 		imgVersion = c.entity.GetDockerConfig().GetVersion()
 		hosts = c.entity.GetDockerConfig().GetHosts()
@@ -47,7 +43,7 @@ func (c *Collector) DockerConfigCommand() []string {
 	}
 
 	if workDir == "" {
-		workDir = fmt.Sprintf("--workdir=%s", c.entity.GetCommandConfig().HomeDir)
+		workDir = c.entity.GetCommandConfig().GetWorkDir()
 	}
 
 	return libs.MergeSliceOfString([]string{
@@ -57,9 +53,8 @@ func (c *Collector) DockerConfigCommand() []string {
 		ports,
 		dns,
 		workDir,
-		cacheVolume,
 		volumes,
-		c.entity.GetCommandConfig().GetProjectVolume(),
+		c.entity.GetProjectVolume(),
 		c.entity.GetImage(),
 	})
 }
@@ -98,9 +93,14 @@ func (c *Collector) CollectCommand() []string {
 func (c *Collector) GetBeginCommand() []string {
 	var bc []string
 
-	bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())
-	bc = append(bc, c.entity.GetDockerConfig().GetFlags())
-	bc = append(bc, c.entity.GetDockerConfig().GetDetached())
+	if c.entity.GetDockerConfig() != nil {
+		bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())
+		bc = append(bc, c.entity.GetDockerConfig().GetFlags())
+		bc = append(bc, c.entity.GetDockerConfig().GetDetached())
+		bc = append(bc, c.entity.GetDockerConfig().GetCleanUp())
+	} else {
+		bc = append(bc, "run", "-ti")
+	}
 
-	return bc
+	return libs.DeleteEmpty(bc)
 }

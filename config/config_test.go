@@ -150,15 +150,6 @@ func TestGetPostCommands(t *testing.T) {
 	cleanServices(c, t)
 }
 
-func TestGetCacheDir(t *testing.T) {
-	c := getConfig("/testdata/starter_composer")
-	expected := "-v /Users/mamau/go/src/github.com/mamau/starter/cache:/tmp"
-	if v := c.GetComposer().GetCacheVolume(); v != expected {
-		t.Errorf("cache dir must bet %q, got %q", expected, v)
-	}
-	cleanServices(c, t)
-}
-
 func TestGetWorkDir(t *testing.T) {
 	c := getConfig("/testdata/starter_composer")
 	if c.GetComposer().GetWorkDir() != "--workdir=/home/www-data" {

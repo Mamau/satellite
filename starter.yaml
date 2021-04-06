@@ -21,9 +21,9 @@ macros:
 
 services:
   - php:
-    detach: true
     name: "php"
     version: "7.4"
+    client-command: "php"
   - mysql:
     name: "mysql"
     version: "5.7"

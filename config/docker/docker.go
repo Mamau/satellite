@@ -6,23 +6,38 @@ import (
 )
 
 type Docker struct {
-	Name         string   `yaml:"name"`
-	Image        string   `yaml:"image"`
-	Command      string   `yaml:"command"`
-	Flags        string   `yaml:"flags"`
-	HomeDir      string   `yaml:"home-dir"`
-	Version      string   `yaml:"version"`
-	UserId       string   `yaml:"user-id"`
-	WorkDir      string   `yaml:"work-dir"`
-	CacheDir     string   `yaml:"cache-dir"`
-	Detach       bool     `yaml:"detach"`
-	PreCommands  []string `yaml:"pre-commands"`
-	PostCommands []string `yaml:"post-commands"`
-	Dns          []string `yaml:"dns"`
-	Volumes      []string `yaml:"volumes"`
-	Ports        []string `yaml:"ports"`
-	AddHosts     []string `yaml:"add-hosts"`
-	EnvVars      []string `yaml:"environment-variables"`
+	Name          string   `yaml:"name"`
+	Image         string   `yaml:"image"`
+	Command       string   `yaml:"command"`
+	ClientCommand string   `yaml:"client-command"`
+	Flags         string   `yaml:"flags"`
+	HomeDir       string   `yaml:"home-dir"`
+	Version       string   `yaml:"version"`
+	UserId        string   `yaml:"user-id"`
+	WorkDir       string   `yaml:"work-dir"`
+	Detach        bool     `yaml:"detach"`
+	CleanUp       bool     `yaml:"clean-up"`
+	PreCommands   []string `yaml:"pre-commands"`
+	PostCommands  []string `yaml:"post-commands"`
+	Dns           []string `yaml:"dns"`
+	Volumes       []string `yaml:"volumes"`
+	Ports         []string `yaml:"ports"`
+	AddHosts      []string `yaml:"add-hosts"`
+	EnvVars       []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetClientCommand() string {
+	if d.ClientCommand != "" {
+		return d.ClientCommand
+	}
+	return "/bin/bash -c"
+}
+
+func (d *Docker) GetCleanUp() string {
+	if d.CleanUp {
+		return "--rm"
+	}
+	return ""
 }
 
 func (d *Docker) GetDockerCommand() string {
@@ -70,20 +85,12 @@ func (d *Docker) GetPostCommands() string {
 	return strings.Join(d.PostCommands, "; ")
 }
 
-func (d *Docker) GetCacheVolume() string {
-	if d.CacheDir == "" {
-		return ""
-	}
-
-	return fmt.Sprintf("-v %s:/tmp", d.CacheDir)
-}
-
 func (d *Docker) GetWorkDir() string {
-	if d.WorkDir == "" {
-		return ""
+	if d.WorkDir != "" {
+		return fmt.Sprintf("--workdir=%s", d.WorkDir)
 	}
 
-	return fmt.Sprintf("--workdir=%s", d.WorkDir)
+	return ""
 }
 
 func (d *Docker) SetWorkDir(wd string) {

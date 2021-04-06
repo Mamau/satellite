@@ -72,19 +72,6 @@ func TestNewService(t *testing.T) {
 	if service != nil {
 		t.Error("service must be nil")
 	}
-	c := config.GetConfig()
-	s := c.GetService("php")
-	s.WorkDir = "/any/path"
-	service = NewService(s, []string{})
-	if service.WorkDir != "/any/path" {
-		t.Error("wrong workdir for service")
-	}
-
-	s.HomeDir = "/any/home/path"
-	service = NewService(s, []string{})
-	if service.HomeDir != "/any/home/path" {
-		t.Error("wrong homedir for service")
-	}
 }
 
 func getYarnConfigToCommand(t *testing.T) {

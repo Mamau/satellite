@@ -2,8 +2,8 @@ commands:
   composer:
     version: "2"
     work-dir: "/home/www-data"
-    cache-dir: "/Users/mamau/go/src/github.com/mamau/starter/cache"
     volumes:
+      - "/Users/mamau/go/src/github.com/mamau/starter/cache:/tmp"
       - "/Users/mamau/go/src/github.com/mamau/starter:/image/volume"
       - "/Users/mamau/go/src/github.com/mamau/starter2:/image/volume2"
     post-commands:
@@ -29,7 +29,6 @@ commands:
   yarn:
     version: "10"
     user-id: "501"
-    cache-dir: "/Users/mamau/go/src/github.com/mamau/starter/cache"
     work-dir: "/home/node"
     config:
       strict-ssl: "false"
@@ -49,6 +48,7 @@ commands:
       - "127.0.0.1:80:80"
       - "8080:8080"
     volumes:
+      - "/Users/mamau/go/src/github.com/mamau/starter/cache:/tmp"
       - "/Users/mamau/go/src/github.com/mamau/starter:/image/volume"
     dns:
       - "8.8.8.8"

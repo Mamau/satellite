@@ -55,3 +55,15 @@ func (c *Command) GetImage() string {
 func (c *Command) GetProjectVolume() string {
 	return fmt.Sprintf("-v %s:%s", libs.GetPwd(), c.HomeDir)
 }
+
+func (c *Command) GetWorkDir() string {
+	if c.WorkDir != "" {
+		return fmt.Sprintf("--workdir=%s", c.WorkDir)
+	}
+
+	if c.HomeDir != "" {
+		return fmt.Sprintf("--workdir=%s", c.HomeDir)
+	}
+
+	return ""
+}
