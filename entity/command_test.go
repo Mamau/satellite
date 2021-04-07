@@ -52,6 +52,13 @@ func TestGetClientSignature(t *testing.T) {
 	getServiceClientSignature(t)
 }
 
+func TestGetClientCommand(t *testing.T) {
+	s := getService("php", []string{"-v"})
+	if c := s.GetDockerConfig().GetClientCommand(); c != "php" {
+		t.Errorf("wrong service client command, expected %q\n got %q\n", "php", c)
+	}
+}
+
 func getServiceClientSignature(t *testing.T) {
 	data := []string{"some", "data"}
 	s := getService("php", []string{"-v"})
@@ -479,12 +486,13 @@ func getYarn(v string, args []string) *Yarn {
 
 func getService(n string, args []string) *Service {
 	c := setConfig()
+	fmt.Println(c)
 	s := c.GetService(n)
 	return NewService(s, args)
 }
 
 func setConfig() *config.Config {
+	config.NewConfig(libs.GetPwd() + "/testdata/starter")
 	c := config.GetConfig()
-	c.Path = libs.GetPwd() + "/testdata/starter"
 	return c
 }

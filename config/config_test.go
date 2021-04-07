@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetConfig(t *testing.T) {
-	nc := NewConfig()
+	nc := NewConfig(libs.GetPwd() + "/testdata/starter")
 	nc.Path = libs.GetPwd() + "/starter_not_exists"
 	c := GetConfig()
 	if c != nc {
@@ -237,7 +237,7 @@ func TestGetClientConfig(t *testing.T) {
 }
 
 func getConfig(cn string) *Config {
-	c := NewConfig()
+	c := NewConfig(libs.GetPwd() + "/testdata/starter")
 	c.Path = libs.GetPwd() + cn
 	return GetConfig()
 }

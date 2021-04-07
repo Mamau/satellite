@@ -56,10 +56,10 @@ func (c *Config) GetServices() []string {
 	return list
 }
 
-func NewConfig() *Config {
+func NewConfig(path string) *Config {
 	once.Do(func() {
 		instance = &Config{
-			Path: libs.GetPwd() + "/starter",
+			Path: path,
 		}
 	})
 
@@ -79,7 +79,8 @@ func (c *Config) GetBower() *Bower {
 }
 
 func GetConfig() *Config {
-	c := NewConfig()
+	path := libs.GetPwd() + "/starter"
+	c := NewConfig(path)
 	fileName := GetClientConfig(c.Path)
 	if fileName == "" {
 		return c
