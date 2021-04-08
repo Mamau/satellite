@@ -20,10 +20,8 @@ macros:
       - "yarn install"
 
 services:
-  - php:
-    name: "php"
+  - name: "php"
     version: "7.4"
-    client-command: "php"
-  - mysql:
-    name: "mysql"
+    execute-command: "php"
+  - name: "mysql"
     version: "5.7"

@@ -17,7 +17,7 @@ func NewService(config *docker.Docker, args []string) *Service {
 	return &Service{
 		Config: config,
 		Command: &Command{
-			CmdName: config.GetClientCommand(),
+			CmdName: config.GetExecCommand(),
 			Image:   config.Name,
 			Version: config.Version,
 			Args:    args,

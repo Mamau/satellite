@@ -25,6 +25,7 @@ func TestGetImage(t *testing.T) {
 	getYarnImage(t)
 	getComposerImage(t)
 	getBowerImage(t)
+	getServiceImage(t)
 }
 
 func TestGetPreCommands(t *testing.T) {
@@ -52,9 +53,9 @@ func TestGetClientSignature(t *testing.T) {
 	getServiceClientSignature(t)
 }
 
-func TestGetClientCommand(t *testing.T) {
+func TestGetExecCommand(t *testing.T) {
 	s := getService("php", []string{"-v"})
-	if c := s.GetDockerConfig().GetClientCommand(); c != "php" {
+	if c := s.GetDockerConfig().GetExecCommand(); c != "php" {
 		t.Errorf("wrong service client command, expected %q\n got %q\n", "php", c)
 	}
 }
@@ -361,6 +362,17 @@ func getYarnPreCommands(t *testing.T) {
 	y.Config.SetPreCommands([]string{})
 	if pc := y.Config.GetPreCommands(); pc != "" {
 		t.Errorf("yarn must be empty pre-command if config settings empty")
+	}
+}
+
+func getServiceImage(t *testing.T) {
+	s := getService("php-with-image", []string{"-v"})
+	if c := s.GetDockerConfig().GetImage(); c != "some-php-image" {
+		t.Errorf("service image must be %q\n, got %q\n", "some-php-image", c)
+	}
+	s.GetDockerConfig().Image = ""
+	if c := s.GetDockerConfig().GetImage(); c != "" {
+		t.Errorf("service image must be %q\n, got %q\n", "empty", c)
 	}
 }
 

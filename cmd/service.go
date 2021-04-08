@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"github.com/gookit/color"
+	"github.com/mamau/starter/config"
 	"github.com/mamau/starter/entity"
 	"github.com/mamau/starter/libs"
 	"github.com/mamau/starter/services"
-
-	"github.com/mamau/starter/config"
 
 	"github.com/spf13/cobra"
 )

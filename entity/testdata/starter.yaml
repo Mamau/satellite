@@ -61,10 +61,12 @@ commands:
       - "npm config set"
 
 services:
-  - php:
-    name: "php"
+  - name: "php"
     version: "7.4"
-    client-command: "php"
-  - mysql:
-    name: "mysql"
+    execute-command: "php"
+  - name: "mysql"
     version: "5.7"
+  - name: "php-with-image"
+    image: "some-php-image"
+    version: "7.4"
+    execute-command: "php"
