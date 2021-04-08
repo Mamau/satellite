@@ -53,6 +53,18 @@ func TestGetClientSignature(t *testing.T) {
 	getServiceClientSignature(t)
 }
 
+func TestGetCleanUp(t *testing.T) {
+	s := getService("php-with-clean-up", []string{"-v"})
+	if c := s.GetDockerConfig().GetCleanUp(); c != "--rm" {
+		t.Errorf("wrong service clean up param, expected %q\n got %q\n", "--rm", c)
+	}
+
+	s.GetDockerConfig().CleanUp = false
+	if c := s.GetDockerConfig().GetCleanUp(); c != "" {
+		t.Errorf("wrong service clean up param, must be empty got %q\n", c)
+	}
+}
+
 func TestGetExecCommand(t *testing.T) {
 	s := getService("php", []string{"-v"})
 	if c := s.GetDockerConfig().GetExecCommand(); c != "php" {

@@ -70,3 +70,7 @@ services:
     image: "some-php-image"
     version: "7.4"
     execute-command: "php"
+  - name: "php-with-clean-up"
+    image: "php"
+    version: "7.4"
+    clean-up: true
