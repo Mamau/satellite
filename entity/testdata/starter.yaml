@@ -74,3 +74,12 @@ services:
     image: "php"
     version: "7.4"
     clean-up: true
+  - name: "php-with-pull-command"
+    detach: true
+    image: "php"
+    version: "7.4"
+    command: "pull"
+  - name: "php-flags"
+    image: "php"
+    version: "7.4"
+    flags: "-T"

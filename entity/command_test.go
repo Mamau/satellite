@@ -44,6 +44,7 @@ func TestProjectVolume(t *testing.T) {
 	getComposerProjectVolume(t)
 	getYarnProjectVolume(t)
 	getBowerProjectVolume(t)
+	getServiceProjectVolume(t)
 }
 
 func TestGetClientSignature(t *testing.T) {
@@ -51,6 +52,54 @@ func TestGetClientSignature(t *testing.T) {
 	getComposerClientSignature(t)
 	getYarnClientSignature(t)
 	getServiceClientSignature(t)
+}
+
+func TestGetFlags(t *testing.T) {
+	s := getService("php-flags", []string{"-v"})
+	if c := s.GetDockerConfig().GetFlags(); c != "-T" {
+		t.Errorf("service must have glag %q,\n got %q\n", "-T", c)
+	}
+	s.GetDockerConfig().Command = "pull"
+	if c := s.GetDockerConfig().GetFlags(); c != "" {
+		t.Errorf("service must be empty, got %q\n", c)
+	}
+	s.GetDockerConfig().Command = ""
+	s.GetDockerConfig().Detach = true
+	if c := s.GetDockerConfig().GetFlags(); c != "" {
+		t.Errorf("service must be empty, got %q\n", c)
+	}
+	s.GetDockerConfig().Detach = false
+	s.GetDockerConfig().Flags = ""
+	if c := s.GetDockerConfig().GetFlags(); c != "-ti" {
+		t.Errorf("service must have default flags %q,\n got %q\n", "-ti", c)
+	}
+}
+
+func TestGetDetached(t *testing.T) {
+	s := getService("php-with-pull-command", []string{"-v"})
+	if c := s.GetDockerConfig().GetDetached(); c != "" {
+		t.Error("when service has pull command, detach must be empty even if specified")
+	}
+	s.GetDockerConfig().Command = ""
+	if c := s.GetDockerConfig().GetDetached(); c != "-d" {
+		t.Errorf("service must have flag %q,\n got %q\n", "-d", c)
+	}
+	s.GetDockerConfig().Detach = false
+	if c := s.GetDockerConfig().GetDetached(); c != "" {
+		t.Errorf("service detach flag must be empty, got %q\n", c)
+	}
+}
+
+func TestGetDockerCommand(t *testing.T) {
+	s := getService("php-with-pull-command", []string{"-v"})
+	if c := s.GetDockerConfig().GetDockerCommand(); c != "pull" {
+		t.Errorf("wrong service docker command, expected %q\n got %q\n", "pull", c)
+	}
+
+	s.GetDockerConfig().Command = ""
+	if c := s.GetDockerConfig().GetDockerCommand(); c != "run" {
+		t.Errorf("wrong service docker command, must be empty got %q\n", "run")
+	}
 }
 
 func TestGetCleanUp(t *testing.T) {
@@ -69,6 +118,11 @@ func TestGetExecCommand(t *testing.T) {
 	s := getService("php", []string{"-v"})
 	if c := s.GetDockerConfig().GetExecCommand(); c != "php" {
 		t.Errorf("wrong service client command, expected %q\n got %q\n", "php", c)
+	}
+
+	s.GetDockerConfig().ExecuteCommand = ""
+	if c := s.GetDockerConfig().GetExecCommand(); c != "/bin/bash -c" {
+		t.Errorf("wrong service client command, expected %q\n got %q\n", "/bin/bash -c", c)
 	}
 }
 
@@ -272,6 +326,33 @@ func getBowerDockerConfig(t *testing.T) {
 	c = b.GetDockerConfig()
 	if c != nil {
 		t.Errorf("docker config for bower incorrect when config is empty")
+	}
+}
+
+func TestGetWorkDir(t *testing.T) {
+	s := getService("php", []string{})
+	if wd := s.GetWorkDir(); wd != "" {
+		t.Errorf("service must have empty work-dir, got: %q", wd)
+	}
+
+	e := "--workdir=/some/work/dir"
+	s.WorkDir = "/some/work/dir"
+	if wd := s.GetWorkDir(); wd != e {
+		t.Errorf("service must have work-dir %q, got: %q", e, wd)
+	}
+
+	e = "--workdir=/some/another/dir"
+	s.WorkDir = ""
+	s.HomeDir = "/some/another/dir"
+	if wd := s.GetWorkDir(); wd != e {
+		t.Errorf("service must have work-dir %q, got: %q", e, wd)
+	}
+}
+
+func getServiceProjectVolume(t *testing.T) {
+	s := getService("php", []string{})
+	if pv := s.GetProjectVolume(); pv != "" {
+		t.Errorf("service must have empty project volume, got: %q", pv)
 	}
 }
 
@@ -510,7 +591,6 @@ func getYarn(v string, args []string) *Yarn {
 
 func getService(n string, args []string) *Service {
 	c := setConfig()
-	fmt.Println(c)
 	s := c.GetService(n)
 	return NewService(s, args)
 }
