@@ -30,6 +30,71 @@ func TestCollectCommand(t *testing.T) {
 	getBowerCollectCommand(t)
 }
 
+func TestGetBeginCommand(t *testing.T) {
+	s := getService("service-with-command", []string{"-v"})
+	c := NewCollector(s)
+	e := "exec -ti"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service", []string{"-v"})
+	c = NewCollector(s)
+	e = "run -ti"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-pull-cmd", []string{"-v"})
+	c = NewCollector(s)
+	e = "pull"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-flags", []string{"-v"})
+	c = NewCollector(s)
+	e = "run -T"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-flags-and-detached", []string{"-v"})
+	c = NewCollector(s)
+	e = "run -d"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-flags-and-pull", []string{"-v"})
+	c = NewCollector(s)
+	e = "pull"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-detach", []string{"-v"})
+	c = NewCollector(s)
+	e = "run -d"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-detach-and-pull", []string{"-v"})
+	c = NewCollector(s)
+	e = "pull"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+
+	s = getService("service-with-clean-up", []string{"-v"})
+	c = NewCollector(s)
+	e = "run -ti --rm"
+	if bc := c.GetBeginCommand(); strings.Join(bc, " ") != e {
+		t.Errorf("begin command for service must be %q\n got %q", e, strings.Join(bc, " "))
+	}
+}
+
 func getBowerCollectCommand(t *testing.T) {
 	bower := getBower()
 	c := NewCollector(bower)
@@ -205,7 +270,14 @@ func getYarn() *entity.Yarn {
 	return entity.NewYarn("12", []string{"install"})
 }
 
-func setConfig() {
+func getService(n string, args []string) *entity.Service {
+	c := setConfig()
+	s := c.GetService(n)
+	return entity.NewService(s, args)
+}
+
+func setConfig() *config.Config {
+	config.NewConfig(libs.GetPwd() + "/testdata/starter")
 	c := config.GetConfig()
-	c.Path = libs.GetPwd() + "/testdata/starter"
+	return c
 }
