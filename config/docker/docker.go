@@ -6,38 +6,24 @@ import (
 )
 
 type Docker struct {
-	Name           string   `yaml:"name"`
-	Image          string   `yaml:"image"`
-	Command        string   `yaml:"command"`
-	ExecuteCommand string   `yaml:"execute-command"`
-	Flags          string   `yaml:"flags"`
-	HomeDir        string   `yaml:"home-dir"`
-	Version        string   `yaml:"version"`
-	UserId         string   `yaml:"user-id"`
-	WorkDir        string   `yaml:"work-dir"`
-	Detach         bool     `yaml:"detach"`
-	CleanUp        bool     `yaml:"clean-up"`
-	PreCommands    []string `yaml:"pre-commands"`
-	PostCommands   []string `yaml:"post-commands"`
-	Dns            []string `yaml:"dns"`
-	Volumes        []string `yaml:"volumes"`
-	Ports          []string `yaml:"ports"`
-	AddHosts       []string `yaml:"add-hosts"`
-	EnvVars        []string `yaml:"environment-variables"`
-}
-
-func (d *Docker) GetImage() string {
-	if d.Image != "" {
-		return d.Image
-	}
-	return ""
-}
-
-func (d *Docker) GetExecCommand() string {
-	if d.ExecuteCommand != "" {
-		return d.ExecuteCommand
-	}
-	return "/bin/bash -c"
+	Name         string   `yaml:"name"`
+	Image        string   `yaml:"image"`
+	Command      string   `yaml:"command"`
+	ImageCommand string   `yaml:"image-command"`
+	Flags        string   `yaml:"flags"`
+	HomeDir      string   `yaml:"home-dir"`
+	Version      string   `yaml:"version"`
+	UserId       string   `yaml:"user-id"`
+	WorkDir      string   `yaml:"work-dir"`
+	Detach       bool     `yaml:"detach"`
+	CleanUp      bool     `yaml:"clean-up"`
+	PreCommands  []string `yaml:"pre-commands"`
+	PostCommands []string `yaml:"post-commands"`
+	Dns          []string `yaml:"dns"`
+	Volumes      []string `yaml:"volumes"`
+	Ports        []string `yaml:"ports"`
+	AddHosts     []string `yaml:"add-hosts"`
+	EnvVars      []string `yaml:"environment-variables"`
 }
 
 func (d *Docker) GetCleanUp() string {

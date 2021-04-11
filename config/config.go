@@ -8,9 +8,6 @@ import (
 
 	"github.com/mamau/starter/config/docker"
 
-	"github.com/mamau/starter/config/yarn"
-
-	"github.com/mamau/starter/config/composer"
 	"github.com/mamau/starter/libs"
 
 	"gopkg.in/yaml.v2"
@@ -23,11 +20,6 @@ type Config struct {
 	Path     string
 	Macros   []Macros        `yaml:"macros"`
 	Services []docker.Docker `yaml:"services"`
-	Commands struct {
-		*composer.Composer `yaml:"composer"`
-		*yarn.Yarn         `yaml:"yarn"`
-		*Bower             `yaml:"bower"`
-	} `yaml:"commands"`
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -64,18 +56,6 @@ func NewConfig(path string) *Config {
 	})
 
 	return instance
-}
-
-func (c *Config) GetComposer() *composer.Composer {
-	return c.Commands.Composer
-}
-
-func (c *Config) GetYarn() *yarn.Yarn {
-	return c.Commands.Yarn
-}
-
-func (c *Config) GetBower() *Bower {
-	return c.Commands.Bower
 }
 
 func GetConfig() *Config {

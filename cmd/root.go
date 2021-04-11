@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/mamau/starter/config"
 
@@ -22,8 +23,12 @@ const commandName = "docker"
 
 func Docker(dc Runnable) *exec.Cmd {
 	mainArgs := dc.GetBeginCommand()
-	dcCommand := exec.Command(commandName, append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
-	color.Info.Printf("Running command: %v\n", dcCommand.String())
+	test := append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)
+	color.Info.Printf(strings.Join(test, " "))
+	fmt.Printf("\n")
+	//dcCommand := exec.Command(commandName, append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
+	dcCommand := exec.Command("echo")
+	//color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
 

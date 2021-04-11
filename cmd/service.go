@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"github.com/gookit/color"
+	collector2 "github.com/mamau/starter/collector"
 	"github.com/mamau/starter/config"
 	"github.com/mamau/starter/entity"
 	"github.com/mamau/starter/libs"
-	"github.com/mamau/starter/services"
 
 	"github.com/spf13/cobra"
 )
@@ -23,7 +23,7 @@ var serviceCmd = &cobra.Command{
 		s := config.GetService(serviceName)
 
 		ser := entity.NewService(s, args[1:])
-		collector := services.NewCollector(ser)
+		collector := collector2.NewCollector(ser)
 		libs.RunCommandAtPTY(Docker(collector))
 	},
 }

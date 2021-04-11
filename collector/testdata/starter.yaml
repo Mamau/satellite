@@ -1,0 +1,21 @@
+services:
+  - name: "service"
+  - name: "service-with-command"
+    command: "exec"
+  - name: "service-with-pull-cmd"
+    command: "pull"
+  - name: "service-with-flags"
+    flags: "-T"
+  - name: "service-with-flags-and-detached"
+    flags: "-T"
+    detach: true
+  - name: "service-with-flags-and-pull"
+    flags: "-T"
+    command: "pull"
+  - name: "service-with-detach"
+    detach: true
+  - name: "service-with-detach-and-pull"
+    detach: true
+    command: "pull"
+  - name: "service-with-clean-up"
+    clean-up: true
