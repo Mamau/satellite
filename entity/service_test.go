@@ -135,21 +135,33 @@ func TestGetCleanUp(t *testing.T) {
 	}
 }
 
-func TestGetExecCommand(t *testing.T) {
+func TestGetProjectVolume(t *testing.T) {
+	s := getService("service", []string{"-v"})
+	if s.GetProjectVolume() != "" {
+		t.Errorf("project volume must be empty")
+	}
+}
+
+func TestGetImageCommand(t *testing.T) {
 	s := getService("service", []string{"-v"})
 	if c := s.GetImageCommand(); c != "service" {
-		t.Errorf("wrong service client command, expected %q\n got %q\n", "service", c)
+		t.Errorf("wrong service client command, expected %q got %q\n", "service", c)
 	}
 
 	s.GetDockerConfig().PreCommands = []string{"test"}
 	if c := s.GetImageCommand(); c != "/bin/bash -c" {
-		t.Errorf("wrong service client command, expected %q\n got %q\n", "/bin/bash -c", c)
+		t.Errorf("wrong service client command, expected %q got %q\n", "/bin/bash -c", c)
 	}
 
 	s.GetDockerConfig().PreCommands = nil
 	s.GetDockerConfig().PostCommands = []string{"test"}
 	if c := s.GetImageCommand(); c != "/bin/bash -c" {
-		t.Errorf("wrong service client command, expected %q\n got %q\n", "/bin/bash -c", c)
+		t.Errorf("wrong service client command, expected %q got %q\n", "/bin/bash -c", c)
+	}
+
+	s.GetDockerConfig().ImageCommand = ""
+	if c := s.GetImageCommand(); c != "" {
+		t.Errorf("wrong service client command, expected %q got %q\n", "empty string", c)
 	}
 }
 
