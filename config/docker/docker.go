@@ -10,6 +10,7 @@ type Docker struct {
 	Image        string   `yaml:"image"`
 	Command      string   `yaml:"command"`
 	ImageCommand string   `yaml:"image-command"`
+	BinBash      bool     `yaml:"bin-bash"`
 	Flags        string   `yaml:"flags"`
 	HomeDir      string   `yaml:"home-dir"`
 	Version      string   `yaml:"version"`

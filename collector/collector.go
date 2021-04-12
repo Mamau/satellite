@@ -1,6 +1,8 @@
 package collector
 
-import "github.com/mamau/starter/libs"
+import (
+	"github.com/mamau/starter/libs"
+)
 
 type Collector struct {
 	entity Collectorable
@@ -51,20 +53,19 @@ func (c *Collector) ClientCommand() []string {
 }
 
 func (c *Collector) CollectCommand() []string {
-	return append(c.DockerConfigCommand(), c.entity.GetClientSignature(c.ClientCommand())...)
+	bc := c.GetBeginCommand()
+	bc = append(bc, c.DockerConfigCommand()...)
+	bc = append(bc, c.entity.GetClientSignature(c.ClientCommand())...)
+	return bc
 }
 
 func (c *Collector) GetBeginCommand() []string {
 	var bc []string
 
-	if c.entity.GetDockerConfig() != nil {
-		bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())
-		bc = append(bc, c.entity.GetDockerConfig().GetFlags())
-		bc = append(bc, c.entity.GetDockerConfig().GetDetached())
-		bc = append(bc, c.entity.GetDockerConfig().GetCleanUp())
-	} else {
-		bc = append(bc, "run", "-ti")
-	}
+	bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())
+	bc = append(bc, c.entity.GetDockerConfig().GetFlags())
+	bc = append(bc, c.entity.GetDockerConfig().GetDetached())
+	bc = append(bc, c.entity.GetDockerConfig().GetCleanUp())
 
 	return libs.DeleteEmpty(bc)
 }

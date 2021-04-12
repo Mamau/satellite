@@ -74,6 +74,10 @@ func (s *Service) GetImageCommand() string {
 		return "/bin/bash -c"
 	}
 
+	if s.Config.BinBash == true {
+		return "/bin/bash -c " + s.Config.ImageCommand
+	}
+
 	return s.Config.ImageCommand
 }
 
