@@ -1,16 +1,11 @@
 package entity
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/mamau/starter/config"
 	"github.com/mamau/starter/libs"
 )
-
-func TestGetClientSignature(t *testing.T) {
-	getServiceClientSignature(t)
-}
 
 func TestGetImage(t *testing.T) {
 	s := getService("service-with-image", []string{"-v"})
@@ -135,13 +130,6 @@ func TestGetCleanUp(t *testing.T) {
 	}
 }
 
-func TestGetProjectVolume(t *testing.T) {
-	s := getService("service", []string{"-v"})
-	if s.GetProjectVolume() != "" {
-		t.Errorf("project volume must be empty")
-	}
-}
-
 func TestGetImageCommand(t *testing.T) {
 	s := getService("service", []string{"-v"})
 	if c := s.GetImageCommand(); c != "service" {
@@ -162,23 +150,6 @@ func TestGetImageCommand(t *testing.T) {
 	s.GetDockerConfig().ImageCommand = ""
 	if c := s.GetImageCommand(); c != "" {
 		t.Errorf("wrong service client command, expected %q got %q\n", "empty string", c)
-	}
-}
-
-func getServiceClientSignature(t *testing.T) {
-	data := []string{"some", "data"}
-	s := getService("service", []string{"-v"})
-	r := s.GetClientSignature(data)
-	e := "some data"
-	if e != strings.Join(r, " ") {
-		t.Errorf("service client signature must be %q\n got %q", e, strings.Join(r, " "))
-	}
-}
-
-func TestNewService(t *testing.T) {
-	service := NewService(nil, []string{})
-	if service != nil {
-		t.Errorf("service must be nil")
 	}
 }
 

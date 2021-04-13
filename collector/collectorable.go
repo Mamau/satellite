@@ -5,9 +5,7 @@ import (
 )
 
 type Collectorable interface {
-	GetProjectVolume() string
 	GetDockerConfig() *docker.Docker
-	GetClientSignature(cmd []string) []string
 	GetImage() string
 	GetWorkDir() string
 	GetImageCommand() string

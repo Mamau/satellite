@@ -1,6 +1,9 @@
 package collector
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/mamau/starter/libs"
 )
 
@@ -23,7 +26,6 @@ func (c *Collector) DockerConfigCommand() []string {
 		c.entity.GetDockerConfig().GetDns(),
 		c.entity.GetWorkDir(),
 		c.entity.GetDockerConfig().GetVolumes(),
-		c.entity.GetProjectVolume(),
 		c.entity.GetImage(),
 	})
 }
@@ -42,24 +44,25 @@ func (c *Collector) ClientCommand() []string {
 		clientCommand += ";"
 	}
 
-	fullCommand := []string{
-		execCommand,
+	listCmd := []string{
 		preCommand,
 		clientCommand,
 		postCommand,
 	}
+	clientCmd := fmt.Sprintf("%s", strings.Join(libs.DeleteEmpty(listCmd), " "))
+	cleanExecCmd := libs.DeleteEmpty(libs.MergeSliceOfString([]string{execCommand}))
 
-	return libs.DeleteEmpty(libs.MergeSliceOfString(fullCommand))
+	return append(cleanExecCmd, clientCmd)
 }
 
 func (c *Collector) CollectCommand() []string {
-	bc := c.GetBeginCommand()
+	bc := c.getBeginCommand()
 	bc = append(bc, c.DockerConfigCommand()...)
-	bc = append(bc, c.entity.GetClientSignature(c.ClientCommand())...)
+	bc = append(bc, c.ClientCommand()...)
 	return bc
 }
 
-func (c *Collector) GetBeginCommand() []string {
+func (c *Collector) getBeginCommand() []string {
 	var bc []string
 
 	bc = append(bc, c.entity.GetDockerConfig().GetDockerCommand())

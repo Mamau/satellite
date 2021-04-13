@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gookit/color"
-
 	"github.com/mamau/starter/config/docker"
 )
 
@@ -15,11 +13,7 @@ type Service struct {
 }
 
 func NewService(config *docker.Docker, args []string) *Service {
-	if config == nil {
-		color.Red.Printf("You need starter.yaml file\n")
-		return nil
-	}
-
+	//TODO: need validation
 	return &Service{
 		Config: config,
 		Args:   args,
@@ -40,7 +34,6 @@ func (s *Service) GetWorkDir() string {
 
 func (s *Service) GetClientCommand() string {
 	if s.Config.ImageCommand == "" {
-		color.Red.Println("You need declare image-command")
 		return ""
 	}
 
@@ -66,7 +59,6 @@ func (s *Service) GetImage() string {
 
 func (s *Service) GetImageCommand() string {
 	if s.Config.ImageCommand == "" {
-		color.Red.Println("You need declare image-command")
 		return ""
 	}
 
@@ -81,14 +73,6 @@ func (s *Service) GetImageCommand() string {
 	return s.Config.ImageCommand
 }
 
-func (s *Service) GetProjectVolume() string {
-	return ""
-}
-
 func (s *Service) GetDockerConfig() *docker.Docker {
 	return s.Config
-}
-
-func (s *Service) GetClientSignature(cmd []string) []string {
-	return cmd
 }

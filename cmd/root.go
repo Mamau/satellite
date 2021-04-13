@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/mamau/starter/config"
 
@@ -22,13 +21,8 @@ var rootCmd = &cobra.Command{
 const commandName = "docker"
 
 func Docker(dc Runnable) *exec.Cmd {
-	mainArgs := dc.GetBeginCommand()
-	test := append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)
-	color.Info.Printf(strings.Join(test, " "))
-	fmt.Printf("\n")
-	//dcCommand := exec.Command(commandName, append(mainArgs, libs.ReplaceEnvVariables(dc.CollectCommand())...)...)
-	dcCommand := exec.Command("echo")
-	//color.Info.Printf("Running command: %v\n", dcCommand.String())
+	dcCommand := exec.Command(commandName, libs.ReplaceEnvVariables(dc.CollectCommand())...)
+	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
 
