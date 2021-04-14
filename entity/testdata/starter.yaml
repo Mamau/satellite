@@ -19,3 +19,5 @@ services:
     image: "service"
     version: "7.4"
     flags: "-T"
+  - name: "service-with-conatiner-name"
+    container-name: "my_container"

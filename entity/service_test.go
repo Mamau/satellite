@@ -118,6 +118,22 @@ func TestGetDockerCommand(t *testing.T) {
 	}
 }
 
+func TestGetContainerName(t *testing.T) {
+	s := getService("service-with-conatiner-name", []string{"-v"})
+	cn := s.GetDockerConfig().GetContainerName()
+	e := "--name my_container"
+	if e != cn {
+		t.Errorf("name of cpntainer must be %q, got %q", e, cn)
+	}
+
+	s.GetDockerConfig().ContainerName = ""
+	cn = s.GetDockerConfig().GetContainerName()
+	e = ""
+	if e != cn {
+		t.Errorf("name of cpntainer must be %q, got %q", e, cn)
+	}
+}
+
 func TestGetCleanUp(t *testing.T) {
 	s := getService("service-with-clean-up", []string{"-v"})
 	if c := s.GetDockerConfig().GetCleanUp(); c != "--rm" {
@@ -145,6 +161,12 @@ func TestGetImageCommand(t *testing.T) {
 	s.GetDockerConfig().PostCommands = []string{"test"}
 	if c := s.GetImageCommand(); c != "/bin/bash -c" {
 		t.Errorf("wrong service client command, expected %q got %q\n", "/bin/bash -c", c)
+	}
+
+	s.GetDockerConfig().BinBash = true
+	s.GetDockerConfig().PostCommands = nil
+	if c := s.GetImageCommand(); c != "/bin/bash -c service" {
+		t.Errorf("wrong service client command, expected %q got %q\n", "/bin/bash -c service", c)
 	}
 
 	s.GetDockerConfig().ImageCommand = ""
