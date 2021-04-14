@@ -26,6 +26,7 @@ func (c *Collector) DockerConfigCommand() []string {
 		c.entity.GetDockerConfig().GetDns(),
 		c.entity.GetWorkDir(),
 		c.entity.GetDockerConfig().GetVolumes(),
+		c.entity.GetDockerConfig().GetContainerName(),
 		c.entity.GetImage(),
 	})
 }
@@ -58,7 +59,7 @@ func (c *Collector) ClientCommand() []string {
 func (c *Collector) CollectCommand() []string {
 	bc := c.getBeginCommand()
 	bc = append(bc, c.DockerConfigCommand()...)
-	bc = append(bc, c.ClientCommand()...)
+	bc = append(bc, libs.DeleteEmpty(c.ClientCommand())...)
 	return bc
 }
 

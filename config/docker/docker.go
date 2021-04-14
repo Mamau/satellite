@@ -6,25 +6,34 @@ import (
 )
 
 type Docker struct {
-	Name         string   `yaml:"name"`
-	Image        string   `yaml:"image"`
-	Command      string   `yaml:"command"`
-	ImageCommand string   `yaml:"image-command"`
-	BinBash      bool     `yaml:"bin-bash"`
-	Flags        string   `yaml:"flags"`
-	HomeDir      string   `yaml:"home-dir"`
-	Version      string   `yaml:"version"`
-	UserId       string   `yaml:"user-id"`
-	WorkDir      string   `yaml:"work-dir"`
-	Detach       bool     `yaml:"detach"`
-	CleanUp      bool     `yaml:"clean-up"`
-	PreCommands  []string `yaml:"pre-commands"`
-	PostCommands []string `yaml:"post-commands"`
-	Dns          []string `yaml:"dns"`
-	Volumes      []string `yaml:"volumes"`
-	Ports        []string `yaml:"ports"`
-	AddHosts     []string `yaml:"add-hosts"`
-	EnvVars      []string `yaml:"environment-variables"`
+	Name          string   `yaml:"name"`
+	ContainerName string   `yaml:"container-name"`
+	Image         string   `yaml:"image"`
+	Command       string   `yaml:"command"`
+	ImageCommand  string   `yaml:"image-command"`
+	Flags         string   `yaml:"flags"`
+	HomeDir       string   `yaml:"home-dir"`
+	Version       string   `yaml:"version"`
+	UserId        string   `yaml:"user-id"`
+	WorkDir       string   `yaml:"work-dir"`
+	BinBash       bool     `yaml:"bin-bash"`
+	SkipArgs      bool     `yaml:"skip-args"`
+	Detach        bool     `yaml:"detach"`
+	CleanUp       bool     `yaml:"clean-up"`
+	PreCommands   []string `yaml:"pre-commands"`
+	PostCommands  []string `yaml:"post-commands"`
+	Dns           []string `yaml:"dns"`
+	Volumes       []string `yaml:"volumes"`
+	Ports         []string `yaml:"ports"`
+	AddHosts      []string `yaml:"add-hosts"`
+	EnvVars       []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetContainerName() string {
+	if d.ContainerName != "" {
+		return fmt.Sprintf("--name %s", d.ContainerName)
+	}
+	return ""
 }
 
 func (d *Docker) GetCleanUp() string {

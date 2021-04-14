@@ -6,16 +6,35 @@ services:
       - "php -v"
     post-commands:
       - "php -v"
+
   - name: "mysql"
     version: "5.7"
 
+  - name: "dl-my-project"
+    command: "pull"
+    skip-args: true
+    image: "some-image"
+  - name: "my-project"
+    detach: true
+    clean-up: true
+    skip-args: true
+    container-name: "my_project"
+    image: "some-image"
+    environment-variables:
+      - "PHP_IDE_CONFIG=serverName=192.168.1.1"
+    volumes:
+      - "/var/www:/home/www"
+    dns:
+      - "127.0.0.1"
+    ports:
+      - "127.0.0.1:443:443"
+
 macros:
-  - test:
-    name: "test"
+  - name: "test"
     commands:
       - "php -v"
       - "mysql -v"
-  - test2:
-    name: "test2"
+
+  - name: "test2"
     commands:
       - "php -v"
