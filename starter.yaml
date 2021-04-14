@@ -13,9 +13,9 @@ macros:
   - test:
     name: "test"
     commands:
-      - "yarn install"
-      - "composer install --ignore-platform-reqs"
+      - "php -v"
+      - "mysql -v"
   - test2:
     name: "test2"
     commands:
-      - "yarn install"
+      - "php -v"

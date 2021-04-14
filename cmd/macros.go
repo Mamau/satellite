@@ -28,11 +28,9 @@ var macrosCmd = &cobra.Command{
 
 		for _, v := range macros.List {
 			cml := strings.Split(v, " ")
-			for _, vv := range rootCmd.Commands() {
-				if cml[0] == vv.Name() {
-					cl = append(cl, cml[0])
-					vv.Run(cmd, cml[1:])
-				}
+			if serviceName := c.GetService(cml[0]); serviceName != nil {
+				cl = append(cl, cml[0])
+				serviceCmd.Run(cmd, cml)
 			}
 		}
 
