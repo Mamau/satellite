@@ -2,8 +2,8 @@
 
 Allows you not to install on your computer programs that
 accompanying developments.  
-If your project uses many services. 
-If your team has people who do not need to know the entire ecosystem of the project.   
+If your project uses many services.   
+If your team has people who do not need to know the entire ecosystem of the project.  
 If you are tired of keeping in mind all commands with the help of which different parts of the project are assembled.  
 Then this service is for you.   
 You can describe all possible command variations in the yaml file and run them, having only docker on your machine. For convenience, the yaml config can be added to the revision of the git, and the bin file can be added to gitignore, because different operating systems will have their own launchers.  
