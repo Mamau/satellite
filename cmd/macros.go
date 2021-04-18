@@ -14,6 +14,11 @@ var macrosCmd = &cobra.Command{
 	Short: "Run group of commands",
 	Long:  "Run group of commands",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			color.Danger.Println("You should pass macros name")
+			return
+		}
+
 		macrosName := args[0]
 
 		var cl []string

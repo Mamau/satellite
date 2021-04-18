@@ -98,6 +98,24 @@ func TestFileExists(t *testing.T) {
 	}
 }
 
+func TestReplacePwdVariable(t *testing.T) {
+	data := []string{
+		"some",
+		"$(pwd)",
+		"test",
+		"$(pwd)/any/path",
+	}
+	e := []string{
+		"some",
+		GetPwd(),
+		"test",
+		GetPwd() + "/any/path",
+	}
+	if res := ReplacePwdVariable(data); strings.Join(res, " ") != strings.Join(e, " ") {
+		t.Errorf("wrong replace pwd dir, expected %q, got %q", strings.Join(e, " "), strings.Join(res, " "))
+	}
+}
+
 func TestReplaceEnvVariables(t *testing.T) {
 	setEnvVar("TEST_VAR", "TEST_VAL", t)
 	setEnvVar("TEST_VAR2", "TEST_VAL2", t)

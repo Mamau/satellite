@@ -45,6 +45,18 @@ func InsertToSlice(slice []string, target string, index int) []string {
 	return append(slice[:index], append([]string{target}, slice[index:]...)...)
 }
 
+func ReplacePwdVariable(args []string) []string {
+	for i, v := range args {
+		r := regexp.MustCompile("\\$(\\(pwd\\))")
+		if found := r.FindAllString(v, -1); found != nil {
+			for _, vv := range found {
+				args[i] = strings.Replace(args[i], vv, GetPwd(), -1)
+			}
+		}
+	}
+	return args
+}
+
 func ReplaceEnvVariables(args []string) []string {
 	for i, v := range args {
 		r := regexp.MustCompile("{(.*?)}")
