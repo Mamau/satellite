@@ -1,0 +1,92 @@
+services:
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter bower install" will run:
+# docker run -ti -u 1000 --workdir=/home/node -v $(pwd):/home/node mamau/bower bower install
+# may use for install bower dependencies
+  - name: "bower"
+    user-id: "1000"
+    image: "mamau/bower"
+    image-command: "bower"
+    work-dir: "/home/node"
+    volumes:
+      - "$(pwd):/home/node"
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter yarn install" will run:
+# docker run -ti -u 1000 --dns=8.8.8.8 --workdir=/home/node -v $(pwd):/home/node -v $(pwd)/cache:/tmp node:10 /bin/bash -c yarn config set @webnpm:registry https://gitlab.com/packages/npm/; yarn config set strict-ssl false; npm config set //gitlab.com/projects/:_authToken {GITLAB_TOKEN}; npm config set //gitlab.com/packages/npm/:_authToken {GITLAB_TOKEN}; yarn install
+# may use for install yarn dependencies with your private repositories whose config described in pre-commands section
+  - name: "yarn"
+    image: "node"
+    version: "10"
+    user-id: "1000"
+    image-command: "yarn"
+    work-dir: "/home/node"
+    volumes:
+      - "$(pwd):/home/node"
+      - "$(pwd)/cache:/tmp"
+    dns:
+      - "8.8.8.8"
+    pre-commands:
+      - "yarn config set @webnpm:registry https://gitlab.com/packages/npm/"
+      - "yarn config set strict-ssl false"
+      - "npm config set //gitlab.com/projects/:_authToken {GITLAB_TOKEN}"
+      - "npm config set //gitlab.com/packages/npm/:_authToken {GITLAB_TOKEN}"
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter composer install --ignore-platform-reqs" will run:
+# docker run -ti --dns=8.8.8.8 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer:1.9 /bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 1000:1000 /home/www-data
+# may use for install composer dependencies, with "pre" and "post" commands that do:
+# pre command: allow to download package from private repository
+# post command: set the right on vendor dir for user with id: 1000
+  - name: "composer"
+    version: "1.9"
+    image-command: "composer"
+    work-dir: "/home/www-data"
+    volumes:
+      - "$(pwd):/home/www-data"
+      - "$(pwd)/cache:/tmp"
+    dns:
+      - "8.8.8.8"
+    pre-commands:
+      - "git config --global http.sslVerify false"
+      - "composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}"
+    post-commands:
+      - "chown -R 1000:1000 /home/www-data"
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter my-image" will run:
+# docker run -d --rm -e PHP_IDE_CONFIG=serverName=192.168.0.1 -p 127.0.0.1:443:443 -p 80:80 --dns=8.8.8.8 -v $(pwd):/home/www gitlab.com/my/image
+# may use for run your project in container on detach mode
+  - name: "my-image"
+    detach: true
+    clean-up: true
+    skip-args: true
+    image: "gitlab.com/my/image"
+    environment-variables:
+      - "PHP_IDE_CONFIG=serverName=192.168.0.1"
+    volumes:
+      - "$(pwd):/home/www"
+    dns:
+      - "8.8.8.8"
+    ports:
+      - "127.0.0.1:443:443"
+      - "80:80"
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter fresh-img" will run:
+# docker pull my-fresh-image:1
+# just pull new image
+  - name: "fresh-img"
+    command: "pull"
+    image: "my-fresh-image"
+    version: "1"
+    skip-args: true
+
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./starter macros init" will run consistently 5 command from commands section.
+# that commands will run from sections described above
+macros:
+  - name: "init"
+    commands:
+      - "composer i --ignore-platform-reqs"
+      - "yarn install"
+      - "bower install"
+      - "yarn build-styles"
+      - "yarn build-dev --some-flag=someValue --some-flag2=someValue2"
+# ------------------------------------------------------------------------------------------------------------------------

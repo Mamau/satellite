@@ -1,0 +1,100 @@
+services:
+  - name: "service"
+    image-command: "service"
+    version: "1"
+  - name: "service-bin-bash"
+    bin-bash: true
+    image-command: "service"
+    version: "1"
+  - name: "service-with-command"
+    command: "exec"
+  - name: "service-with-pull-cmd"
+    command: "pull"
+  - name: "service-with-flags"
+    flags: "-T"
+  - name: "service-with-flags-and-detached"
+    flags: "-T"
+    detach: true
+  - name: "service-with-flags-and-pull"
+    flags: "-T"
+    command: "pull"
+  - name: "service-with-detach"
+    detach: true
+  - name: "service-with-detach-and-pull"
+    detach: true
+    command: "pull"
+  - name: "service-with-clean-up"
+    clean-up: true
+  - name: "service-with-pre-post-command"
+    image-command: "service"
+    version: "1"
+    pre-commands:
+      - "pre cmd 1"
+      - "pre cmd 2"
+    post-commands:
+      - "post cmd 1"
+      - "post cmd 2"
+  - name: "service-with-post-command"
+    image-command: "service"
+    version: "1"
+    post-commands:
+      - "post cmd 1"
+      - "post cmd 2"
+  - name: "service-with-pre-command"
+    image-command: "service"
+    version: "1"
+    pre-commands:
+      - "pre cmd 1"
+      - "pre cmd 2"
+  - name: "service-with-pre-command"
+    image-command: "service"
+    version: "1"
+    pre-commands:
+      - "pre cmd 1"
+      - "pre cmd 2"
+  - name: "service-docker-config"
+    user-id: "1000"
+    version: "2"
+    environment-variables:
+      - "SOME_VAR=someVal"
+      - "SOME_VAR2=someVal2"
+    add-hosts:
+      - "docker:10.180.0.1"
+      - "somehost.com"
+    ports:
+      - "80:80"
+      - "127.0.0.1.8089:8089"
+    dns:
+      - "0.0.0.0"
+      - "8.8.8.8"
+    work-dir: "/home/service"
+    volumes:
+      - "/path/to/current/dir/cache:/tmp"
+      - "/path/to/current/dir:/home/service"
+    image-command: "service"
+  - name: "full-service-docker-config"
+    user-id: "1000"
+    version: "2"
+    environment-variables:
+      - "SOME_VAR=someVal"
+      - "SOME_VAR2=someVal2"
+    add-hosts:
+      - "docker:10.180.0.1"
+      - "somehost.com"
+    ports:
+      - "80:80"
+      - "127.0.0.1.8089:8089"
+    dns:
+      - "0.0.0.0"
+      - "8.8.8.8"
+    work-dir: "/home/service"
+    volumes:
+      - "/path/to/current/dir/cache:/tmp"
+      - "/path/to/current/dir:/home/service"
+    image-command: "service"
+    pre-commands:
+      - "pre cmd 1"
+      - "pre cmd 2"
+    post-commands:
+      - "post cmd 1"
+      - "post cmd 2"
