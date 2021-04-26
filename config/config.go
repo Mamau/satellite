@@ -6,9 +6,9 @@ import (
 	"log"
 	"sync"
 
-	"github.com/mamau/starter/config/docker"
+	"github.com/mamau/satellite/config/docker"
 
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/satellite/libs"
 
 	"gopkg.in/yaml.v2"
 )
@@ -59,7 +59,7 @@ func NewConfig(path string) *Config {
 }
 
 func GetConfig() *Config {
-	path := libs.GetPwd() + "/starter"
+	path := libs.GetPwd() + "/satellite"
 	c := NewConfig(path)
 	fileName := GetClientConfig(c.Path)
 	if fileName == "" {

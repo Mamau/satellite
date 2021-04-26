@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mamau/starter/config/docker"
+	"github.com/mamau/satellite/config/docker"
 )
 
 type Service struct {

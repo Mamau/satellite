@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/mamau/starter/cmd"
+	"github.com/mamau/satellite/cmd"
 
 	"github.com/joho/godotenv"
 )

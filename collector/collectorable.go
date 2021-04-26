@@ -1,7 +1,7 @@
 package collector
 
 import (
-	"github.com/mamau/starter/config/docker"
+	"github.com/mamau/satellite/config/docker"
 )
 
 type Collectorable interface {

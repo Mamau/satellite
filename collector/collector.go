@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/satellite/libs"
 )
 
 type Collector struct {

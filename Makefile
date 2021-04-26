@@ -1,4 +1,4 @@
-PROJECT_NAME=starter
+PROJECT_NAME=satlt
 
 DEFAULT_GOAL := help
 help:

@@ -4,11 +4,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/satellite/libs"
 )
 
 func TestGetMacros(t *testing.T) {
-	c := getConfig("/testdata/starter")
+	c := getConfig("/testdata/satellite")
 	if m := c.GetMacros("test_not_found"); m != nil {
 		t.Errorf("macros must be empty")
 	}
@@ -19,7 +19,7 @@ func TestGetMacros(t *testing.T) {
 }
 
 func TestGetService(t *testing.T) {
-	c := getConfig("/testdata/starter")
+	c := getConfig("/testdata/satellite")
 	if s := c.GetService("php"); s.Name != "php" {
 		t.Error("got wrong service")
 	}
@@ -30,21 +30,21 @@ func TestGetService(t *testing.T) {
 }
 
 func TestGetServices(t *testing.T) {
-	c := getConfig("/testdata/starter")
+	c := getConfig("/testdata/satellite")
 	if list := c.GetServices(); strings.Join(list, " ") != "php mysql" {
 		t.Errorf("services expected %q", "php mysql")
 	}
 }
 
 func TestGetClientConfig(t *testing.T) {
-	fp := libs.GetPwd() + "/testdata/starter"
+	fp := libs.GetPwd() + "/testdata/satellite"
 	result := GetClientConfig(fp)
 
 	if result != fp+".yaml" {
 		t.Errorf("file %s is not exist", fp)
 	}
 
-	fp = libs.GetPwd() + "/testdata/starter_not_exists"
+	fp = libs.GetPwd() + "/testdata/satellite_not_exists"
 	result = GetClientConfig(fp)
 	if result != "" {
 		t.Errorf("file %s not exists and return non empty string", fp)
@@ -52,7 +52,7 @@ func TestGetClientConfig(t *testing.T) {
 }
 
 func getConfig(cn string) *Config {
-	c := NewConfig(libs.GetPwd() + "/testdata/starter")
+	c := NewConfig(libs.GetPwd() + "/testdata/satellite")
 	c.Path = libs.GetPwd() + cn
 	return GetConfig()
 }

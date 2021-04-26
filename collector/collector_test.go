@@ -4,10 +4,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/satellite/libs"
 
-	"github.com/mamau/starter/config"
-	"github.com/mamau/starter/entity"
+	"github.com/mamau/satellite/config"
+	"github.com/mamau/satellite/entity"
 )
 
 func TestCollectCommand(t *testing.T) {
@@ -200,7 +200,7 @@ func getService(n string, args []string) *entity.Service {
 }
 
 func setConfig() *config.Config {
-	config.NewConfig(libs.GetPwd() + "/testdata/starter")
+	config.NewConfig(libs.GetPwd() + "/testdata/satellite")
 	c := config.GetConfig()
 	return c
 }

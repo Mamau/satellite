@@ -5,15 +5,15 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/mamau/starter/config"
+	"github.com/mamau/satellite/config"
 
 	"github.com/gookit/color"
-	"github.com/mamau/starter/libs"
+	"github.com/mamau/satellite/libs"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "starter",
+	Use:   "satlt",
 	Short: "All command",
 	Long:  "Show all command",
 }

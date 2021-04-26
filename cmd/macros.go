@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
-	"github.com/mamau/starter/config"
+	"github.com/mamau/satellite/config"
 
 	"github.com/spf13/cobra"
 )
