@@ -1,6 +1,7 @@
 package libs
 
 import (
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -8,6 +9,14 @@ import (
 	"testing"
 	"time"
 )
+
+func TestGetGatewayHost(t *testing.T) {
+	data, _ := ioutil.ReadFile(GetPwd() + "/testdata/network-data.json")
+	e := "172.17.0.1"
+	if host := RetrieveGatewayHost(data); host != e {
+		t.Errorf("host must be %q got %q", e, host)
+	}
+}
 
 func TestDeleteEmpty(t *testing.T) {
 	expectedItems := 3
@@ -98,7 +107,7 @@ func TestFileExists(t *testing.T) {
 	}
 }
 
-func TestReplacePwdVariable(t *testing.T) {
+func TestReplaceInternalVariables(t *testing.T) {
 	data := []string{
 		"some",
 		"$(pwd)",
@@ -111,7 +120,7 @@ func TestReplacePwdVariable(t *testing.T) {
 		"test",
 		GetPwd() + "/any/path",
 	}
-	if res := ReplacePwdVariable(data); strings.Join(res, " ") != strings.Join(e, " ") {
+	if res := ReplaceInternalVariables("\\$(\\(pwd\\))", GetPwd(), data); strings.Join(res, " ") != strings.Join(e, " ") {
 		t.Errorf("wrong replace pwd dir, expected %q, got %q", strings.Join(e, " "), strings.Join(res, " "))
 	}
 }

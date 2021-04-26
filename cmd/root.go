@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+	"strings"
 
 	"github.com/mamau/satellite/config"
 
@@ -22,8 +24,10 @@ const commandName = "docker"
 
 func Docker(dc Runnable) *exec.Cmd {
 	replacedEnv := libs.ReplaceEnvVariables(dc.CollectCommand())
-	replacedPwd := libs.ReplacePwdVariable(replacedEnv)
-	dcCommand := exec.Command(commandName, replacedPwd...)
+	replacedPwd := libs.ReplaceInternalVariables("\\$(\\(pwd\\))", libs.GetPwd(), replacedEnv)
+	replaceGateWay := getReplaceGateWay(replacedPwd)
+
+	dcCommand := exec.Command(commandName, replaceGateWay...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
@@ -64,4 +68,16 @@ func getAvailableCommands() []string {
 		availableCommands = append(availableCommands, v.Name())
 	}
 	return availableCommands
+}
+
+func getReplaceGateWay(data []string) []string {
+	from := "\\$(\\(gatewayHost\\))"
+	r := regexp.MustCompile(from)
+	if found := r.Find([]byte(strings.Join(data, " "))); found == nil {
+		return data
+	}
+
+	inspectData := libs.DockerExec([]string{"network", "inspect", "bridge"})
+	host := libs.RetrieveGatewayHost(inspectData)
+	return libs.ReplaceInternalVariables(from, host, data)
 }

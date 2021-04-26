@@ -1,7 +1,10 @@
 package libs
 
 import (
+	"encoding/json"
+	"log"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -45,16 +48,16 @@ func InsertToSlice(slice []string, target string, index int) []string {
 	return append(slice[:index], append([]string{target}, slice[index:]...)...)
 }
 
-func ReplacePwdVariable(args []string) []string {
-	for i, v := range args {
-		r := regexp.MustCompile("\\$(\\(pwd\\))")
+func ReplaceInternalVariables(from string, to string, list []string) []string {
+	for i, v := range list {
+		r := regexp.MustCompile(from)
 		if found := r.FindAllString(v, -1); found != nil {
 			for _, vv := range found {
-				args[i] = strings.Replace(args[i], vv, GetPwd(), -1)
+				list[i] = strings.Replace(list[i], vv, to, -1)
 			}
 		}
 	}
-	return args
+	return list
 }
 
 func ReplaceEnvVariables(args []string) []string {
@@ -87,4 +90,28 @@ func IndexExists(slice []string, index int) bool {
 		return true
 	}
 	return false
+}
+
+func DockerExec(signature []string) []byte {
+	cmd := exec.Command("docker", signature...)
+	data, err := cmd.Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return data
+}
+
+func RetrieveGatewayHost(data []byte) string {
+	var networkInspected []NetworkInspected
+	if err := json.Unmarshal(data, &networkInspected); err != nil {
+		log.Fatal(err)
+	}
+
+	if len(networkInspected) == 0 {
+		log.Println("cant network inspect")
+		return ""
+	}
+
+	return networkInspected[0].GetGateway()
 }
