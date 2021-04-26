@@ -1,4 +1,4 @@
-## Starter service
+## Satellite of your project
 
 Allows you not to install on your computer programs that
 accompanying developments.  
@@ -39,24 +39,24 @@ macros:
 ```
 From config described above, you can run commands"
 ```bash
-./starter yarn install 
+./stlt yarn install 
 #in fact will run: docker run -ti -u 1000 --workdir=/home/node -v $(pwd):/home/node -v $(pwd)/cache:/tmp node:14 yarn install
-./starter composer i --ignore-platform-reqs 
+./stlt composer i --ignore-platform-reqs 
 #in fact will run: docker run -ti -u 1000 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer:2 composer i --ignore-platform-reqs
-./starter macros init # will run all commands from section "commands"
+./stlt macros init # will run all commands from section "commands"
 ```
 For php you can use [composer package wkit](https://github.com/Mamau/web-kit). For downloading last version.   
-If you dont use composer, you can just download [bin file](https://github.com/Mamau/starter/releases), and put in the root of the project.  
+If you dont use composer, you can just download [bin file](https://github.com/Mamau/satellite/releases), and put in the root of the project.  
 For unix system need access:
 ```bash
-chmod +x starter
+chmod +x stlt
 ```
 For MacOS need additional rights, because i do not have a developer certificate.
 
 Example:
 ```bash
-starter help
+stlt help
 ``` 
 ### Example of config
-*[You can see here](https://github.com/Mamau/starter/tree/master/example)*  
+*[You can see here](https://github.com/Mamau/satellite/tree/master/example)*  
 
