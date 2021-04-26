@@ -7,12 +7,12 @@ import (
 )
 
 func TestGetRunnableCommand(t *testing.T) {
-	os.Args = []string{"satlt", "php", "-v"}
+	os.Args = []string{"sat", "php", "-v"}
 	if cmd := getRunnableCommand(); cmd != "php" {
 		t.Errorf("runnable command must be %q", "php")
 	}
 
-	os.Args = []string{"satlt"}
+	os.Args = []string{"sat"}
 	if cmd := getRunnableCommand(); cmd != "" {
 		t.Error("runnable command must be empty")
 	}

@@ -15,7 +15,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "satlt",
+	Use:   "sat",
 	Short: "All command",
 	Long:  "Show all command",
 }
