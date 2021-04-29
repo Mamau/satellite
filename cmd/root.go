@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/mamau/satellite/strategy"
+
 	"github.com/mamau/satellite/config"
 
 	"github.com/gookit/color"
@@ -24,6 +26,16 @@ const commandName = "docker"
 
 func Docker(dc Runnable) *exec.Cmd {
 	replacedEnv := libs.ReplaceEnvVariables(dc.CollectCommand())
+	replacedPwd := libs.ReplaceInternalVariables("\\$(\\(pwd\\))", libs.GetPwd(), replacedEnv)
+	replaceGateWay := getReplaceGateWay(replacedPwd)
+
+	dcCommand := exec.Command(commandName, replaceGateWay...)
+	color.Info.Printf("Running command: %v\n", dcCommand.String())
+	return dcCommand
+}
+
+func Docker2(strategy strategy.Strategy) *exec.Cmd {
+	replacedEnv := libs.ReplaceEnvVariables(strategy.ToCommand())
 	replacedPwd := libs.ReplaceInternalVariables("\\$(\\(pwd\\))", libs.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 

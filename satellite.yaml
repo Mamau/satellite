@@ -9,6 +9,25 @@ services:
       - "$(pwd):/home/node"
       - "$(pwd)/cache:/tmp"
 
+  - name: "fresh-img"
+    command: "pull"
+    image: "node"
+    version: "10"
+
+  - name: "my-image"
+    detach: true
+    clean-up: true
+    image: "gitlab.com/my/image"
+    environment-variables:
+      - "PHP_IDE_CONFIG=serverName=192.168.0.1"
+    volumes:
+      - "$(pwd):/home/www"
+    dns:
+      - "8.8.8.8"
+    ports:
+      - "127.0.0.1:443:443"
+      - "80:80"
+
   - name: "composer"
     version: "2"
     user-id: "1000"

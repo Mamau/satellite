@@ -13,7 +13,6 @@ type Service struct {
 }
 
 func NewService(config *docker.Docker, args []string) *Service {
-	//TODO: need validation
 	return &Service{
 		Config: config,
 		Args:   args,
