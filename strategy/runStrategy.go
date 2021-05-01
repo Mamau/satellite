@@ -1,6 +1,7 @@
 package strategy
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -9,12 +10,14 @@ import (
 )
 
 type RunStrategy struct {
+	ctx    context.Context
 	docker *docker.Docker
 	Args   []string
 }
 
-func NewRunStrategy(config *docker.Docker, args []string) *RunStrategy {
+func NewRunStrategy(ctx context.Context, config *docker.Docker, args []string) *RunStrategy {
 	return &RunStrategy{
+		ctx:    ctx,
 		docker: config,
 		Args:   args,
 	}
@@ -75,4 +78,8 @@ func (r *RunStrategy) getArgs() string {
 	}
 
 	return strings.Join(r.Args, " ")
+}
+
+func (r *RunStrategy) GetContext() context.Context {
+	return r.ctx
 }

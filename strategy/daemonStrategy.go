@@ -1,16 +1,20 @@
 package strategy
 
 import (
+	"context"
+
 	"github.com/mamau/satellite/config/docker"
 	"github.com/mamau/satellite/libs"
 )
 
 type DaemonStrategy struct {
+	ctx    context.Context
 	docker *docker.Docker
 }
 
-func NewDaemonStrategy(config *docker.Docker) *DaemonStrategy {
+func NewDaemonStrategy(ctx context.Context, config *docker.Docker) *DaemonStrategy {
 	return &DaemonStrategy{
+		ctx:    ctx,
 		docker: config,
 	}
 }
@@ -26,4 +30,8 @@ func (d *DaemonStrategy) ToCommand() []string {
 		d.docker.GetVolumes(),
 		d.docker.GetImage(),
 	})
+}
+
+func (d *DaemonStrategy) GetContext() context.Context {
+	return d.ctx
 }
