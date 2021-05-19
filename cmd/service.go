@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/gookit/color"
-	"github.com/mamau/satellite/collector"
 	"github.com/mamau/satellite/config"
-	"github.com/mamau/satellite/entity"
+	"github.com/mamau/satellite/config/docker"
 	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/strategy"
 
 	"github.com/spf13/cobra"
 )
@@ -18,18 +20,26 @@ var serviceCmd = &cobra.Command{
 		}
 		serviceName := args[0]
 		color.Cyan.Printf("Start %s\n", serviceName)
-		config := config.GetConfig()
-		s := config.GetService(serviceName)
+		s := config.GetConfig().GetService(serviceName)
 
-		if s.SkipArgs == false {
-			if len(args) < 2 {
-				color.Red.Printf("You should pass args")
-				return
-			}
-		}
+		strategy := determineStrategy(s, args[1:])
 
-		ser := entity.NewService(s, args[1:])
-		coll := collector.NewCollector(ser)
-		libs.RunCommandAtPTY(Docker(coll))
+		libs.RunCommandAtPTY(Docker(strategy))
 	},
+}
+
+func determineStrategy(config *docker.Docker, args []string) strategy.Strategy {
+	parent := context.Background()
+	if config.GetDockerCommand() == strategy.PullType {
+		ctx := context.WithValue(parent, "type", strategy.PullType)
+		return strategy.NewPullStrategy(ctx, config)
+	}
+
+	if config.Detach {
+		ctx := context.WithValue(parent, "type", strategy.DaemonType)
+		return strategy.NewDaemonStrategy(ctx, config)
+	}
+
+	ctx := context.WithValue(parent, "type", strategy.RunType)
+	return strategy.NewRunStrategy(ctx, config, args)
 }

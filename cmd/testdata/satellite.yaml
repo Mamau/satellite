@@ -1,14 +1,4 @@
 services:
-  - name: "yarn"
-    image: "node"
-    version: "14"
-    user-id: "1000"
-    image-command: "yarn"
-    work-dir: "/home/node"
-    volumes:
-      - "$(pwd):/home/node"
-      - "$(pwd)/cache:/tmp"
-
   - name: "fresh-img"
     command: "pull"
     image: "node"
@@ -30,15 +20,9 @@ services:
 
   - name: "composer"
     version: "2"
-    user-id: "1000"
+    user-id: "501"
     image-command: "composer"
     work-dir: "/home/www-data"
     volumes:
       - "$(pwd):/home/www-data"
       - "$(pwd)/cache:/tmp"
-
-macros:
-  - name: "init"
-    commands:
-      - "composer i --ignore-platform-reqs"
-      - "yarn install"

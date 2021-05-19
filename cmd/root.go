@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/mamau/satellite/strategy"
+
 	"github.com/mamau/satellite/config"
 
 	"github.com/gookit/color"
@@ -22,8 +24,8 @@ var rootCmd = &cobra.Command{
 
 const commandName = "docker"
 
-func Docker(dc Runnable) *exec.Cmd {
-	replacedEnv := libs.ReplaceEnvVariables(dc.CollectCommand())
+func Docker(strategy strategy.Strategy) *exec.Cmd {
+	replacedEnv := libs.ReplaceEnvVariables(strategy.ToCommand())
 	replacedPwd := libs.ReplaceInternalVariables("\\$(\\(pwd\\))", libs.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 

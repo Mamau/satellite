@@ -51,10 +51,6 @@ func (d *Docker) GetDockerCommand() string {
 }
 
 func (d *Docker) GetDetached() string {
-	if d.GetDockerCommand() == "pull" {
-		return ""
-	}
-
 	if d.Detach {
 		return "-d"
 	}
@@ -62,10 +58,6 @@ func (d *Docker) GetDetached() string {
 }
 
 func (d *Docker) GetFlags() string {
-	if d.GetDockerCommand() == "pull" || d.Detach {
-		return ""
-	}
-
 	if d.Flags != "" {
 		return d.Flags
 	}
@@ -91,6 +83,10 @@ func (d *Docker) GetPostCommands() string {
 func (d *Docker) GetWorkDir() string {
 	if d.WorkDir != "" {
 		return fmt.Sprintf("--workdir=%s", d.WorkDir)
+	}
+
+	if d.HomeDir != "" {
+		return fmt.Sprintf("--workdir=%s", d.HomeDir)
 	}
 
 	return ""
@@ -155,4 +151,32 @@ func (d *Docker) GetDns() string {
 	}
 
 	return strings.Join(dns, " ")
+}
+
+func (d *Docker) GetImage() string {
+	imageName := d.Image
+	if imageName == "" {
+		imageName = d.Name
+	}
+
+	if d.Version != "" {
+		return fmt.Sprintf("%s:%s", imageName, d.Version)
+	}
+	return imageName
+}
+
+func (d *Docker) GetImageCommand() string {
+	if d.ImageCommand == "" {
+		return ""
+	}
+
+	if len(d.GetPreCommands()) > 0 || len(d.GetPostCommands()) > 0 {
+		return "/bin/bash -c"
+	}
+
+	if d.BinBash == true {
+		return "/bin/bash -c " + d.ImageCommand
+	}
+
+	return d.ImageCommand
 }

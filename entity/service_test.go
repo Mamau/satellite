@@ -75,15 +75,7 @@ func TestGetFlags(t *testing.T) {
 	if c := s.GetDockerConfig().GetFlags(); c != "-T" {
 		t.Errorf("service must have glag %q,\n got %q\n", "-T", c)
 	}
-	s.GetDockerConfig().Command = "pull"
-	if c := s.GetDockerConfig().GetFlags(); c != "" {
-		t.Errorf("service must be empty, got %q\n", c)
-	}
-	s.GetDockerConfig().Command = ""
-	s.GetDockerConfig().Detach = true
-	if c := s.GetDockerConfig().GetFlags(); c != "" {
-		t.Errorf("service must be empty, got %q\n", c)
-	}
+
 	s.GetDockerConfig().Detach = false
 	s.GetDockerConfig().Flags = ""
 	if c := s.GetDockerConfig().GetFlags(); c != "-ti" {
@@ -93,9 +85,6 @@ func TestGetFlags(t *testing.T) {
 
 func TestGetDetached(t *testing.T) {
 	s := getService("service-with-pull-command", []string{"-v"})
-	if c := s.GetDockerConfig().GetDetached(); c != "" {
-		t.Error("when service has pull command, detach must be empty even if specified")
-	}
 	s.GetDockerConfig().Command = ""
 	if c := s.GetDockerConfig().GetDetached(); c != "-d" {
 		t.Errorf("service must have flag %q,\n got %q\n", "-d", c)
@@ -194,20 +183,20 @@ func getServiceDockerConfig(t *testing.T) {
 
 func TestGetWorkDir(t *testing.T) {
 	s := getService("service", []string{})
-	if wd := s.GetWorkDir(); wd != "" {
+	if wd := s.GetDockerConfig().GetWorkDir(); wd != "" {
 		t.Errorf("service must have empty work-dir, got: %q", wd)
 	}
 
 	e := "--workdir=/some/work/dir"
 	s.Config.WorkDir = "/some/work/dir"
-	if wd := s.GetWorkDir(); wd != e {
+	if wd := s.GetDockerConfig().GetWorkDir(); wd != e {
 		t.Errorf("service must have work-dir %q, got: %q", e, wd)
 	}
 
 	e = "--workdir=/some/another/dir"
 	s.Config.WorkDir = ""
 	s.Config.HomeDir = "/some/another/dir"
-	if wd := s.GetWorkDir(); wd != e {
+	if wd := s.GetDockerConfig().GetWorkDir(); wd != e {
 		t.Errorf("service must have work-dir %q, got: %q", e, wd)
 	}
 }

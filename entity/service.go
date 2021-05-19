@@ -13,23 +13,10 @@ type Service struct {
 }
 
 func NewService(config *docker.Docker, args []string) *Service {
-	//TODO: need validation
 	return &Service{
 		Config: config,
 		Args:   args,
 	}
-}
-
-func (s *Service) GetWorkDir() string {
-	if s.Config.WorkDir != "" {
-		return fmt.Sprintf("--workdir=%s", s.Config.WorkDir)
-	}
-
-	if s.Config.HomeDir != "" {
-		return fmt.Sprintf("--workdir=%s", s.Config.HomeDir)
-	}
-
-	return ""
 }
 
 func (s *Service) GetClientCommand() string {
