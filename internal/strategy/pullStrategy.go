@@ -5,15 +5,15 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type PullStrategy struct {
 	ctx    context.Context
-	docker *docker2.Docker
+	docker *docker.Docker
 }
 
-func NewPullStrategy(ctx context.Context, config *docker2.Docker) *PullStrategy {
+func NewPullStrategy(ctx context.Context, config *docker.Docker) *PullStrategy {
 	return &PullStrategy{
 		ctx:    ctx,
 		docker: config,

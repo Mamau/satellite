@@ -5,15 +5,15 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type DaemonStrategy struct {
 	ctx    context.Context
-	docker *docker2.Docker
+	docker *docker.Docker
 }
 
-func NewDaemonStrategy(ctx context.Context, config *docker2.Docker) *DaemonStrategy {
+func NewDaemonStrategy(ctx context.Context, config *docker.Docker) *DaemonStrategy {
 	return &DaemonStrategy{
 		ctx:    ctx,
 		docker: config,
@@ -25,6 +25,7 @@ func (d *DaemonStrategy) ToCommand() []string {
 		d.docker.GetDockerCommand(),
 		d.docker.GetDetached(),
 		d.docker.GetCleanUp(),
+		d.docker.GetNetwork(),
 		d.docker.GetEnvironmentVariables(),
 		d.docker.GetPorts(),
 		d.docker.GetDns(),

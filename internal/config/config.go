@@ -8,7 +8,7 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config/docker"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,10 +16,15 @@ import (
 var once sync.Once
 var instance *Config
 
+type Macros struct {
+	Name string   `yaml:"name"`
+	List []string `yaml:"commands"`
+}
+
 type Config struct {
 	Path     string
-	Macros   []Macros         `yaml:"macros"`
-	Services []docker2.Docker `yaml:"services"`
+	Macros   []Macros        `yaml:"macros"`
+	Services []docker.Docker `yaml:"services"`
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -31,7 +36,7 @@ func (c *Config) GetMacros(name string) *Macros {
 	return nil
 }
 
-func (c *Config) GetService(name string) *docker2.Docker {
+func (c *Config) GetService(name string) *docker.Docker {
 	for _, v := range c.Services {
 		if v.Name == name {
 			return &v
@@ -59,7 +64,7 @@ func NewConfig(path string) *Config {
 }
 
 func GetConfig() *Config {
-	path := pkg.GetPwd() + "/satellite"
+	path := fmt.Sprintf("%s/satellite", pkg.GetPwd())
 	c := NewConfig(path)
 	fileName := GetClientConfig(c.Path)
 	if fileName == "" {

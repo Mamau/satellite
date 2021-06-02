@@ -2,13 +2,14 @@ package commands
 
 import (
 	"context"
+	"os/exec"
+	"strings"
 
 	"github.com/mamau/satellite/pkg"
 
-	config2 "github.com/mamau/satellite/internal/config"
-	docker2 "github.com/mamau/satellite/internal/config/docker"
-
-	strategy2 "github.com/mamau/satellite/internal/strategy"
+	"github.com/mamau/satellite/internal/config"
+	"github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/strategy"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var serviceCmd = &cobra.Command{
 		}
 		serviceName := args[0]
 		color.Cyan.Printf("Start %s\n", serviceName)
-		s := config2.GetConfig().GetService(serviceName)
+		s := config.GetConfig().GetService(serviceName)
 
 		strategy := determineStrategy(s, args[1:])
 
@@ -30,18 +31,47 @@ var serviceCmd = &cobra.Command{
 	},
 }
 
-func determineStrategy(config *docker2.Docker, args []string) strategy2.Strategy {
+func determineStrategy(config *docker.Docker, args []string) strategy.Strategy {
+	createNetwork(config)
 	parent := context.Background()
-	if config.GetDockerCommand() == strategy2.PullType {
-		ctx := context.WithValue(parent, "type", strategy2.PullType)
-		return strategy2.NewPullStrategy(ctx, config)
+	if config.GetDockerCommand() == strategy.PullType {
+		ctx := context.WithValue(parent, "type", strategy.PullType)
+		return strategy.NewPullStrategy(ctx, config)
 	}
 
 	if config.Detach {
-		ctx := context.WithValue(parent, "type", strategy2.DaemonType)
-		return strategy2.NewDaemonStrategy(ctx, config)
+		ctx := context.WithValue(parent, "type", strategy.DaemonType)
+		return strategy.NewDaemonStrategy(ctx, config)
 	}
 
-	ctx := context.WithValue(parent, "type", strategy2.RunType)
-	return strategy2.NewRunStrategy(ctx, config, args)
+	ctx := context.WithValue(parent, "type", strategy.RunType)
+	return strategy.NewRunStrategy(ctx, config, args)
+}
+
+func createNetwork(config *docker.Docker) {
+	if config.Network == "" {
+		return
+	}
+
+	data := []string{
+		"network",
+		"inspect",
+		config.Network,
+	}
+
+	cmd := exec.Command(commandName, data...)
+	network, _ := cmd.Output()
+
+	if strings.TrimSuffix(string(network), "\n") == "[]" {
+		color.Yellow.Printf("Creating network %s\n", config.Network)
+		data := []string{
+			"network",
+			"create",
+			config.Network,
+		}
+		cmd := exec.Command(commandName, data...)
+		out, _ := cmd.Output()
+
+		color.Cyan.Printf("%s\n", out)
+	}
 }

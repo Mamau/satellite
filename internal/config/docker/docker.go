@@ -20,6 +20,7 @@ type Docker struct {
 	SkipArgs      bool     `yaml:"skip-args"`
 	Detach        bool     `yaml:"detach"`
 	CleanUp       bool     `yaml:"clean-up"`
+	Network       string   `yaml:"network"`
 	PreCommands   []string `yaml:"pre-commands"`
 	PostCommands  []string `yaml:"post-commands"`
 	Dns           []string `yaml:"dns"`
@@ -27,6 +28,13 @@ type Docker struct {
 	Ports         []string `yaml:"ports"`
 	AddHosts      []string `yaml:"add-hosts"`
 	EnvVars       []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetNetwork() string {
+	if d.Network != "" {
+		return fmt.Sprintf("--network %s", d.Network)
+	}
+	return ""
 }
 
 func (d *Docker) GetContainerName() string {

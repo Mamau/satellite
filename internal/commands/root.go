@@ -9,9 +9,9 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	config2 "github.com/mamau/satellite/internal/config"
+	"github.com/mamau/satellite/internal/config"
 
-	strategy2 "github.com/mamau/satellite/internal/strategy"
+	"github.com/mamau/satellite/internal/strategy"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -25,7 +25,7 @@ var rootCmd = &cobra.Command{
 
 const commandName = "docker"
 
-func Docker(strategy strategy2.Strategy) *exec.Cmd {
+func Docker(strategy strategy.Strategy) *exec.Cmd {
 	replacedEnv := pkg.ReplaceEnvVariables(strategy.ToCommand())
 	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
@@ -40,7 +40,7 @@ func Execute() {
 	ac := getAvailableCommands()
 
 	if _, has := pkg.Find(ac, rc); has == false {
-		c := config2.GetConfig()
+		c := config.GetConfig()
 		if _, hasService := pkg.Find(c.GetServices(), rc); hasService {
 			serviceCmd.Run(rootCmd, os.Args[1:])
 		} else {

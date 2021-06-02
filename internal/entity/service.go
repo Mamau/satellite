@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"strings"
 
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type Service struct {
-	Config *docker2.Docker
+	Config *docker.Docker
 	Args   []string
 }
 
-func NewService(config *docker2.Docker, args []string) *Service {
+func NewService(config *docker.Docker, args []string) *Service {
 	return &Service{
 		Config: config,
 		Args:   args,
@@ -60,6 +60,6 @@ func (s *Service) GetImageCommand() string {
 	return s.Config.ImageCommand
 }
 
-func (s *Service) GetDockerConfig() *docker2.Docker {
+func (s *Service) GetDockerConfig() *docker.Docker {
 	return s.Config
 }

@@ -7,16 +7,16 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type RunStrategy struct {
 	ctx    context.Context
-	docker *docker2.Docker
+	docker *docker.Docker
 	Args   []string
 }
 
-func NewRunStrategy(ctx context.Context, config *docker2.Docker, args []string) *RunStrategy {
+func NewRunStrategy(ctx context.Context, config *docker.Docker, args []string) *RunStrategy {
 	return &RunStrategy{
 		ctx:    ctx,
 		docker: config,
