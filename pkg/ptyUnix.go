@@ -1,16 +1,17 @@
 // +build !windows
 
-package libs
+package pkg
 
 import (
-	"github.com/creack/pty"
-	"golang.org/x/crypto/ssh/terminal"
 	"io"
 	"log"
 	"os"
 	"os/exec"
 	"os/signal"
 	"syscall"
+
+	"github.com/creack/pty"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 func RunCommandAtPTY(c *exec.Cmd) {

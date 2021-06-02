@@ -1,4 +1,5 @@
 PROJECT_NAME=sat
+MAIN_PATH=cmd/satelite/main.go
 
 DEFAULT_GOAL := help
 help:
@@ -6,6 +7,6 @@ help:
 
 build: ## Build project.
 	gotest ./...
-	GOOS=darwin go build -ldflags "-s -w" -o bin/darwin_$(PROJECT_NAME)
-	GOOS=windows go build -ldflags "-s -w" -o bin/windows_$(PROJECT_NAME).exe
-	GOOS=linux go build -ldflags "-s -w" -o bin/linux_$(PROJECT_NAME)
+	GOOS=darwin go build -ldflags "-s -w" -o bin/darwin_$(PROJECT_NAME) $(MAIN_PATH)
+	GOOS=windows go build -ldflags "-s -w" -o bin/windows_$(PROJECT_NAME).exe $(MAIN_PATH)
+	GOOS=linux go build -ldflags "-s -w" -o bin/linux_$(PROJECT_NAME) $(MAIN_PATH)

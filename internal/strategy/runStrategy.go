@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mamau/satellite/config/docker"
-	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/pkg"
+
+	docker2 "github.com/mamau/satellite/internal/config/docker"
 )
 
 type RunStrategy struct {
 	ctx    context.Context
-	docker *docker.Docker
+	docker *docker2.Docker
 	Args   []string
 }
 
-func NewRunStrategy(ctx context.Context, config *docker.Docker, args []string) *RunStrategy {
+func NewRunStrategy(ctx context.Context, config *docker2.Docker, args []string) *RunStrategy {
 	return &RunStrategy{
 		ctx:    ctx,
 		docker: config,
@@ -24,7 +25,7 @@ func NewRunStrategy(ctx context.Context, config *docker.Docker, args []string) *
 }
 
 func (r *RunStrategy) ToCommand() []string {
-	bc := libs.MergeSliceOfString([]string{
+	bc := pkg.MergeSliceOfString([]string{
 		r.docker.GetDockerCommand(),
 		r.docker.GetFlags(),
 		r.docker.GetCleanUp(),
@@ -39,7 +40,7 @@ func (r *RunStrategy) ToCommand() []string {
 		r.docker.GetImage(),
 	})
 
-	return append(bc, libs.DeleteEmpty(r.clientCommand())...)
+	return append(bc, pkg.DeleteEmpty(r.clientCommand())...)
 }
 
 func (r *RunStrategy) clientCommand() []string {
@@ -61,8 +62,8 @@ func (r *RunStrategy) clientCommand() []string {
 		clientCommand,
 		postCommand,
 	}
-	clientCmd := fmt.Sprintf("%s", strings.Join(libs.DeleteEmpty(listCmd), " "))
-	cleanExecCmd := libs.DeleteEmpty(libs.MergeSliceOfString([]string{execCommand}))
+	clientCmd := fmt.Sprintf("%s", strings.Join(pkg.DeleteEmpty(listCmd), " "))
+	cleanExecCmd := pkg.DeleteEmpty(pkg.MergeSliceOfString([]string{execCommand}))
 
 	return append(cleanExecCmd, clientCmd)
 }

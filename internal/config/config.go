@@ -6,9 +6,9 @@ import (
 	"log"
 	"sync"
 
-	"github.com/mamau/satellite/config/docker"
+	"github.com/mamau/satellite/pkg"
 
-	"github.com/mamau/satellite/libs"
+	docker2 "github.com/mamau/satellite/internal/config/docker"
 
 	"gopkg.in/yaml.v2"
 )
@@ -18,8 +18,8 @@ var instance *Config
 
 type Config struct {
 	Path     string
-	Macros   []Macros        `yaml:"macros"`
-	Services []docker.Docker `yaml:"services"`
+	Macros   []Macros         `yaml:"macros"`
+	Services []docker2.Docker `yaml:"services"`
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -31,7 +31,7 @@ func (c *Config) GetMacros(name string) *Macros {
 	return nil
 }
 
-func (c *Config) GetService(name string) *docker.Docker {
+func (c *Config) GetService(name string) *docker2.Docker {
 	for _, v := range c.Services {
 		if v.Name == name {
 			return &v
@@ -59,7 +59,7 @@ func NewConfig(path string) *Config {
 }
 
 func GetConfig() *Config {
-	path := libs.GetPwd() + "/satellite"
+	path := pkg.GetPwd() + "/satellite"
 	c := NewConfig(path)
 	fileName := GetClientConfig(c.Path)
 	if fileName == "" {
@@ -81,7 +81,7 @@ func GetConfig() *Config {
 func GetClientConfig(filePath string) string {
 	for _, ext := range []string{"yaml", "yml"} {
 		file := fmt.Sprintf("%s.%s", filePath, ext)
-		if libs.FileExists(file) {
+		if pkg.FileExists(file) {
 			return file
 		}
 	}

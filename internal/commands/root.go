@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -7,12 +7,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mamau/satellite/strategy"
+	"github.com/mamau/satellite/pkg"
 
-	"github.com/mamau/satellite/config"
+	config2 "github.com/mamau/satellite/internal/config"
+
+	strategy2 "github.com/mamau/satellite/internal/strategy"
 
 	"github.com/gookit/color"
-	"github.com/mamau/satellite/libs"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +25,9 @@ var rootCmd = &cobra.Command{
 
 const commandName = "docker"
 
-func Docker(strategy strategy.Strategy) *exec.Cmd {
-	replacedEnv := libs.ReplaceEnvVariables(strategy.ToCommand())
-	replacedPwd := libs.ReplaceInternalVariables("\\$(\\(pwd\\))", libs.GetPwd(), replacedEnv)
+func Docker(strategy strategy2.Strategy) *exec.Cmd {
+	replacedEnv := pkg.ReplaceEnvVariables(strategy.ToCommand())
+	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
 	dcCommand := exec.Command(commandName, replaceGateWay...)
@@ -38,9 +39,9 @@ func Execute() {
 	rc := getRunnableCommand()
 	ac := getAvailableCommands()
 
-	if _, has := libs.Find(ac, rc); has == false {
-		c := config.GetConfig()
-		if _, hasService := libs.Find(c.GetServices(), rc); hasService {
+	if _, has := pkg.Find(ac, rc); has == false {
+		c := config2.GetConfig()
+		if _, hasService := pkg.Find(c.GetServices(), rc); hasService {
 			serviceCmd.Run(rootCmd, os.Args[1:])
 		} else {
 			defaultExec()
@@ -58,7 +59,7 @@ func defaultExec() {
 }
 
 func getRunnableCommand() string {
-	if isSet := libs.IndexExists(os.Args, 1); isSet {
+	if isSet := pkg.IndexExists(os.Args, 1); isSet {
 		return os.Args[1]
 	}
 	return ""
@@ -79,7 +80,7 @@ func getReplaceGateWay(data []string) []string {
 		return data
 	}
 
-	inspectData := libs.DockerExec([]string{"network", "inspect", "bridge"})
-	host := libs.RetrieveGatewayHost(inspectData)
-	return libs.ReplaceInternalVariables(from, host, data)
+	inspectData := pkg.DockerExec([]string{"network", "inspect", "bridge"})
+	host := pkg.RetrieveGatewayHost(inspectData)
+	return pkg.ReplaceInternalVariables(from, host, data)
 }

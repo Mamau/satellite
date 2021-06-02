@@ -3,8 +3,9 @@ package entity
 import (
 	"testing"
 
-	"github.com/mamau/satellite/config"
-	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/pkg"
+
+	config2 "github.com/mamau/satellite/internal/config"
 )
 
 func TestGetImage(t *testing.T) {
@@ -207,8 +208,8 @@ func getService(n string, args []string) *Service {
 	return NewService(s, args)
 }
 
-func setConfig() *config.Config {
-	config.NewConfig(libs.GetPwd() + "/testdata/satellite")
-	c := config.GetConfig()
+func setConfig() *config2.Config {
+	config2.NewConfig(pkg.GetPwd() + "/testdata/satellite")
+	c := config2.GetConfig()
 	return c
 }

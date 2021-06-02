@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/pkg"
 )
 
 func TestGetMacros(t *testing.T) {
@@ -37,14 +37,14 @@ func TestGetServices(t *testing.T) {
 }
 
 func TestGetClientConfig(t *testing.T) {
-	fp := libs.GetPwd() + "/testdata/satellite"
+	fp := pkg.GetPwd() + "/testdata/satellite"
 	result := GetClientConfig(fp)
 
 	if result != fp+".yaml" {
 		t.Errorf("file %s is not exist", fp)
 	}
 
-	fp = libs.GetPwd() + "/testdata/satellite_not_exists"
+	fp = pkg.GetPwd() + "/testdata/satellite_not_exists"
 	result = GetClientConfig(fp)
 	if result != "" {
 		t.Errorf("file %s not exists and return non empty string", fp)
@@ -52,7 +52,7 @@ func TestGetClientConfig(t *testing.T) {
 }
 
 func getConfig(cn string) *Config {
-	c := NewConfig(libs.GetPwd() + "/testdata/satellite")
-	c.Path = libs.GetPwd() + cn
+	c := NewConfig(pkg.GetPwd() + "/testdata/satellite")
+	c.Path = pkg.GetPwd() + cn
 	return GetConfig()
 }

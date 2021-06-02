@@ -1,4 +1,4 @@
-package libs
+package pkg
 
 import (
 	"encoding/json"

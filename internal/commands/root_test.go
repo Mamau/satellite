@@ -1,14 +1,15 @@
-package cmd
+package commands
 
 import (
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/mamau/satellite/strategy"
+	"github.com/mamau/satellite/pkg"
 
-	"github.com/mamau/satellite/config"
-	"github.com/mamau/satellite/libs"
+	config2 "github.com/mamau/satellite/internal/config"
+
+	strategy2 "github.com/mamau/satellite/internal/strategy"
 )
 
 func TestGetRunnableCommand(t *testing.T) {
@@ -39,27 +40,27 @@ func TestDetermineStrategy(t *testing.T) {
 	c := setConfig().GetService("fresh-img")
 	strat := determineStrategy(c, []string{})
 	st := strat.GetContext().Value("type")
-	if st != strategy.PullType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.PullType, st)
+	if st != strategy2.PullType {
+		t.Errorf("worng value context, expected %q, got %q", strategy2.PullType, st)
 	}
 
 	c = setConfig().GetService("my-image")
 	strat = determineStrategy(c, []string{})
 	st = strat.GetContext().Value("type")
-	if st != strategy.DaemonType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.DaemonType, st)
+	if st != strategy2.DaemonType {
+		t.Errorf("worng value context, expected %q, got %q", strategy2.DaemonType, st)
 	}
 
 	c = setConfig().GetService("composer")
 	strat = determineStrategy(c, []string{})
 	st = strat.GetContext().Value("type")
-	if st != strategy.RunType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.RunType, st)
+	if st != strategy2.RunType {
+		t.Errorf("worng value context, expected %q, got %q", strategy2.RunType, st)
 	}
 }
 
-func setConfig() *config.Config {
-	config.NewConfig(libs.GetPwd() + "/testdata/satellite")
-	c := config.GetConfig()
+func setConfig() *config2.Config {
+	config2.NewConfig(pkg.GetPwd() + "/testdata/satellite")
+	c := config2.GetConfig()
 	return c
 }

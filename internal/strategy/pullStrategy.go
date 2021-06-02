@@ -3,16 +3,17 @@ package strategy
 import (
 	"context"
 
-	"github.com/mamau/satellite/config/docker"
-	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/pkg"
+
+	docker2 "github.com/mamau/satellite/internal/config/docker"
 )
 
 type PullStrategy struct {
 	ctx    context.Context
-	docker *docker.Docker
+	docker *docker2.Docker
 }
 
-func NewPullStrategy(ctx context.Context, config *docker.Docker) *PullStrategy {
+func NewPullStrategy(ctx context.Context, config *docker2.Docker) *PullStrategy {
 	return &PullStrategy{
 		ctx:    ctx,
 		docker: config,
@@ -20,7 +21,7 @@ func NewPullStrategy(ctx context.Context, config *docker.Docker) *PullStrategy {
 }
 
 func (p *PullStrategy) ToCommand() []string {
-	return libs.MergeSliceOfString([]string{
+	return pkg.MergeSliceOfString([]string{
 		p.docker.GetDockerCommand(),
 		p.docker.GetImage(),
 	})

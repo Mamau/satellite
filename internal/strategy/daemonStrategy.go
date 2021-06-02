@@ -3,16 +3,17 @@ package strategy
 import (
 	"context"
 
-	"github.com/mamau/satellite/config/docker"
-	"github.com/mamau/satellite/libs"
+	"github.com/mamau/satellite/pkg"
+
+	docker2 "github.com/mamau/satellite/internal/config/docker"
 )
 
 type DaemonStrategy struct {
 	ctx    context.Context
-	docker *docker.Docker
+	docker *docker2.Docker
 }
 
-func NewDaemonStrategy(ctx context.Context, config *docker.Docker) *DaemonStrategy {
+func NewDaemonStrategy(ctx context.Context, config *docker2.Docker) *DaemonStrategy {
 	return &DaemonStrategy{
 		ctx:    ctx,
 		docker: config,
@@ -20,7 +21,7 @@ func NewDaemonStrategy(ctx context.Context, config *docker.Docker) *DaemonStrate
 }
 
 func (d *DaemonStrategy) ToCommand() []string {
-	return libs.MergeSliceOfString([]string{
+	return pkg.MergeSliceOfString([]string{
 		d.docker.GetDockerCommand(),
 		d.docker.GetDetached(),
 		d.docker.GetCleanUp(),

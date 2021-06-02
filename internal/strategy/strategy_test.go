@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mamau/satellite/config/docker"
+	"github.com/mamau/satellite/pkg"
 
-	"github.com/mamau/satellite/config"
-	"github.com/mamau/satellite/libs"
+	config2 "github.com/mamau/satellite/internal/config"
+	docker2 "github.com/mamau/satellite/internal/config/docker"
 )
 
 func TestToCommand(t *testing.T) {
@@ -151,12 +151,12 @@ func createStrategy(name, t string, args []string) Strategy {
 	}
 }
 
-func createRunStrategy(ctx context.Context, c *docker.Docker, args []string) *RunStrategy {
+func createRunStrategy(ctx context.Context, c *docker2.Docker, args []string) *RunStrategy {
 	return NewRunStrategy(ctx, c, args)
 }
 
-func setConfig() *config.Config {
-	config.NewConfig(libs.GetPwd() + "/testdata/satellite")
-	c := config.GetConfig()
+func setConfig() *config2.Config {
+	config2.NewConfig(pkg.GetPwd() + "/testdata/satellite")
+	c := config2.GetConfig()
 	return c
 }
