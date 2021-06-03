@@ -3,7 +3,7 @@ package commands
 import (
 	"strings"
 
-	config2 "github.com/mamau/satellite/internal/config"
+	"github.com/mamau/satellite/internal/config"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -23,7 +23,7 @@ var macrosCmd = &cobra.Command{
 
 		var cl []string
 
-		c := config2.GetConfig()
+		c := config.GetConfig()
 		macros := c.GetMacros(macrosName)
 
 		if macros == nil {

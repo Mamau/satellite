@@ -16,11 +16,12 @@ type Docker struct {
 	Version       string   `yaml:"version"`
 	UserId        string   `yaml:"user-id"`
 	WorkDir       string   `yaml:"work-dir"`
+	Network       string   `yaml:"network"`
+	Description   string   `yaml:"description"`
 	BinBash       bool     `yaml:"bin-bash"`
 	SkipArgs      bool     `yaml:"skip-args"`
 	Detach        bool     `yaml:"detach"`
 	CleanUp       bool     `yaml:"clean-up"`
-	Network       string   `yaml:"network"`
 	PreCommands   []string `yaml:"pre-commands"`
 	PostCommands  []string `yaml:"post-commands"`
 	Dns           []string `yaml:"dns"`

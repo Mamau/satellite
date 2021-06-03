@@ -35,42 +35,37 @@ func Docker(strategy strategy.Strategy) *exec.Cmd {
 	return dcCommand
 }
 
-func Execute() {
-	rc := getRunnableCommand()
-	ac := getAvailableCommands()
+func InitServiceCommand() {
+	c := config.GetConfig()
+	for _, service := range c.GetServices() {
+		rootCmd.AddCommand(&cobra.Command{
+			Use:                service.Name,
+			Short:              service.Description,
+			Long:               service.Description,
+			DisableFlagParsing: true,
+			Run: func(cmd *cobra.Command, args []string) {
+				if len(args) < 1 {
+					color.Red.Printf("You should pass service name")
+					return
+				}
 
-	if _, has := pkg.Find(ac, rc); has == false {
-		c := config.GetConfig()
-		if _, hasService := pkg.Find(c.GetServices(), rc); hasService {
-			serviceCmd.Run(rootCmd, os.Args[1:])
-		} else {
-			defaultExec()
-		}
-	} else {
-		defaultExec()
+				serviceName := cmd.Name()
+				color.Cyan.Printf("Start %s\n", serviceName)
+				s := config.GetConfig().GetService(serviceName)
+
+				sttt := determineStrategy(s, args[1:])
+
+				pkg.RunCommandAtPTY(Docker(sttt))
+			},
+		})
 	}
 }
 
-func defaultExec() {
+func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func getRunnableCommand() string {
-	if isSet := pkg.IndexExists(os.Args, 1); isSet {
-		return os.Args[1]
-	}
-	return ""
-}
-
-func getAvailableCommands() []string {
-	var availableCommands []string
-	for _, v := range rootCmd.Commands() {
-		availableCommands = append(availableCommands, v.Name())
-	}
-	return availableCommands
 }
 
 func getReplaceGateWay(data []string) []string {

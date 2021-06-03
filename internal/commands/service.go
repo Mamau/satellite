@@ -25,6 +25,7 @@ var serviceCmd = &cobra.Command{
 		color.Cyan.Printf("Start %s\n", serviceName)
 		s := config.GetConfig().GetService(serviceName)
 
+		createNetwork(s)
 		strategy := determineStrategy(s, args[1:])
 
 		pkg.RunCommandAtPTY(Docker(strategy))
@@ -32,7 +33,6 @@ var serviceCmd = &cobra.Command{
 }
 
 func determineStrategy(config *docker.Docker, args []string) strategy.Strategy {
-	createNetwork(config)
 	parent := context.Background()
 	if config.GetDockerCommand() == strategy.PullType {
 		ctx := context.WithValue(parent, "type", strategy.PullType)

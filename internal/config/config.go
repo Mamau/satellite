@@ -16,6 +16,11 @@ import (
 var once sync.Once
 var instance *Config
 
+type Service struct {
+	Name        string
+	Description string
+}
+
 type Macros struct {
 	Name string   `yaml:"name"`
 	List []string `yaml:"commands"`
@@ -45,10 +50,13 @@ func (c *Config) GetService(name string) *docker.Docker {
 	return nil
 }
 
-func (c *Config) GetServices() []string {
-	var list []string
+func (c *Config) GetServices() []Service {
+	var list []Service
 	for _, v := range c.Services {
-		list = append(list, v.Name)
+		list = append(list, Service{
+			Name:        v.Name,
+			Description: v.Description,
+		})
 	}
 	return list
 }

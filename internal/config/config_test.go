@@ -1,7 +1,6 @@
 package config
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/mamau/satellite/pkg"
@@ -31,8 +30,25 @@ func TestGetService(t *testing.T) {
 
 func TestGetServices(t *testing.T) {
 	c := getConfig("/testdata/satellite")
-	if list := c.GetServices(); strings.Join(list, " ") != "php mysql" {
-		t.Errorf("services expected %q", "php mysql")
+	services := c.GetServices()
+	e := "php"
+	if services[0].Name != e {
+		t.Errorf("services #1 expected name %q", e)
+	}
+
+	ed := "some description"
+	if services[0].Description != ed {
+		t.Errorf("services #1 expected description %q", ed)
+	}
+
+	e2 := "mysql"
+	if services[1].Name != e2 {
+		t.Errorf("services #2 expected name %q", e2)
+	}
+
+	ed2 := "some mysql description"
+	if services[1].Description != ed2 {
+		t.Errorf("services #2 expected description %q", ed2)
 	}
 }
 

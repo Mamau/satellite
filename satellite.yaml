@@ -29,6 +29,7 @@ services:
       - "80:80"
 
   - name: "composer"
+    description: "Install composer dependencies"
     version: "2"
     user-id: "1000"
     image-command: "composer"

@@ -1,7 +1,9 @@
 services:
   - name: "php"
+    description: "some description"
     version: "7.4"
   - name: "mysql"
+    description: "some mysql description"
     version: "5.7"
 
 macros:

@@ -96,7 +96,7 @@ func DockerExec(signature []string) []byte {
 	cmd := exec.Command("docker", signature...)
 	data, err := cmd.Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Cant exec docker command, err: %s", err)
 	}
 
 	return data
