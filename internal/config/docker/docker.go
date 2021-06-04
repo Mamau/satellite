@@ -2,6 +2,7 @@ package docker
 
 import (
 	"fmt"
+	"runtime"
 	"strings"
 )
 
@@ -67,10 +68,18 @@ func (d *Docker) GetDetached() string {
 }
 
 func (d *Docker) GetFlags() string {
-	if d.Flags != "" {
-		return d.Flags
+	flags := d.Flags
+	if flags == "" {
+		flags = "-ti"
 	}
-	return "-ti"
+	if runtime.GOOS == "windows" {
+		flags = strings.Replace(strings.ToLower(flags), "-t", "-", -1)
+		flags = strings.Replace(strings.ToLower(flags), "t", "", -1)
+		if flags == "-" {
+			flags = ""
+		}
+	}
+	return flags
 }
 
 func (d *Docker) GetPreCommands() string {

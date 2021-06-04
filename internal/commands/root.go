@@ -53,9 +53,9 @@ func InitServiceCommand() {
 				color.Cyan.Printf("Start %s\n", serviceName)
 				s := config.GetConfig().GetService(serviceName)
 
-				sttt := determineStrategy(s, args[1:])
+				strgy := determineStrategy(s, args[1:])
 
-				pkg.RunCommandAtPTY(Docker(sttt))
+				pkg.RunCommandAtPTY(Docker(strgy))
 			},
 		})
 	}
