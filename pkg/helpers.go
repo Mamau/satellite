@@ -2,7 +2,10 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"regexp"
@@ -114,4 +117,32 @@ func RetrieveGatewayHost(data []byte) string {
 	}
 
 	return networkInspected[0].GetGateway()
+}
+
+func DownloadFile(uri, fileName, dst string) string {
+	tmpFile := fmt.Sprintf("%s%s", dst, fileName)
+	resp, err := http.Get(uri)
+	if err != nil {
+		log.Fatalf("error while get latest file, err: %s\n", err)
+		return ""
+	}
+
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			log.Fatalf("error while close response body, err: %s\n", err)
+		}
+	}()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("error while read source, err: %s\n", err)
+		return ""
+	}
+
+	if err := ioutil.WriteFile(tmpFile, data, 0755); err != nil {
+		log.Fatalf("error while write file, err: %s\n", err)
+		return ""
+	}
+
+	return tmpFile
 }
