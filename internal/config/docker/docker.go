@@ -2,6 +2,7 @@ package docker
 
 import (
 	"fmt"
+	"os/user"
 	"runtime"
 	"strings"
 )
@@ -86,14 +87,6 @@ func (d *Docker) GetPreCommands() string {
 	return strings.Join(d.PreCommands, "; ")
 }
 
-func (d *Docker) SetPreCommands(pc []string) {
-	d.PreCommands = pc
-}
-
-func (d *Docker) SetPostCommands(pc []string) {
-	d.PostCommands = pc
-}
-
 func (d *Docker) GetPostCommands() string {
 	return strings.Join(d.PostCommands, "; ")
 }
@@ -110,16 +103,22 @@ func (d *Docker) GetWorkDir() string {
 	return ""
 }
 
-func (d *Docker) SetWorkDir(wd string) {
-	d.WorkDir = wd
-}
-
 func (d *Docker) GetUserId() string {
-	if d.UserId == "" {
+	userID := d.UserId
+
+	if userID == "" {
 		return ""
 	}
 
-	return fmt.Sprintf("-u %s", d.UserId)
+	if userID == "$(uid)" {
+		currentUser, err := user.Current()
+		if err != nil {
+			return ""
+		}
+		userID = currentUser.Uid
+	}
+
+	return fmt.Sprintf("-u %s", userID)
 }
 
 func (d *Docker) GetEnvironmentVariables() string {

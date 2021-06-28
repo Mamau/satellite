@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mamau/satellite/internal/updater"
-
 	"github.com/mamau/satellite/internal/commands"
+	"github.com/mamau/satellite/internal/updater"
 
 	"github.com/joho/godotenv"
 )
