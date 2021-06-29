@@ -6,13 +6,173 @@ import (
 	"testing"
 )
 
-//func TestGetEnvironmentVariables(t *testing.T) {
-//	docker := Docker{}
-//	checkForEmpty(t, "environment-variables", docker.GetEnvironmentVariables)
-//
-//	docker.EnvVars = []string{"PHP_IDE_CONFIG=serverName=192.168.0.1"}
-//
-//}
+func TestGetImageCommand(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "image-command", docker.GetImageCommand)
+
+	docker.ImageCommand = "--version"
+	e := "--version"
+	r := docker.GetImageCommand()
+	if e != r {
+		t.Errorf("expected image-command is %q, got %q", e, r)
+	}
+
+	docker.BinBash = true
+	e = "/bin/bash -c --version"
+	r = docker.GetImageCommand()
+	if e != r {
+		t.Errorf("expected image-command is %q, got %q", e, r)
+	}
+
+	docker.BinBash = false
+	docker.PreCommands = []string{"ls -la"}
+	e = "/bin/bash -c"
+	r = docker.GetImageCommand()
+	if e != r {
+		t.Errorf("when bin-bash is false expected image-command is %q, got %q", e, r)
+	}
+
+	docker.PreCommands = nil
+	docker.PostCommands = []string{"ls -la"}
+	e = "/bin/bash -c"
+	r = docker.GetImageCommand()
+	if e != r {
+		t.Errorf("when bin-bash is false expected image-command is %q, got %q", e, r)
+	}
+
+	docker.BinBash = true
+	docker.PostCommands = []string{"ls -la"}
+	e = "/bin/bash -c"
+	r = docker.GetImageCommand()
+	if e != r {
+		t.Errorf("when bin-bash is true expected image-command is %q, got %q", e, r)
+	}
+
+	docker.PreCommands = nil
+	docker.PostCommands = []string{"ls -la"}
+	e = "/bin/bash -c"
+	r = docker.GetImageCommand()
+	if e != r {
+		t.Errorf("when bin-bash is true expected image-command is %q, got %q", e, r)
+	}
+}
+
+func TestGetImage(t *testing.T) {
+	docker := Docker{}
+	docker.Name = "imgName"
+	e := "imgName"
+	r := docker.GetImage()
+	if e != r {
+		t.Errorf("expected image is %q, got %q", e, r)
+	}
+	docker.Image = "node"
+	e = "node"
+	r = docker.GetImage()
+	if e != r {
+		t.Errorf("expected image is %q, got %q", e, r)
+	}
+	docker.Version = "10"
+	e = "node:10"
+	r = docker.GetImage()
+	if e != r {
+		t.Errorf("expected image is %q, got %q", e, r)
+	}
+}
+
+func TestGetDns(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "dns", docker.GetDns)
+
+	docker.Dns = []string{"8.8.8.8"}
+	e := "--dns=8.8.8.8"
+	r := docker.GetDns()
+	if e != r {
+		t.Errorf("expected dns is %q, got %q", e, r)
+	}
+
+	docker.Dns = []string{"8.8.8.8", "8.8.4.4"}
+	e = "--dns=8.8.8.8 --dns=8.8.4.4"
+	r = docker.GetDns()
+	if e != r {
+		t.Errorf("expected dns is %q, got %q", e, r)
+	}
+}
+
+func TestGetVolumes(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "volumes", docker.GetVolumes)
+
+	docker.Volumes = []string{"/tmp:/var/www"}
+	e := "-v /tmp:/var/www"
+	r := docker.GetVolumes()
+	if e != r {
+		t.Errorf("expected volumes is %q, got %q", e, r)
+	}
+
+	docker.Volumes = []string{"/tmp:/var/www", "/var/log:/var/www"}
+	e = "-v /tmp:/var/www -v /var/log:/var/www"
+	r = docker.GetVolumes()
+	if e != r {
+		t.Errorf("expected volumes is %q, got %q", e, r)
+	}
+}
+
+func TestGetPorts(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "ports", docker.GetPorts)
+
+	docker.Ports = []string{"80:80"}
+	e := "-p 80:80"
+	r := docker.GetPorts()
+	if e != r {
+		t.Errorf("expected ports is %q, got %q", e, r)
+	}
+
+	docker.Ports = []string{"80:80", "127.0.0.1:443:443"}
+	e = "-p 80:80 -p 127.0.0.1:443:443"
+	r = docker.GetPorts()
+	if e != r {
+		t.Errorf("expected ports is %q, got %q", e, r)
+	}
+}
+
+func TestGetHosts(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "add-hosts", docker.GetHosts)
+
+	docker.AddHosts = []string{"somehost.com"}
+	e := "--add-host=somehost.com"
+	r := docker.GetHosts()
+	if e != r {
+		t.Errorf("expected add-hosts is %q, got %q", e, r)
+	}
+
+	docker.AddHosts = []string{"somehost.com", "127.0.0.1"}
+	e = "--add-host=somehost.com --add-host=127.0.0.1"
+	r = docker.GetHosts()
+	if e != r {
+		t.Errorf("expected add-hosts is %q, got %q", e, r)
+	}
+}
+
+func TestGetEnvironmentVariables(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "environment-variables", docker.GetEnvironmentVariables)
+
+	docker.EnvVars = []string{"PHP_IDE_CONFIG=serverName=192.168.0.1"}
+	e := "-e PHP_IDE_CONFIG=serverName=192.168.0.1"
+	r := docker.GetEnvironmentVariables()
+	if e != r {
+		t.Errorf("expected environment-variables is %q, got %q", e, r)
+	}
+
+	docker.EnvVars = []string{"PHP_IDE_CONFIG=serverName=192.168.0.1", "SOME_VAR=SOME_VAL"}
+	e = "-e PHP_IDE_CONFIG=serverName=192.168.0.1 -e SOME_VAR=SOME_VAL"
+	r = docker.GetEnvironmentVariables()
+	if e != r {
+		t.Errorf("expected environment-variables is %q, got %q", e, r)
+	}
+}
 
 func TestGetUserId(t *testing.T) {
 	docker := Docker{}

@@ -129,14 +129,6 @@ func (d *Docker) GetEnvironmentVariables() string {
 	return strings.Join(envVars, " ")
 }
 
-func (d *Docker) SetVersion(v string) {
-	d.Version = v
-}
-
-func (d *Docker) GetVersion() string {
-	return d.Version
-}
-
 func (d *Docker) GetHosts() string {
 	var hosts []string
 	for _, v := range d.AddHosts {
