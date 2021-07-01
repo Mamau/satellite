@@ -60,21 +60,14 @@ func TestGetArgs(t *testing.T) {
 	ctx := context.WithValue(context.Background(), "type", RunType)
 	strategy := createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
 	e := "install --ignore-platform-reqs"
-	if e != strategy.getArgs() {
+	if e != strings.Join(strategy.getArgs(), " ") {
 		t.Errorf("error get args on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
 	}
 
 	c = setConfig().GetService("composer-2")
 	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
 	e = "composer install --ignore-platform-reqs"
-	if e != strategy.getArgs() {
-		t.Errorf("error get args on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
-	}
-
-	c.ImageCommand = ""
-	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
-	e = ""
-	if e != strategy.getArgs() {
+	if e != strings.Join(strategy.getArgs(), " ") {
 		t.Errorf("error get args on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
 	}
 }
@@ -93,7 +86,7 @@ func runStrategyToCommand(t *testing.T) {
 	e = "run -ti -u 501 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer-2:1.10 /bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	if e != strings.Join(result, " ") {
 		name := s.GetContext().Value("type")
-		t.Errorf("error to command %q service, expected:\n %q,\n got %q", name, e, strings.Join(result, " "))
+		t.Errorf("error to command %q service, expected:\n %q,\n got:\n %q", name, e, strings.Join(result, " "))
 	}
 }
 

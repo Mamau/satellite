@@ -182,6 +182,19 @@ func TestIndexExists(t *testing.T) {
 	}
 }
 
+func TestFlattenSlice(t *testing.T) {
+	data := [][]string{
+		{"command", "command2"},
+		{"command3", "command4"},
+	}
+
+	r := strings.Join(FlattenSlice(data), " ")
+	e := "command command2 command3 command4"
+	if e != r {
+		t.Errorf("expected flatten slice is %q, got %q", e, r)
+	}
+}
+
 func setEnvVar(name, value string, t *testing.T) {
 	if err := os.Setenv(name, value); err != nil {
 		t.Error("error while setting env variable")

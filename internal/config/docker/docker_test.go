@@ -3,6 +3,7 @@ package docker
 import (
 	"fmt"
 	"os/user"
+	"strings"
 	"testing"
 )
 
@@ -218,18 +219,22 @@ func TestGetWorkDir(t *testing.T) {
 
 func TestGetPostCommands(t *testing.T) {
 	docker := Docker{}
-	checkForEmpty(t, "post-commands", docker.GetPostCommands)
+	r := strings.Join(docker.GetPostCommands(), " ")
+	e := ""
+	if e != r {
+		t.Errorf("expected post-commands is %q, got %q", e, r)
+	}
 
 	docker.PostCommands = []string{"some command"}
-	e := "some command"
-	r := docker.GetPostCommands()
+	e = "some command"
+	r = strings.Join(docker.GetPostCommands(), " ")
 	if e != r {
 		t.Errorf("expected post-commands is %q, got %q", e, r)
 	}
 
 	docker.PostCommands = []string{"some command", "some command2"}
 	e = "some command; some command2"
-	r = docker.GetPostCommands()
+	r = strings.Join(docker.GetPostCommands(), " ")
 	if e != r {
 		t.Errorf("expected post-commands is %q, got %q", e, r)
 	}
@@ -237,18 +242,22 @@ func TestGetPostCommands(t *testing.T) {
 
 func TestGetPreCommands(t *testing.T) {
 	docker := Docker{}
-	checkForEmpty(t, "pre-commands", docker.GetPreCommands)
+	r := strings.Join(docker.GetPreCommands(), " ")
+	e := ""
+	if e != r {
+		t.Errorf("expected pre-commands is %q, got %q", e, r)
+	}
 
 	docker.PreCommands = []string{"some command"}
-	e := "some command"
-	r := docker.GetPreCommands()
+	e = "some command"
+	r = strings.Join(docker.GetPreCommands(), " ")
 	if e != r {
 		t.Errorf("expected pre-commands is %q, got %q", e, r)
 	}
 
 	docker.PreCommands = []string{"some command", "some command2"}
 	e = "some command; some command2"
-	r = docker.GetPreCommands()
+	r = strings.Join(docker.GetPreCommands(), " ")
 	if e != r {
 		t.Errorf("expected pre-commands is %q, got %q", e, r)
 	}

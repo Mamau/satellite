@@ -83,12 +83,22 @@ func (d *Docker) GetFlags() string {
 	return flags
 }
 
-func (d *Docker) GetPreCommands() string {
-	return strings.Join(d.PreCommands, "; ")
+func (d *Docker) GetPreCommands() []string {
+	if len(d.PreCommands) == 0 {
+		return nil
+	}
+
+	commands := strings.Join(d.PreCommands, "; ")
+	return strings.Split(commands, " ")
 }
 
-func (d *Docker) GetPostCommands() string {
-	return strings.Join(d.PostCommands, "; ")
+func (d *Docker) GetPostCommands() []string {
+	if len(d.PostCommands) == 0 {
+		return nil
+	}
+
+	commands := strings.Join(d.PostCommands, "; ")
+	return strings.Split(commands, " ")
 }
 
 func (d *Docker) GetWorkDir() string {
@@ -175,10 +185,6 @@ func (d *Docker) GetImage() string {
 }
 
 func (d *Docker) GetImageCommand() string {
-	if d.ImageCommand == "" {
-		return ""
-	}
-
 	if len(d.GetPreCommands()) > 0 || len(d.GetPostCommands()) > 0 {
 		return "/bin/bash -c"
 	}

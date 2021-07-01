@@ -146,3 +146,13 @@ func DownloadFile(uri, fileName, dst string) string {
 
 	return tmpFile
 }
+
+func FlattenSlice(target [][]string) []string {
+	var flatten []string
+
+	for _, v := range target {
+		flatten = append(flatten, v...)
+	}
+
+	return flatten
+}
