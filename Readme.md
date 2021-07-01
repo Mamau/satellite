@@ -14,7 +14,7 @@ services:
   - name: "yarn"
     image: "node"
     version: "14"
-    user-id: "1000"
+    user-id: "$(uid)"
     image-command: "yarn"
     work-dir: "/home/node"
     volumes:
@@ -23,7 +23,7 @@ services:
 
   - name: "composer"
     version: "2"
-    user-id: "1000"
+    user-id: "$(uid)"
     image-command: "composer"
     work-dir: "/home/www-data"
     volumes:
