@@ -84,36 +84,21 @@ func (d *Docker) GetFlags() string {
 }
 
 func (d *Docker) GetPreCommands() []string {
-	var result [][]string
-	for i, v := range d.PreCommands {
-		if (len(d.PreCommands) - 1) == i {
-			result = append(result, strings.Split(v, " "))
-			break
-		}
-		v += ";"
-		result = append(result, strings.Split(v, " "))
-		//d.PreCommands[i] = strings.Split(v, " ")
+	if len(d.PreCommands) == 0 {
+		return nil
 	}
 
-	//func flatten(m [][]int) []int {
-	//	return m[0][:cap(m[0])]
-	//}
-
-	//m[0][:cap(m[0])]
-
-	return result[0][:cap(result[0])]
+	commands := strings.Join(d.PreCommands, "; ")
+	return strings.Split(commands, " ")
 }
 
 func (d *Docker) GetPostCommands() []string {
-	for i, v := range d.PostCommands {
-		if (len(d.PostCommands) - 1) == i {
-			break
-		}
-		v += ";"
-		d.PostCommands[i] = v
+	if len(d.PostCommands) == 0 {
+		return nil
 	}
 
-	return d.PostCommands
+	commands := strings.Join(d.PostCommands, "; ")
+	return strings.Split(commands, " ")
 }
 
 func (d *Docker) GetWorkDir() string {

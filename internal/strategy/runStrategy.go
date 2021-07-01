@@ -2,7 +2,8 @@ package strategy
 
 import (
 	"context"
-	"fmt"
+	"strings"
+
 	"github.com/mamau/satellite/internal/config/docker"
 	"github.com/mamau/satellite/pkg"
 )
@@ -37,11 +38,12 @@ func (r *RunStrategy) ToCommand() []string {
 		r.docker.GetImage(),
 	})
 
-	return append(bc, pkg.DeleteEmpty(r.clientCommand())...)
+	return append(bc, r.clientCommand()...)
 }
 
 func (r *RunStrategy) clientCommand() []string {
 	execCommand := r.docker.GetImageCommand()
+	isBinBash := strings.Contains(execCommand, "/bin/bash")
 
 	preCommand := r.docker.GetPreCommands()
 	if len(preCommand) > 0 {
@@ -54,12 +56,15 @@ func (r *RunStrategy) clientCommand() []string {
 		clientCommand[len(clientCommand)-1] += ";"
 	}
 	listCmd := append(preCommand, clientCommand...)
-	clientCmd := pkg.DeleteEmpty(append(listCmd, postCommand...))
+	clientCmd := append(listCmd, postCommand...)
 
 	cleanExecCmd := pkg.DeleteEmpty(pkg.MergeSliceOfString([]string{execCommand}))
 
-	fmt.Println(clientCmd, len(clientCmd))
-	return append(cleanExecCmd, clientCmd...)
+	if isBinBash {
+		return pkg.DeleteEmpty(append(cleanExecCmd, strings.Join(clientCmd, " ")))
+	}
+
+	return pkg.DeleteEmpty(append(cleanExecCmd, clientCmd...))
 }
 
 func (r *RunStrategy) getArgs() []string {

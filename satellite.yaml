@@ -5,8 +5,6 @@ services:
     user-id: "$(uid)"
     image-command: "yarn"
     work-dir: "/home/node"
-    pre-commands:
-      - "yarn config set cache-folder cache/yarn"
     volumes:
       - "$(pwd):/home/node"
       - "$(pwd)/cache:/tmp"

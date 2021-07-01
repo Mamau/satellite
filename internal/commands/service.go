@@ -18,7 +18,7 @@ import (
 var serviceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
-			color.Red.Printf("You should pass service name")
+			color.Red.Printf("You should pass service name\n")
 			return
 		}
 		serviceName := args[0]
