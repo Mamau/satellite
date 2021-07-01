@@ -3,11 +3,8 @@ package strategy
 import (
 	"context"
 	"fmt"
-	"strings"
-
-	"github.com/mamau/satellite/pkg"
-
 	"github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/pkg"
 )
 
 type RunStrategy struct {
@@ -48,37 +45,29 @@ func (r *RunStrategy) clientCommand() []string {
 
 	preCommand := r.docker.GetPreCommands()
 	if len(preCommand) > 0 {
-		preCommand += ";"
+		preCommand[len(preCommand)-1] += ";"
 	}
 
 	clientCommand := r.getArgs()
 	postCommand := r.docker.GetPostCommands()
 	if len(postCommand) > 0 {
-		clientCommand += ";"
+		clientCommand[len(clientCommand)-1] += ";"
 	}
+	listCmd := append(preCommand, clientCommand...)
+	clientCmd := pkg.DeleteEmpty(append(listCmd, postCommand...))
 
-	listCmd := []string{
-		preCommand,
-		clientCommand,
-		postCommand,
-	}
-	clientCmd := fmt.Sprintf("%s", strings.Join(pkg.DeleteEmpty(listCmd), " "))
 	cleanExecCmd := pkg.DeleteEmpty(pkg.MergeSliceOfString([]string{execCommand}))
 
-	return append(cleanExecCmd, clientCmd)
+	fmt.Println(clientCmd, len(clientCmd))
+	return append(cleanExecCmd, clientCmd...)
 }
 
-func (r *RunStrategy) getArgs() string {
-	if r.docker.ImageCommand == "" {
-		return ""
-	}
-
+func (r *RunStrategy) getArgs() []string {
 	if len(r.docker.GetPreCommands()) > 0 || len(r.docker.GetPostCommands()) > 0 {
-		cmd := append([]string{r.docker.ImageCommand}, r.Args...)
-		return strings.Join(cmd, " ")
+		return append([]string{r.docker.ImageCommand}, r.Args...)
 	}
 
-	return strings.Join(r.Args, " ")
+	return r.Args
 }
 
 func (r *RunStrategy) GetContext() context.Context {

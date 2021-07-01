@@ -83,12 +83,37 @@ func (d *Docker) GetFlags() string {
 	return flags
 }
 
-func (d *Docker) GetPreCommands() string {
-	return strings.Join(d.PreCommands, "; ")
+func (d *Docker) GetPreCommands() []string {
+	var result [][]string
+	for i, v := range d.PreCommands {
+		if (len(d.PreCommands) - 1) == i {
+			result = append(result, strings.Split(v, " "))
+			break
+		}
+		v += ";"
+		result = append(result, strings.Split(v, " "))
+		//d.PreCommands[i] = strings.Split(v, " ")
+	}
+
+	//func flatten(m [][]int) []int {
+	//	return m[0][:cap(m[0])]
+	//}
+
+	//m[0][:cap(m[0])]
+
+	return result[0][:cap(result[0])]
 }
 
-func (d *Docker) GetPostCommands() string {
-	return strings.Join(d.PostCommands, "; ")
+func (d *Docker) GetPostCommands() []string {
+	for i, v := range d.PostCommands {
+		if (len(d.PostCommands) - 1) == i {
+			break
+		}
+		v += ";"
+		d.PostCommands[i] = v
+	}
+
+	return d.PostCommands
 }
 
 func (d *Docker) GetWorkDir() string {
@@ -175,10 +200,6 @@ func (d *Docker) GetImage() string {
 }
 
 func (d *Docker) GetImageCommand() string {
-	if d.ImageCommand == "" {
-		return ""
-	}
-
 	if len(d.GetPreCommands()) > 0 || len(d.GetPostCommands()) > 0 {
 		return "/bin/bash -c"
 	}

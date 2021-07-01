@@ -44,16 +44,16 @@ func InitServiceCommand() {
 			Long:               service.Description,
 			DisableFlagParsing: true,
 			Run: func(cmd *cobra.Command, args []string) {
-				if len(args) < 1 {
-					color.Red.Printf("You should pass service name")
-					return
-				}
+				//if len(args) < 1 {
+				//	color.Red.Printf("You should pass service name")
+				//	return
+				//}
 
 				serviceName := cmd.Name()
 				color.Cyan.Printf("Start %s\n", serviceName)
 				s := config.GetConfig().GetService(serviceName)
-
-				strgy := determineStrategy(s, args[1:])
+				strgy := determineStrategy(s, args)
+				//fmt.Println(len(args), "------")
 
 				pkg.RunCommandAtPTY(Docker(strgy))
 			},
