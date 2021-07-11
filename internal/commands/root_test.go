@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/mamau/satellite/internal/strategy"
+	"github.com/mamau/satellite/internal/config/docker"
 
 	"github.com/mamau/satellite/pkg"
 
@@ -14,23 +14,27 @@ import (
 func TestDetermineStrategy(t *testing.T) {
 	c := setConfig().GetService("fresh-img")
 	strat := determineStrategy(c, []string{})
-	st := strat.GetContext().Value("type")
-	if st != strategy.PullType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.PullType, st)
+	st := strat.GetContext()
+	r := st.GetConfig().GetType()
+
+	if r != docker.PULL {
+		t.Errorf("worng value context, expected %q, got %q", docker.PULL, r)
 	}
 
 	c = setConfig().GetService("my-image")
 	strat = determineStrategy(c, []string{})
-	st = strat.GetContext().Value("type")
-	if st != strategy.DaemonType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.DaemonType, st)
+	st = strat.GetContext()
+	r = st.GetConfig().GetType()
+	if r != docker.DAEMON {
+		t.Errorf("worng value context, expected %q, got %q", docker.DAEMON, r)
 	}
 
 	c = setConfig().GetService("composer")
 	strat = determineStrategy(c, []string{})
-	st = strat.GetContext().Value("type")
-	if st != strategy.RunType {
-		t.Errorf("worng value context, expected %q, got %q", strategy.RunType, st)
+	st = strat.GetContext()
+	r = st.GetConfig().GetType()
+	if r != docker.RUN {
+		t.Errorf("worng value context, expected %q, got %q", docker.RUN, r)
 	}
 }
 

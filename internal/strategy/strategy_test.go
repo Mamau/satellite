@@ -7,8 +7,8 @@ import (
 
 	"github.com/mamau/satellite/pkg"
 
-	config2 "github.com/mamau/satellite/internal/config"
-	docker2 "github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/config"
+	"github.com/mamau/satellite/internal/config/docker"
 )
 
 func TestToCommand(t *testing.T) {
@@ -19,8 +19,8 @@ func TestToCommand(t *testing.T) {
 
 func TestClientCommand(t *testing.T) {
 	c := setConfig().GetService("composer")
-	ctx := context.WithValue(context.Background(), "type", RunType)
-	strategy := createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	ctx := ContextWithConfig(context.Background(), c)
+	strategy := createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e := "composer install --ignore-platform-reqs"
 	result := strategy.clientCommand()
 	if e != strings.Join(result, " ") {
@@ -28,7 +28,7 @@ func TestClientCommand(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "/bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
@@ -36,7 +36,7 @@ func TestClientCommand(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	c.PreCommands = []string{}
 	e = "/bin/bash -c composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
@@ -45,7 +45,7 @@ func TestClientCommand(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	c.PreCommands = []string{"any command", "command 2"}
 	c.PostCommands = []string{}
 	e = "/bin/bash -c any command; command 2; composer install --ignore-platform-reqs"
@@ -57,23 +57,25 @@ func TestClientCommand(t *testing.T) {
 
 func TestGetArgs(t *testing.T) {
 	c := setConfig().GetService("composer")
-	ctx := context.WithValue(context.Background(), "type", RunType)
-	strategy := createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	ctx := ContextWithConfig(context.Background(), c)
+	strategy := createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
+	ts := strategy.GetContext().GetConfig().GetType()
 	e := "install --ignore-platform-reqs"
 	if e != strings.Join(strategy.getArgs(), " ") {
-		t.Errorf("error get args on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error get args on service type %q, expected: %q, got %q", ts, e, strategy.getArgs())
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, c, []string{"install --ignore-platform-reqs"})
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "composer install --ignore-platform-reqs"
+	ts = strategy.GetContext().GetConfig().GetType()
 	if e != strings.Join(strategy.getArgs(), " ") {
-		t.Errorf("error get args on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error get args on service type %q, expected: %q, got %q", ts, e, strategy.getArgs())
 	}
 }
 
 func runStrategyToCommand(t *testing.T) {
-	s := createStrategy("composer", RunType, []string{"--version"})
+	s := createStrategy("composer", docker.RUN, []string{"--version"})
 	result := s.ToCommand()
 	e := "run -ti -u 501 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer:2 composer --version"
 	if e != strings.Join(result, " ") {
@@ -81,7 +83,7 @@ func runStrategyToCommand(t *testing.T) {
 		t.Errorf("error to command %q service, expected: %q, got %q", name, e, strings.Join(result, " "))
 	}
 
-	s = createStrategy("composer-2", RunType, []string{"install", "--ignore-platform-reqs"})
+	s = createStrategy("composer-2", docker.RUN, []string{"install", "--ignore-platform-reqs"})
 	result = s.ToCommand()
 	e = "run -ti -u 501 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer-2:1.10 /bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	if e != strings.Join(result, " ") {
@@ -91,7 +93,7 @@ func runStrategyToCommand(t *testing.T) {
 }
 
 func daemonStrategyToCommand(t *testing.T) {
-	s := createStrategy("my-image", DaemonType, []string{})
+	s := createStrategy("my-image", docker.DAEMON, []string{})
 	e := "run -d --rm -e PHP_IDE_CONFIG=serverName=192.168.0.1 -p 127.0.0.1:443:443 -p 80:80 --dns=8.8.8.8 -v $(pwd):/home/www gitlab.com/my/image"
 	result := s.ToCommand()
 	if e != strings.Join(result, " ") {
@@ -99,7 +101,7 @@ func daemonStrategyToCommand(t *testing.T) {
 		t.Errorf("error to command %q service, expected: %q, got %q", name, e, strings.Join(result, " "))
 	}
 
-	s = createStrategy("my-image-2", DaemonType, []string{})
+	s = createStrategy("my-image-2", docker.DAEMON, []string{})
 	e = "run -d -v $(pwd):/home/www any-image:2"
 	result = s.ToCommand()
 	if e != strings.Join(result, " ") {
@@ -109,7 +111,7 @@ func daemonStrategyToCommand(t *testing.T) {
 }
 
 func pullStrategyToCommand(t *testing.T) {
-	s := createStrategy("fresh-img", PullType, []string{})
+	s := createStrategy("fresh-img", docker.PULL, []string{})
 	e := "pull node:10"
 	result := s.ToCommand()
 
@@ -118,7 +120,7 @@ func pullStrategyToCommand(t *testing.T) {
 		t.Errorf("error to command %q service, expected: %q, got %q", name, e, strings.Join(result, " "))
 	}
 
-	s = createStrategy("fresh-img-2", PullType, []string{})
+	s = createStrategy("fresh-img-2", docker.PULL, []string{})
 	e = "pull node"
 	result = s.ToCommand()
 
@@ -128,28 +130,28 @@ func pullStrategyToCommand(t *testing.T) {
 	}
 }
 
-func createStrategy(name, t string, args []string) Strategy {
+func createStrategy(name string, t docker.Exec, args []string) Strategy {
 	c := setConfig().GetService(name)
-	ctx := context.WithValue(context.Background(), "type", t)
+	ctx := ContextWithConfig(context.Background(), c)
 
 	switch t {
-	case PullType:
-		return NewPullStrategy(ctx, c)
-	case DaemonType:
-		return NewDaemonStrategy(ctx, c)
-	case RunType:
+	case docker.PULL:
+		return NewPullStrategy(ctx)
+	case docker.DAEMON:
+		return NewDaemonStrategy(ctx)
+	case docker.RUN:
 		fallthrough
 	default:
-		return createRunStrategy(ctx, c, args)
+		return createRunStrategy(ctx, args)
 	}
 }
 
-func createRunStrategy(ctx context.Context, c *docker2.Docker, args []string) *RunStrategy {
-	return NewRunStrategy(ctx, c, args)
+func createRunStrategy(ctx CommandContext, args []string) *RunStrategy {
+	return NewRunStrategy(ctx, args)
 }
 
-func setConfig() *config2.Config {
-	config2.NewConfig(pkg.GetPwd() + "/testdata/satellite")
-	c := config2.GetConfig()
+func setConfig() *config.Config {
+	config.NewConfig(pkg.GetPwd() + "/testdata/satellite")
+	c := config.GetConfig()
 	return c
 }

@@ -1,4 +1,8 @@
 services:
+  - name: "run-docker-compose"
+    type: "docker-compose"
+
+
   - name: "yarn"
     image: "node"
     version: "14"

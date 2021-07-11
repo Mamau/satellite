@@ -20,6 +20,7 @@ type Docker struct {
 	WorkDir       string   `yaml:"work-dir"`
 	Network       string   `yaml:"network"`
 	Description   string   `yaml:"description"`
+	Type          string   `yaml:"type"`
 	BinBash       bool     `yaml:"bin-bash"`
 	SkipArgs      bool     `yaml:"skip-args"`
 	Detach        bool     `yaml:"detach"`
@@ -31,6 +32,15 @@ type Docker struct {
 	Ports         []string `yaml:"ports"`
 	AddHosts      []string `yaml:"add-hosts"`
 	EnvVars       []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetType() Exec {
+	dt := Exec(d.Type)
+	if dt.IsAllowed() {
+		return dt
+	}
+
+	return RUN
 }
 
 func (d *Docker) GetNetwork() string {

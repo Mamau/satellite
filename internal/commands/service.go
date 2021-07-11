@@ -34,18 +34,24 @@ var serviceCmd = &cobra.Command{
 
 func determineStrategy(config *docker.Docker, args []string) strategy.Strategy {
 	parent := context.Background()
-	if config.GetDockerCommand() == strategy.PullType {
-		ctx := context.WithValue(parent, "type", strategy.PullType)
-		return strategy.NewPullStrategy(ctx, config)
+
+	if config.GetType() == docker.DOCKER_COMPOSE {
+		ctx := strategy.ContextWithConfig(parent, config)
+		return strategy.NewDockerComposeStrategy(ctx)
 	}
 
-	if config.Detach {
-		ctx := context.WithValue(parent, "type", strategy.DaemonType)
-		return strategy.NewDaemonStrategy(ctx, config)
+	if config.GetType() == docker.PULL {
+		ctx := strategy.ContextWithConfig(parent, config)
+		return strategy.NewPullStrategy(ctx)
 	}
 
-	ctx := context.WithValue(parent, "type", strategy.RunType)
-	return strategy.NewRunStrategy(ctx, config, args)
+	if config.GetType() == docker.DAEMON {
+		ctx := strategy.ContextWithConfig(parent, config)
+		return strategy.NewDaemonStrategy(ctx)
+	}
+
+	ctx := strategy.ContextWithConfig(parent, config)
+	return strategy.NewRunStrategy(ctx, args)
 }
 
 func createNetwork(config *docker.Docker) {

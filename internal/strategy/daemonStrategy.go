@@ -1,39 +1,33 @@
 package strategy
 
 import (
-	"context"
-
 	"github.com/mamau/satellite/pkg"
-
-	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type DaemonStrategy struct {
-	ctx    context.Context
-	docker *docker.Docker
+	ctx CommandContext
 }
 
-func NewDaemonStrategy(ctx context.Context, config *docker.Docker) *DaemonStrategy {
+func NewDaemonStrategy(ctx CommandContext) *DaemonStrategy {
 	return &DaemonStrategy{
-		ctx:    ctx,
-		docker: config,
+		ctx: ctx,
 	}
 }
 
 func (d *DaemonStrategy) ToCommand() []string {
 	return pkg.MergeSliceOfString([]string{
-		d.docker.GetDockerCommand(),
-		d.docker.GetDetached(),
-		d.docker.GetCleanUp(),
-		d.docker.GetNetwork(),
-		d.docker.GetEnvironmentVariables(),
-		d.docker.GetPorts(),
-		d.docker.GetDns(),
-		d.docker.GetVolumes(),
-		d.docker.GetImage(),
+		d.ctx.GetConfig().GetDockerCommand(),
+		d.ctx.GetConfig().GetDetached(),
+		d.ctx.GetConfig().GetCleanUp(),
+		d.ctx.GetConfig().GetNetwork(),
+		d.ctx.GetConfig().GetEnvironmentVariables(),
+		d.ctx.GetConfig().GetPorts(),
+		d.ctx.GetConfig().GetDns(),
+		d.ctx.GetConfig().GetVolumes(),
+		d.ctx.GetConfig().GetImage(),
 	})
 }
 
-func (d *DaemonStrategy) GetContext() context.Context {
+func (d *DaemonStrategy) GetContext() CommandContext {
 	return d.ctx
 }

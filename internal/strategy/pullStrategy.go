@@ -1,32 +1,26 @@
 package strategy
 
 import (
-	"context"
-
 	"github.com/mamau/satellite/pkg"
-
-	"github.com/mamau/satellite/internal/config/docker"
 )
 
 type PullStrategy struct {
-	ctx    context.Context
-	docker *docker.Docker
+	ctx CommandContext
 }
 
-func NewPullStrategy(ctx context.Context, config *docker.Docker) *PullStrategy {
+func NewPullStrategy(ctx CommandContext) *PullStrategy {
 	return &PullStrategy{
-		ctx:    ctx,
-		docker: config,
+		ctx: ctx,
 	}
 }
 
 func (p *PullStrategy) ToCommand() []string {
 	return pkg.MergeSliceOfString([]string{
-		p.docker.GetDockerCommand(),
-		p.docker.GetImage(),
+		p.ctx.GetConfig().GetDockerCommand(),
+		p.ctx.GetConfig().GetImage(),
 	})
 }
 
-func (p *PullStrategy) GetContext() context.Context {
+func (p *PullStrategy) GetContext() CommandContext {
 	return p.ctx
 }

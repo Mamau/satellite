@@ -7,6 +7,29 @@ import (
 	"testing"
 )
 
+func TestGetType(t *testing.T) {
+	docker := Docker{}
+	e := RUN
+	r := docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+
+	docker.Type = "docker-compose"
+	e = DOCKER_COMPOSE
+	r = docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+
+	docker.Type = "wrong-type"
+	e = RUN
+	r = docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+}
+
 func TestGetImageCommand(t *testing.T) {
 	docker := Docker{}
 	checkForEmpty(t, "image-command", docker.GetImageCommand)
