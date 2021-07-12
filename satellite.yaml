@@ -1,6 +1,11 @@
 services:
   - name: "run-docker-compose"
     type: "docker-compose"
+    path: "./path/to/file/docker-compose"
+    project-name: "anyName"
+    verbose: true
+    log-level: "DEBUG"
+    command: "up"
 
 
   - name: "yarn"
