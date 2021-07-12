@@ -94,7 +94,6 @@ func (d *Docker) GetFlags() string {
 }
 
 func (d *Docker) GetPreCommands() []string {
-	//fmt.Println(d.PreCommands, "------", d.Name)
 	if len(d.PreCommands) == 0 {
 		return nil
 	}

@@ -33,7 +33,7 @@ func (r *RunStrategy) ToCommand() []string {
 		r.ctx.GetConfig().GetContainerName(),
 		r.ctx.GetConfig().GetImage(),
 	})
-	//fmt.Println(bc, "==1111=")
+
 	return append(bc, r.clientCommand()...)
 }
 
@@ -57,7 +57,6 @@ func (r *RunStrategy) clientCommand() []string {
 	cleanExecCmd := pkg.DeleteEmpty(pkg.MergeSliceOfString([]string{execCommand}))
 
 	if isBinBash {
-		//fmt.Println("111", pkg.DeleteEmpty(append(cleanExecCmd, strings.Join(clientCmd, " "))))
 		return pkg.DeleteEmpty(append(cleanExecCmd, strings.Join(clientCmd, " ")))
 	}
 
