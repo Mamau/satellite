@@ -24,7 +24,7 @@ func TestClientCommand(t *testing.T) {
 	e := "composer install --ignore-platform-reqs"
 	result := strategy.clientCommand()
 	if e != strings.Join(result, " ") {
-		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().GetConfig().GetType(), e, strategy.getArgs())
 	}
 
 	c = setConfig().GetService("composer-2")
@@ -32,7 +32,7 @@ func TestClientCommand(t *testing.T) {
 	e = "/bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
-		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().GetConfig().GetType(), e, strategy.getArgs())
 	}
 
 	c = setConfig().GetService("composer-2")
@@ -41,7 +41,7 @@ func TestClientCommand(t *testing.T) {
 	e = "/bin/bash -c composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
-		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().GetConfig().GetType(), e, strategy.getArgs())
 	}
 
 	c = setConfig().GetService("composer-2")
@@ -51,7 +51,7 @@ func TestClientCommand(t *testing.T) {
 	e = "/bin/bash -c any command; command 2; composer install --ignore-platform-reqs"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
-		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().Value("type"), e, strategy.getArgs())
+		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().GetConfig().GetType(), e, strategy.getArgs())
 	}
 }
 
