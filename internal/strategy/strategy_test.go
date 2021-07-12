@@ -28,6 +28,7 @@ func TestClientCommand(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
+	ctx = ContextWithConfig(context.Background(), c)
 	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "/bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
@@ -36,18 +37,20 @@ func TestClientCommand(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	c.PreCommands = []string{}
+	ctx = ContextWithConfig(context.Background(), c)
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "/bin/bash -c composer install --ignore-platform-reqs; chown -R 501:501 /home/www-data"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
-		t.Errorf("error on service type %q, expected: %q, got %q", strategy.GetContext().GetConfig().GetType(), e, strategy.getArgs())
+		t.Errorf("error on service type %q, expected:\n%q, got\n%q", strategy.GetContext().GetConfig().GetType(), e, strings.Join(result, " "))
 	}
 
 	c = setConfig().GetService("composer-2")
-	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	c.PreCommands = []string{"any command", "command 2"}
 	c.PostCommands = []string{}
+	ctx = ContextWithConfig(context.Background(), c)
+	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "/bin/bash -c any command; command 2; composer install --ignore-platform-reqs"
 	result = strategy.clientCommand()
 	if e != strings.Join(result, " ") {
@@ -66,11 +69,12 @@ func TestGetArgs(t *testing.T) {
 	}
 
 	c = setConfig().GetService("composer-2")
+	ctx = ContextWithConfig(context.Background(), c)
 	strategy = createRunStrategy(ctx, []string{"install --ignore-platform-reqs"})
 	e = "composer install --ignore-platform-reqs"
 	ts = strategy.GetContext().GetConfig().GetType()
 	if e != strings.Join(strategy.getArgs(), " ") {
-		t.Errorf("error get args on service type %q, expected: %q, got %q", ts, e, strategy.getArgs())
+		t.Errorf("error get args on service type %q, expected:\n%q, got\n%q", ts, e, strategy.getArgs())
 	}
 }
 
