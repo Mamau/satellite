@@ -12,10 +12,19 @@ import (
 )
 
 func TestDetermineStrategy(t *testing.T) {
-	c := setConfig().GetService("fresh-img")
+	c := setConfig().GetService("run-docker-compose")
 	strat := determineStrategy(c, []string{})
 	st := strat.GetContext()
 	r := st.GetConfig().GetType()
+
+	if r != docker.DOCKER_COMPOSE {
+		t.Errorf("worng value context, expected %q, got %q", docker.DOCKER_COMPOSE, r)
+	}
+
+	c = setConfig().GetService("fresh-img")
+	strat = determineStrategy(c, []string{})
+	st = strat.GetContext()
+	r = st.GetConfig().GetType()
 
 	if r != docker.PULL {
 		t.Errorf("worng value context, expected %q, got %q", docker.PULL, r)

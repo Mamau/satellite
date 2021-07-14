@@ -8,34 +8,50 @@ import (
 )
 
 type Docker struct {
-	Name          string   `yaml:"name"`
-	ContainerName string   `yaml:"container-name"`
-	Image         string   `yaml:"image"`
-	Command       string   `yaml:"command"`
-	ImageCommand  string   `yaml:"image-command"`
-	Flags         string   `yaml:"flags"`
-	HomeDir       string   `yaml:"home-dir"`
-	Version       string   `yaml:"version"`
-	UserId        string   `yaml:"user-id"`
-	WorkDir       string   `yaml:"work-dir"`
-	Network       string   `yaml:"network"`
-	Description   string   `yaml:"description"`
-	Type          string   `yaml:"type"`
-	Path          string   `yaml:"path"`
-	ProjectName   string   `yaml:"project-name"`
-	LogLevel      string   `yaml:"log-level"`
-	Verbose       bool     `yaml:"verbose"`
-	BinBash       bool     `yaml:"bin-bash"`
-	SkipArgs      bool     `yaml:"skip-args"`
-	Detach        bool     `yaml:"detach"`
-	CleanUp       bool     `yaml:"clean-up"`
-	PreCommands   []string `yaml:"pre-commands"`
-	PostCommands  []string `yaml:"post-commands"`
-	Dns           []string `yaml:"dns"`
-	Volumes       []string `yaml:"volumes"`
-	Ports         []string `yaml:"ports"`
-	AddHosts      []string `yaml:"add-hosts"`
-	EnvVars       []string `yaml:"environment-variables"`
+	Name             string   `yaml:"name"`
+	ContainerName    string   `yaml:"container-name"`
+	Image            string   `yaml:"image"`
+	Command          string   `yaml:"command"`
+	ImageCommand     string   `yaml:"image-command"`
+	Flags            string   `yaml:"flags"`
+	HomeDir          string   `yaml:"home-dir"`
+	Version          string   `yaml:"version"`
+	UserId           string   `yaml:"user-id"`
+	WorkDir          string   `yaml:"work-dir"`
+	Network          string   `yaml:"network"`
+	Description      string   `yaml:"description"`
+	Type             string   `yaml:"type"`
+	Path             string   `yaml:"path"`
+	ProjectDirectory string   `yaml:"project-directory"`
+	ProjectName      string   `yaml:"project-name"`
+	LogLevel         string   `yaml:"log-level"`
+	RemoveOrphans    bool     `yaml:"remove-orphans"`
+	Verbose          bool     `yaml:"verbose"`
+	BinBash          bool     `yaml:"bin-bash"`
+	SkipArgs         bool     `yaml:"skip-args"`
+	Detach           bool     `yaml:"detach"`
+	CleanUp          bool     `yaml:"clean-up"`
+	PreCommands      []string `yaml:"pre-commands"`
+	PostCommands     []string `yaml:"post-commands"`
+	Dns              []string `yaml:"dns"`
+	Volumes          []string `yaml:"volumes"`
+	Ports            []string `yaml:"ports"`
+	AddHosts         []string `yaml:"add-hosts"`
+	EnvVars          []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetRemoveOrphans() string {
+	if d.RemoveOrphans {
+		return "--remove-orphans"
+	}
+	return ""
+}
+
+func (d *Docker) GetProjectDirectory() string {
+	if d.ProjectDirectory != "" {
+		return fmt.Sprintf("--project-directory %s", d.ProjectDirectory)
+	}
+	return ""
 }
 
 func (d *Docker) GetVerbose() string {

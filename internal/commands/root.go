@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/mamau/satellite/internal/config/docker"
+
 	"github.com/mamau/satellite/pkg"
 
 	"github.com/mamau/satellite/internal/config"
@@ -30,7 +32,7 @@ func Docker(strategy strategy.Strategy) *exec.Cmd {
 	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
-	dcCommand := exec.Command(commandName, replaceGateWay...)
+	dcCommand := exec.Command(strategy.GetExecCommand(), replaceGateWay...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
@@ -44,15 +46,15 @@ func InitServiceCommand() {
 			Long:               service.Description,
 			DisableFlagParsing: true,
 			Run: func(cmd *cobra.Command, args []string) {
-				if len(args) < 1 {
-					color.Red.Printf("You should pass service name\n")
-					return
-				}
-
 				serviceName := cmd.Name()
 				color.Cyan.Printf("Start %s\n", serviceName)
 				s := config.GetConfig().GetService(serviceName)
 				strgy := determineStrategy(s, args)
+
+				if strgy.GetContext().GetConfig().GetType() != docker.DOCKER_COMPOSE && len(args) < 1 {
+					color.Red.Printf("You should pass service name\n")
+					return
+				}
 
 				pkg.RunCommandAtPTY(Docker(strgy))
 			},

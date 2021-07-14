@@ -18,6 +18,10 @@ func NewRunStrategy(ctx CommandContext, args []string) *RunStrategy {
 	}
 }
 
+func (r *RunStrategy) GetExecCommand() string {
+	return string(DOCKER)
+}
+
 func (r *RunStrategy) ToCommand() []string {
 	bc := pkg.MergeSliceOfString([]string{
 		r.ctx.GetConfig().GetDockerCommand(),

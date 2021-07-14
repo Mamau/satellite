@@ -2,10 +2,22 @@ services:
   - name: "run-docker-compose"
     type: "docker-compose"
     path: "./path/to/file/docker-compose"
+    project-directory: "./path/to/file/docker-compose"
     project-name: "anyName"
     verbose: true
     log-level: "DEBUG"
+    detach: true
     command: "up"
+    remove-orphans: true
+
+  - name: "run-docker-compose"
+    type: "docker-compose"
+    command: "up"
+    detach: true
+
+  - name: "docker-compose-down"
+    type: "docker-compose"
+    command: "down"
 
   - name: "yarn"
     image: "node"

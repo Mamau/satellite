@@ -14,6 +14,10 @@ func NewPullStrategy(ctx CommandContext) *PullStrategy {
 	}
 }
 
+func (p *PullStrategy) GetExecCommand() string {
+	return string(DOCKER)
+}
+
 func (p *PullStrategy) ToCommand() []string {
 	return pkg.MergeSliceOfString([]string{
 		p.ctx.GetConfig().GetDockerCommand(),

@@ -7,6 +7,30 @@ import (
 	"testing"
 )
 
+func TestGetRemoveOrphans(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "remove-orphans", docker.GetRemoveOrphans)
+
+	docker.RemoveOrphans = true
+	e := "--remove-orphans"
+	r := docker.GetRemoveOrphans()
+	if e != r {
+		t.Errorf("expected remove-orphans is %q, got %q", e, r)
+	}
+}
+
+func TestGetProjectDirectory(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "project-directory", docker.GetProjectDirectory)
+
+	docker.ProjectDirectory = "./some/path/to/dir"
+	e := "--project-directory ./some/path/to/dir"
+	r := docker.GetProjectDirectory()
+	if e != r {
+		t.Errorf("expected project-directory is %q, got %q", e, r)
+	}
+}
+
 func TestGetVerbose(t *testing.T) {
 	docker := Docker{}
 	checkForEmpty(t, "verbose", docker.GetVerbose)

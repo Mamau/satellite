@@ -14,6 +14,10 @@ func NewDaemonStrategy(ctx CommandContext) *DaemonStrategy {
 	}
 }
 
+func (d *DaemonStrategy) GetExecCommand() string {
+	return string(DOCKER)
+}
+
 func (d *DaemonStrategy) ToCommand() []string {
 	return pkg.MergeSliceOfString([]string{
 		d.ctx.GetConfig().GetDockerCommand(),
