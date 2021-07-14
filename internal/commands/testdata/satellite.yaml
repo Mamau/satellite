@@ -1,11 +1,22 @@
 services:
+  - name: "run-docker-compose"
+    type: "docker-compose"
+    path: "./path/to/file/docker-compose"
+    project-directory: "./path/to/file/docker-compose"
+    project-name: "anyName"
+    verbose: true
+    log-level: "DEBUG"
+    command: "up"
+
   - name: "fresh-img"
     command: "pull"
+    type: "pull"
     image: "node"
     version: "10"
 
   - name: "my-image"
     detach: true
+    type: "daemon"
     clean-up: true
     image: "gitlab.com/my/image"
     environment-variables:

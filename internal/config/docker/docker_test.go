@@ -7,6 +7,108 @@ import (
 	"testing"
 )
 
+func TestGetRemoveOrphans(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "remove-orphans", docker.GetRemoveOrphans)
+
+	docker.RemoveOrphans = true
+	e := "--remove-orphans"
+	r := docker.GetRemoveOrphans()
+	if e != r {
+		t.Errorf("expected remove-orphans is %q, got %q", e, r)
+	}
+}
+
+func TestGetProjectDirectory(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "project-directory", docker.GetProjectDirectory)
+
+	docker.ProjectDirectory = "./some/path/to/dir"
+	e := "--project-directory ./some/path/to/dir"
+	r := docker.GetProjectDirectory()
+	if e != r {
+		t.Errorf("expected project-directory is %q, got %q", e, r)
+	}
+}
+
+func TestGetVerbose(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "verbose", docker.GetVerbose)
+
+	docker.Verbose = true
+	e := "--verbose"
+	r := docker.GetVerbose()
+	if e != r {
+		t.Errorf("expected verbose is %q, got %q", e, r)
+	}
+}
+
+func TestGetLogLevel(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "log-level", docker.GetLogLevel)
+
+	docker.LogLevel = "DEBUG"
+	e := "--log-level DEBUG"
+	r := docker.GetLogLevel()
+	if e != r {
+		t.Errorf("expected log-level is %q, got %q", e, r)
+	}
+
+	docker.LogLevel = "wrong-level"
+	e = ""
+	r = docker.GetLogLevel()
+	if e != r {
+		t.Errorf("expected log-level is %q, got %q", e, r)
+	}
+}
+
+func TestGetProjectName(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "project-name", docker.GetProjectName)
+
+	docker.ProjectName = "some-project-name"
+	e := "--project-name some-project-name"
+	r := docker.GetProjectName()
+	if e != r {
+		t.Errorf("expected project-name is %q, got %q", e, r)
+	}
+}
+
+func TestGetPath(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "path", docker.GetPath)
+
+	docker.Path = "./some/path/to/docker-compose"
+	e := "--file ./some/path/to/docker-compose"
+	r := docker.GetPath()
+	if e != r {
+		t.Errorf("expected path is %q, got %q", e, r)
+	}
+}
+
+func TestGetType(t *testing.T) {
+	docker := Docker{}
+	e := RUN
+	r := docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+
+	docker.Type = "docker-compose"
+	e = DOCKER_COMPOSE
+	r = docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+
+	docker.Type = "wrong-type"
+	e = RUN
+	r = docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+}
+
 func TestGetImageCommand(t *testing.T) {
 	docker := Docker{}
 	checkForEmpty(t, "image-command", docker.GetImageCommand)
