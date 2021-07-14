@@ -21,6 +21,10 @@ type Docker struct {
 	Network       string   `yaml:"network"`
 	Description   string   `yaml:"description"`
 	Type          string   `yaml:"type"`
+	Path          string   `yaml:"path"`
+	ProjectName   string   `yaml:"project-name"`
+	LogLevel      string   `yaml:"log-level"`
+	Verbose       bool     `yaml:"verbose"`
 	BinBash       bool     `yaml:"bin-bash"`
 	SkipArgs      bool     `yaml:"skip-args"`
 	Detach        bool     `yaml:"detach"`
@@ -32,6 +36,36 @@ type Docker struct {
 	Ports         []string `yaml:"ports"`
 	AddHosts      []string `yaml:"add-hosts"`
 	EnvVars       []string `yaml:"environment-variables"`
+}
+
+func (d *Docker) GetVerbose() string {
+	if d.Verbose {
+		return "--verbose"
+	}
+	return ""
+}
+
+func (d *Docker) GetLogLevel() string {
+	ll := LogLevel(d.LogLevel)
+	if ll.IsAllowed() && d.LogLevel != "" {
+		return fmt.Sprintf("--log-level %s", d.LogLevel)
+	}
+
+	return ""
+}
+
+func (d *Docker) GetProjectName() string {
+	if d.ProjectName != "" {
+		return fmt.Sprintf("--project-name %s", d.ProjectName)
+	}
+	return ""
+}
+
+func (d *Docker) GetPath() string {
+	if d.Path != "" {
+		return fmt.Sprintf("--file %s", d.Path)
+	}
+	return ""
 }
 
 func (d *Docker) GetType() Exec {

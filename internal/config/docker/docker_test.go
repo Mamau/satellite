@@ -7,6 +7,61 @@ import (
 	"testing"
 )
 
+func TestGetVerbose(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "verbose", docker.GetVerbose)
+
+	docker.Verbose = true
+	e := "--verbose"
+	r := docker.GetVerbose()
+	if e != r {
+		t.Errorf("expected verbose is %q, got %q", e, r)
+	}
+}
+
+func TestGetLogLevel(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "log-level", docker.GetLogLevel)
+
+	docker.LogLevel = "DEBUG"
+	e := "--log-level DEBUG"
+	r := docker.GetLogLevel()
+	if e != r {
+		t.Errorf("expected log-level is %q, got %q", e, r)
+	}
+
+	docker.LogLevel = "wrong-level"
+	e = ""
+	r = docker.GetLogLevel()
+	if e != r {
+		t.Errorf("expected log-level is %q, got %q", e, r)
+	}
+}
+
+func TestGetProjectName(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "project-name", docker.GetProjectName)
+
+	docker.ProjectName = "some-project-name"
+	e := "--project-name some-project-name"
+	r := docker.GetProjectName()
+	if e != r {
+		t.Errorf("expected project-name is %q, got %q", e, r)
+	}
+}
+
+func TestGetPath(t *testing.T) {
+	docker := Docker{}
+	checkForEmpty(t, "path", docker.GetPath)
+
+	docker.Path = "./some/path/to/docker-compose"
+	e := "--file ./some/path/to/docker-compose"
+	r := docker.GetPath()
+	if e != r {
+		t.Errorf("expected path is %q, got %q", e, r)
+	}
+}
+
 func TestGetType(t *testing.T) {
 	docker := Docker{}
 	e := RUN

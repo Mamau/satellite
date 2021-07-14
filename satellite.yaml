@@ -7,7 +7,6 @@ services:
     log-level: "DEBUG"
     command: "up"
 
-
   - name: "yarn"
     image: "node"
     version: "14"
