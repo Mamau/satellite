@@ -120,7 +120,7 @@ func RetrieveGatewayHost(data []byte) string {
 }
 
 func DownloadFile(uri, fileName, dst string) string {
-	tmpFile := fmt.Sprintf("%s%s", dst, fileName)
+	tmpFile := fmt.Sprintf("%s/%s", dst, fileName)
 	resp, err := http.Get(uri)
 	if err != nil {
 		log.Fatalf("error while get latest file, err: %s\n", err)

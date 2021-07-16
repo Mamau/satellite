@@ -13,7 +13,7 @@ import (
 	"github.com/mamau/satellite/pkg"
 )
 
-const Version = "v0.13"
+const Version = "v0.14"
 
 type SelfUpdater struct {
 	Name           string
@@ -23,7 +23,7 @@ type SelfUpdater struct {
 
 func NewSelfUpdater() *SelfUpdater {
 	return &SelfUpdater{
-		Name:           os.Args[0],
+		Name:           strings.Replace(os.Args[0], "./", "", -1),
 		CurrentVersion: Version,
 		LatestRelease:  fetchRelease(),
 	}
