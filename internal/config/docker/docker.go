@@ -140,6 +140,10 @@ func (d *Docker) GetFlags() string {
 			flags = ""
 		}
 	}
+	if d.Detach {
+		return ""
+	}
+
 	return flags
 }
 
