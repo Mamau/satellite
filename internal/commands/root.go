@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -51,8 +52,8 @@ func InitServiceCommand() {
 				s := config.GetConfig().GetService(serviceName)
 				strgy := determineStrategy(s, args)
 
-				if strgy.GetContext().GetConfig().GetType() != docker.DOCKER_COMPOSE && len(args) < 1 {
-					color.Red.Printf("You should pass service name\n")
+				if err := validation(strgy, args); err != nil {
+					color.Red.Println(err)
 					return
 				}
 
@@ -67,6 +68,18 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func validation(strgy strategy.Strategy, args []string) error {
+	if dt := docker.Exec(strgy.GetContext().GetConfig().Type); !dt.IsAllowed() {
+		return errors.New(fmt.Sprintf("Please, declare service %q from allowed list: %q", "type", docker.List))
+	}
+
+	if strgy.GetContext().GetConfig().GetType() != docker.DOCKER_COMPOSE && len(args) < 1 {
+		return errors.New("you should pass service name")
+	}
+
+	return nil
 }
 
 func getReplaceGateWay(data []string) []string {

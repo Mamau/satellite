@@ -11,6 +11,15 @@ import (
 	"github.com/mamau/satellite/internal/config"
 )
 
+func TestValidation(t *testing.T) {
+	c := setConfig().GetService("composer")
+	strat := determineStrategy(c, []string{})
+	err := validation(strat, []string{"i", "--ignore-platform-reqs"})
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestDetermineStrategy(t *testing.T) {
 	c := setConfig().GetService("run-docker-compose")
 	strat := determineStrategy(c, []string{})

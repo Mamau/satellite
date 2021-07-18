@@ -32,6 +32,7 @@ services:
   - name: "composer"
     version: "2"
     user-id: "501"
+    type: "run"
     image-command: "composer"
     work-dir: "/home/www-data"
     volumes:

@@ -200,3 +200,16 @@ func setEnvVar(name, value string, t *testing.T) {
 		t.Error("error while setting env variable")
 	}
 }
+
+func TestContains(t *testing.T) {
+	data := []string{"a", "b", "c"}
+	r := Contains(data, "c")
+	if r != true {
+		t.Errorf("expected data contains %q\n but result is %t\n", "c", true)
+	}
+
+	r = Contains(data, "d")
+	if r != false {
+		t.Errorf("expected data not contains %q\n but result is %t\n", "d", false)
+	}
+}

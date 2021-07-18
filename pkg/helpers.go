@@ -156,3 +156,12 @@ func FlattenSlice(target [][]string) []string {
 
 	return flatten
 }
+
+func Contains(data []string, needle string) bool {
+	for _, v := range data {
+		if needle == v {
+			return true
+		}
+	}
+	return false
+}
