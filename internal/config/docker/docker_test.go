@@ -94,15 +94,22 @@ func TestGetType(t *testing.T) {
 		t.Errorf("expected type is %q, got %q", e, r)
 	}
 
-	docker.Type = "docker-compose"
-	e = DOCKER_COMPOSE
+	docker.Detach = true
+	e = DAEMON
 	r = docker.GetType()
 	if e != r {
 		t.Errorf("expected type is %q, got %q", e, r)
 	}
 
-	docker.Type = "wrong-type"
-	e = RUN
+	docker.Command = "pull"
+	e = PULL
+	r = docker.GetType()
+	if e != r {
+		t.Errorf("expected type is %q, got %q", e, r)
+	}
+
+	docker.DockerCompose = true
+	e = DOCKER_COMPOSE
 	r = docker.GetType()
 	if e != r {
 		t.Errorf("expected type is %q, got %q", e, r)

@@ -52,7 +52,7 @@ func InitServiceCommand() {
 				s := config.GetConfig().GetService(serviceName)
 				strgy := determineStrategy(s, args)
 
-				if err := validation(strgy, args); err != nil {
+				if err := validation(strgy); err != nil {
 					color.Red.Println(err)
 					return
 				}
@@ -70,13 +70,13 @@ func Execute() {
 	}
 }
 
-func validation(strgy strategy.Strategy, args []string) error {
-	if dt := docker.Exec(strgy.GetContext().GetConfig().Type); !dt.IsAllowed() {
-		return errors.New(fmt.Sprintf("Please, declare service %q from allowed list: %q", "type", docker.List))
-	}
-
-	if strgy.GetContext().GetConfig().GetType() != docker.DOCKER_COMPOSE && len(args) < 1 {
-		return errors.New("you should pass service name")
+func validation(strgy strategy.Strategy) error {
+	typeConfig := strgy.GetContext().GetConfig().GetType()
+	if typeConfig == docker.RUN {
+		rstrg := strgy.(*strategy.RunStrategy)
+		if len(rstrg.Args) < 1 {
+			return errors.New("you should pass arguments for service")
+		}
 	}
 
 	return nil

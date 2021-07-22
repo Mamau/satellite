@@ -1,6 +1,6 @@
 services:
   - name: "run-docker-compose"
-    type: "docker-compose"
+    docker-compose: true
     path: "./path/to/file/docker-compose"
     project-directory: "./path/to/file/docker-compose"
     project-name: "anyName"
@@ -10,13 +10,11 @@ services:
 
   - name: "fresh-img"
     command: "pull"
-    type: "pull"
     image: "node"
     version: "10"
 
   - name: "my-image"
     detach: true
-    type: "daemon"
     clean-up: true
     image: "gitlab.com/my/image"
     environment-variables:
@@ -32,7 +30,6 @@ services:
   - name: "composer"
     version: "2"
     user-id: "501"
-    type: "run"
     image-command: "composer"
     work-dir: "/home/www-data"
     volumes:

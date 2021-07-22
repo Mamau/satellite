@@ -1,65 +1,10 @@
 services:
-  - name: "run-docker-compose"
-    type: "docker-compose"
-    path: "./path/to/file/docker-compose"
-    project-directory: "./path/to/file/docker-compose"
-    project-name: "anyName"
-    verbose: true
-    log-level: "DEBUG"
-    detach: true
-    command: "up"
-    remove-orphans: true
-
-  - name: "run-docker-compose"
-    type: "docker-compose"
-    command: "up"
-    detach: true
-
-  - name: "docker-compose-down"
-    type: "docker-compose"
-    command: "down"
-
-  - name: "yarn"
-    image: "node"
-    version: "14"
-    user-id: "$(uid)"
-    image-command: "yarn"
-    work-dir: "/home/node"
-    volumes:
-      - "$(pwd):/home/node"
-      - "$(pwd)/cache:/tmp"
-
   - name: "fresh-img"
     command: "pull"
     image: "node"
     version: "10"
 
-  - name: "my-image"
-    detach: true
-    clean-up: true
-    image: "gitlab.com/my/image"
-    environment-variables:
-      - "PHP_IDE_CONFIG=serverName=192.168.0.1"
-    volumes:
-      - "$(pwd):/home/www"
-    dns:
-      - "8.8.8.8"
-    ports:
-      - "127.0.0.1:443:443"
-      - "80:80"
-
-  - name: "composer"
-    description: "Install composer dependencies"
-    version: "2"
-    user-id: "$(uid)"
-    image-command: "composer"
-    work-dir: "/home/www-data"
-    volumes:
-      - "$(pwd):/home/www-data"
-      - "$(pwd)/cache:/tmp"
-
 macros:
-  - name: "init"
+  - name: "dl-img"
     commands:
-      - "composer i --ignore-platform-reqs"
-      - "yarn install"
+      - "fresh-img"

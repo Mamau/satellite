@@ -12,11 +12,25 @@ import (
 )
 
 func TestValidation(t *testing.T) {
-	c := setConfig().GetService("composer")
+	c := setConfig().GetService("fresh-img")
 	strat := determineStrategy(c, []string{})
-	err := validation(strat, []string{"i", "--ignore-platform-reqs"})
+	err := validation(strat)
 	if err != nil {
-		t.Error(err)
+		t.Errorf("error must be nil on %q service\n", strat.GetContext().GetConfig().GetType())
+	}
+
+	c = setConfig().GetService("my-image")
+	strat = determineStrategy(c, []string{})
+	err = validation(strat)
+	if err != nil {
+		t.Errorf("error must be nil on %q service\n", strat.GetContext().GetConfig().GetType())
+	}
+
+	c = setConfig().GetService("composer")
+	strat = determineStrategy(c, []string{})
+	err = validation(strat)
+	if err == nil {
+		t.Errorf("error cannot be nil when empty arguments for service %q\n", strat.GetContext().GetConfig().GetType())
 	}
 }
 

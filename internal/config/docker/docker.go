@@ -20,7 +20,6 @@ type Docker struct {
 	WorkDir          string   `yaml:"work-dir"`
 	Network          string   `yaml:"network"`
 	Description      string   `yaml:"description"`
-	Type             string   `yaml:"type"`
 	Path             string   `yaml:"path"`
 	ProjectDirectory string   `yaml:"project-directory"`
 	ProjectName      string   `yaml:"project-name"`
@@ -31,6 +30,7 @@ type Docker struct {
 	SkipArgs         bool     `yaml:"skip-args"`
 	Detach           bool     `yaml:"detach"`
 	CleanUp          bool     `yaml:"clean-up"`
+	DockerCompose    bool     `yaml:"docker-compose"`
 	PreCommands      []string `yaml:"pre-commands"`
 	PostCommands     []string `yaml:"post-commands"`
 	Dns              []string `yaml:"dns"`
@@ -85,9 +85,17 @@ func (d *Docker) GetPath() string {
 }
 
 func (d *Docker) GetType() Exec {
-	dt := Exec(d.Type)
-	if dt.IsAllowed() {
-		return dt
+
+	if d.DockerCompose {
+		return DOCKER_COMPOSE
+	}
+
+	if d.GetDockerCommand() == string(PULL) {
+		return PULL
+	}
+
+	if d.Detach {
+		return DAEMON
 	}
 
 	return RUN
