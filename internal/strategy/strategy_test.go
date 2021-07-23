@@ -98,7 +98,7 @@ func runStrategyToCommand(t *testing.T) {
 
 func daemonStrategyToCommand(t *testing.T) {
 	s := createStrategy("my-image", docker.DAEMON, []string{})
-	e := "run -d --rm -e PHP_IDE_CONFIG=serverName=192.168.0.1 -p 127.0.0.1:443:443 -p 80:80 --dns=8.8.8.8 -v $(pwd):/home/www gitlab.com/my/image"
+	e := "run -d -e PHP_IDE_CONFIG=serverName=192.168.0.1 -p 127.0.0.1:443:443 -p 80:80 --dns=8.8.8.8 -v $(pwd):/home/www --rm gitlab.com/my/image"
 	result := s.ToCommand()
 	if e != strings.Join(result, " ") {
 		name := s.GetContext().Value("type")

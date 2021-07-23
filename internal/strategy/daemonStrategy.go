@@ -22,12 +22,16 @@ func (d *DaemonStrategy) ToCommand() []string {
 	return pkg.MergeSliceOfString([]string{
 		d.ctx.GetConfig().GetDockerCommand(),
 		d.ctx.GetConfig().GetDetached(),
-		d.ctx.GetConfig().GetCleanUp(),
 		d.ctx.GetConfig().GetNetwork(),
+		d.ctx.GetConfig().GetUserId(),
 		d.ctx.GetConfig().GetEnvironmentVariables(),
 		d.ctx.GetConfig().GetPorts(),
+		d.ctx.GetConfig().GetHosts(),
 		d.ctx.GetConfig().GetDns(),
 		d.ctx.GetConfig().GetVolumes(),
+		d.ctx.GetConfig().GetCleanUp(),
+		d.ctx.GetConfig().GetContainerName(),
+		d.ctx.GetConfig().GetWorkDir(),
 		d.ctx.GetConfig().GetImage(),
 	})
 }

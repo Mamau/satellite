@@ -25,9 +25,9 @@ func (r *RunStrategy) GetExecCommand() string {
 func (r *RunStrategy) ToCommand() []string {
 	bc := pkg.MergeSliceOfString([]string{
 		r.ctx.GetConfig().GetDockerCommand(),
-		r.ctx.GetConfig().GetDetached(),
 		r.ctx.GetConfig().GetFlags(),
 		r.ctx.GetConfig().GetCleanUp(),
+		r.ctx.GetConfig().GetNetwork(),
 		r.ctx.GetConfig().GetUserId(),
 		r.ctx.GetConfig().GetEnvironmentVariables(),
 		r.ctx.GetConfig().GetHosts(),
