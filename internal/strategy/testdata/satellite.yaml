@@ -1,19 +1,16 @@
 services:
   - name: "fresh-img"
     command: "pull"
-    type: "pull"
     image: "node"
     version: "10"
 
   - name: "fresh-img-2"
     command: "pull"
     image: "node"
-    type: "pull"
 
   - name: "my-image"
     detach: true
     clean-up: true
-    type: "daemon"
     image: "gitlab.com/my/image"
     environment-variables:
       - "PHP_IDE_CONFIG=serverName=192.168.0.1"
@@ -27,7 +24,6 @@ services:
 
   - name: "my-image-2"
     detach: true
-    type: "daemon"
     image: "any-image"
     version: 2
     volumes:
