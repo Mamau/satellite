@@ -17,17 +17,6 @@ func TestGetMacros(t *testing.T) {
 	}
 }
 
-func TestGetService(t *testing.T) {
-	c := getConfig("/testdata/satellite")
-	if s := c.GetService("php"); s.Name != "php" {
-		t.Error("got wrong service")
-	}
-
-	if s := c.GetService("unknown"); s != nil {
-		t.Error("unknown service must be nil")
-	}
-}
-
 func TestGetServices(t *testing.T) {
 	c := getConfig("/testdata/satellite")
 	services := c.GetServices()

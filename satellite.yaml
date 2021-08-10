@@ -1,10 +1,18 @@
 services:
-  - name: "fresh-img"
-    command: "pull"
-    image: "node"
-    version: "10"
+  run:
+    - name: "composer-cmd"
+      clean-up: true
+      image: "composer"
+      description: "work with composer dependencies"
+
+    - name: "node-cmd"
+      clean-up: true
+      image: "node"
+      version: "12"
+      description: "work with node dependencies"
 
 macros:
-  - name: "dl-img"
+  - name: "install-all"
     commands:
-      - "fresh-img"
+      - "composer-cmd composer i --ignore-platform-reqs"
+      - "node-cmd node i"

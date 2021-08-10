@@ -1,11 +1,11 @@
 package commands
 
 import (
+	"fmt"
 	"strings"
 
-	"github.com/mamau/satellite/internal/config"
-
 	"github.com/gookit/color"
+	"github.com/mamau/satellite/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,8 @@ var macrosCmd = &cobra.Command{
 
 		for _, v := range macros.List {
 			cml := strings.Split(v, " ")
-			if serviceName := c.GetService(cml[0]); serviceName != nil {
+			if serviceName := c.FindService(cml[0]); serviceName != nil {
+				fmt.Println(serviceName, "-123")
 				cl = append(cl, cml[0])
 				serviceCmd.Run(cmd, cml)
 			}
