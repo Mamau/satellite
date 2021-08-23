@@ -9,15 +9,24 @@ import (
 
 var serviceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
+		var serviceName string
+		var arguments []string
+
 		if len(args) < 1 {
 			color.Red.Printf("You should pass service name\n")
 			return
 		}
-		serviceName := args[0]
+
+		serviceName = args[0]
+
+		if len(args) >= 2 {
+			arguments = args[1:]
+		}
+
 		color.Cyan.Printf("Start %s\n", serviceName)
 
 		s := config.GetConfig().FindService(serviceName)
 
-		pkg.RunCommandAtPTY(Docker(s, args))
+		pkg.RunCommandAtPTY(Docker(s, arguments))
 	},
 }

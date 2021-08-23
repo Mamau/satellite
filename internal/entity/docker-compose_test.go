@@ -11,11 +11,10 @@ func TestDCToCommand(t *testing.T) {
 	dc := DockerCompose{}
 	assert.Empty(t, dc.ToCommand([]string{}))
 
-	dc.Command = "up"
 	dc.Path = "/some/path"
 	dc.Verbose = true
 
-	result := strings.Join(dc.ToCommand([]string{}), " ")
+	result := strings.Join(dc.ToCommand([]string{"up"}), " ")
 	e := "up --file /some/path --verbose"
 	assert.Equal(t, result, e)
 }
@@ -58,14 +57,6 @@ func TestGetVerbose(t *testing.T) {
 
 	dc.Verbose = true
 	assert.Equal(t, dc.GetVerbose(), "--verbose")
-}
-
-func TestGetCommand(t *testing.T) {
-	dc := DockerCompose{}
-	assert.Empty(t, dc.GetCommand())
-
-	dc.Command = "up"
-	assert.Equal(t, dc.GetCommand(), "up")
 }
 
 func TestDCGetName(t *testing.T) {

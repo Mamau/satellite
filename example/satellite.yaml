@@ -40,7 +40,7 @@ services:
   exec:
     - name: "console"
       container-name: "project"
-      work-dir: "/home/www/project"
+      workdir: "/home/www/project"
       description: "exec console for project"
       pre-commands:
         - "cd /home"

@@ -14,7 +14,6 @@ type DockerCompose struct {
 	ProjectDirectory string `yaml:"project-directory"`
 	ProjectName      string `yaml:"project-name"`
 	LogLevel         string `yaml:"log-level"`
-	Command          string `yaml:"command"`
 	Description      string `yaml:"description"`
 	Verbose          bool   `yaml:"verbose"`
 }
@@ -29,13 +28,6 @@ func (d *DockerCompose) GetDescription() string {
 
 func (d *DockerCompose) GetName() string {
 	return d.Name
-}
-
-func (d *DockerCompose) GetCommand() string {
-	if d.Command != "" {
-		return d.Command
-	}
-	return ""
 }
 
 func (d *DockerCompose) GetVerbose() string {
@@ -75,13 +67,23 @@ func (d *DockerCompose) GetProjectDirectory() string {
 }
 
 func (d *DockerCompose) ToCommand(args []string) []string {
+	var command string
+	var arguments []string
+
+	if len(args) >= 1 {
+		command = args[0]
+	}
+	if len(args) >= 2 {
+		arguments = args[1:]
+	}
+
 	bc := pkg.MergeSliceOfString([]string{
-		d.GetCommand(),
+		command,
 		d.GetPath(),
 		d.GetProjectDirectory(),
 		d.GetVerbose(),
 		d.GetProjectName(),
 	})
-	configurator := newPureConfigConfigurator(bc, args)
+	configurator := newPureConfigConfigurator(bc, arguments)
 	return append(bc, configurator.getClientCommand()...)
 }
