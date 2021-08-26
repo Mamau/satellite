@@ -13,7 +13,7 @@ import (
 	"github.com/mamau/satellite/pkg"
 )
 
-const Version = "v0.18"
+const Version = "v0.20"
 
 type SelfUpdater struct {
 	Name           string
