@@ -1,6 +1,6 @@
 services:
 # ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat run-docker-compose" will run:
+# by command "./sat run-docker-compose run" will run:
 # docker-compose up --file ./path/to/file/docker-compose --project-directory ./path/to/file/docker-compose --verbose --project-name anyName
   docker-compose:
     - name: "run-docker-compose"
@@ -10,7 +10,6 @@ services:
       description: "run docker compose data"
       verbose: true
       log-level: "DEBUG"
-      command: "up"
 
 # ------------------------------------------------------------------------------------------------------------------------
 # by command "./sat fresh-img" will run:

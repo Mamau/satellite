@@ -39,44 +39,18 @@ type Config struct {
 	Services Services `yaml:"services"`
 }
 
+func NewConfig(path string) *Config {
+	once.Do(func() {
+		instance = &Config{
+			Path: path,
+		}
+	})
+
+	return instance
+}
+
 func (c *Config) GetMacros(name string) *Macros {
 	for _, v := range c.Macros {
-		if v.Name == name {
-			return &v
-		}
-	}
-	return nil
-}
-
-func (c *Config) FindDCService(name string) *entity.DockerCompose {
-	for _, v := range c.Services.ServiceDC {
-		if v.Name == name {
-			return &v
-		}
-	}
-	return nil
-}
-
-func (c *Config) FindExecService(name string) *entity.Exec {
-	for _, v := range c.Services.ServiceExec {
-		if v.Name == name {
-			return &v
-		}
-	}
-	return nil
-}
-
-func (c *Config) FindPullService(name string) *entity.Pull {
-	for _, v := range c.Services.ServicesPull {
-		if v.Name == name {
-			return &v
-		}
-	}
-	return nil
-}
-
-func (c *Config) FindRunService(name string) *entity.Run {
-	for _, v := range c.Services.ServiceRun {
 		if v.Name == name {
 			return &v
 		}
@@ -128,16 +102,6 @@ func (c *Config) GetServices() []Service {
 		})
 	}
 	return list
-}
-
-func NewConfig(path string) *Config {
-	once.Do(func() {
-		instance = &Config{
-			Path: path,
-		}
-	})
-
-	return instance
 }
 
 func GetConfig() *Config {
