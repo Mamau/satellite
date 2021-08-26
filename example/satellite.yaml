@@ -1,118 +1,56 @@
 services:
 # ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat bower install" will run:
-# docker run -ti -u 1000 --workdir=/home/node -v $(pwd):/home/node mamau/bower bower install
-# may use for install bower dependencies
-  - name: "bower"
-    user-id: "$(uid)"
-    image: "mamau/bower"
-    image-command: "bower"
-    work-dir: "/home/node"
-    volumes:
-      - "$(pwd):/home/node"
-# ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat yarn install" will run:
-# docker run -ti -u 1000 --dns=8.8.8.8 --workdir=/home/node -v $(pwd):/home/node -v $(pwd)/cache:/tmp node:10 /bin/bash -c yarn config set @webnpm:registry https://gitlab.com/packages/npm/; yarn config set strict-ssl false; npm config set //gitlab.com/projects/:_authToken {GITLAB_TOKEN}; npm config set //gitlab.com/packages/npm/:_authToken {GITLAB_TOKEN}; yarn install
-# may use for install yarn dependencies with your private repositories whose config described in pre-commands section
-  - name: "yarn"
-    image: "node"
-    version: "10"
-    user-id: "$(uid)"
-    image-command: "yarn"
-    work-dir: "/home/node"
-    volumes:
-      - "$(pwd):/home/node"
-      - "$(pwd)/cache:/tmp"
-    dns:
-      - "8.8.8.8"
-    pre-commands:
-      - "yarn config set @webnpm:registry https://gitlab.com/packages/npm/"
-      - "yarn config set strict-ssl false"
-      - "npm config set //gitlab.com/projects/:_authToken {GITLAB_TOKEN}"
-      - "npm config set //gitlab.com/packages/npm/:_authToken {GITLAB_TOKEN}"
-# ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat composer install --ignore-platform-reqs" will run:
-# docker run -ti --dns=8.8.8.8 --workdir=/home/www-data -v $(pwd):/home/www-data -v $(pwd)/cache:/tmp composer:1.9 /bin/bash -c git config --global http.sslVerify false; composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}; composer install --ignore-platform-reqs; chown -R 1000:1000 /home/www-data
-# may use for install composer dependencies, with "pre" and "post" commands that do:
-# pre command: allow to download package from private repository
-# post command: set the right on vendor dir for user with id: 1000
-  - name: "composer"
-    version: "1.9"
-    image-command: "composer"
-    work-dir: "/home/www-data"
-    volumes:
-      - "$(pwd):/home/www-data"
-      - "$(pwd)/cache:/tmp"
-    dns:
-      - "8.8.8.8"
-    pre-commands:
-      - "git config --global http.sslVerify false"
-      - "composer config -g http-basic.gitlab.com {GITLAB_USERNAME} {GITLAB_TOKEN}"
-    post-commands:
-      - "chown -R 1000:1000 /home/www-data"
-# ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat my-image" will run:
-# docker run -d --rm -e PHP_IDE_CONFIG=serverName=192.168.0.1 -p 127.0.0.1:443:443 -p 80:80 --dns=8.8.8.8 -v $(pwd):/home/www gitlab.com/my/image
-# may use for run your project in container on detach mode
-  - name: "my-image"
-    detach: true
-    clean-up: true
-    skip-args: true
-    image: "gitlab.com/my/image"
-    environment-variables:
-      - "PHP_IDE_CONFIG=serverName=192.168.0.1"
-    volumes:
-      - "$(pwd):/home/www"
-    dns:
-      - "8.8.8.8"
-    ports:
-      - "127.0.0.1:443:443"
-      - "80:80"
+# by command "./sat run-docker-compose run" will run:
+# docker-compose up --file ./path/to/file/docker-compose --project-directory ./path/to/file/docker-compose --verbose --project-name anyName
+  docker-compose:
+    - name: "run-docker-compose"
+      path: "./path/to/file/docker-compose"
+      project-directory: "./path/to/file/docker-compose"
+      project-name: "anyName"
+      description: "run docker compose data"
+      verbose: true
+      log-level: "DEBUG"
+
 # ------------------------------------------------------------------------------------------------------------------------
 # by command "./sat fresh-img" will run:
-# docker pull my-fresh-image:1
-# just pull new image
-  - name: "fresh-img"
-    command: "pull"
-    image: "my-fresh-image"
-    version: "1"
-    skip-args: true
+# docker pull node:10
+  pull:
+    - name: "fresh-img"
+      image: "node"
+      version: "10"
+      description: "pull node 10"
 
 # ------------------------------------------------------------------------------------------------------------------------
-# will run:  docker-compose --file ./path/to/file/docker-compose --project-directory ./path/to/file/docker-compose --log-level DEBUG --project-name anyName --verbose up -d --remove-orphans
-  - name: "run-docker-compose"
-    docker-compose: true
-    path: "./path/to/file/docker-compose"
-    project-directory: "./path/to/file/docker-compose"
-    project-name: "anyName"
-    verbose: true
-    log-level: "DEBUG"
-    detach: true
-    command: "up"
-    remove-orphans: true
+# by command "./sat composer-command composer i" will run:
+# docker run --rm --workdir=/home/www-data --name composer composer:1.9 /bin/bash -c composer --version; composer i
+  run:
+    - name: "composer-command"
+      clean-up: true
+      image: "composer"
+      version: "1.9"
+      workdir: "/home/www-data"
+      description: "install composer dependencies"
+      pre-commands:
+        - "composer --version"
 
 # ------------------------------------------------------------------------------------------------------------------------
-# will run: docker-compose up -d
-  - name: "run-docker-compose-2"
-    command: "up"
-    docker-compose: true
-    detach: true
+# by command "./sat console php -v" will run:
+# docker exec project /bin/bash -c cd /home; ls -la; php -v
+  exec:
+    - name: "console"
+      container-name: "project"
+      workdir: "/home/www/project"
+      description: "exec console for project"
+      pre-commands:
+        - "cd /home"
+        - "ls -la"
 
 # ------------------------------------------------------------------------------------------------------------------------
-# will run: docker-compose down
-  - name: "docker-compose-down"
-    command: "down"
-    docker-compose: true
-
-# ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat macros init" will run consistently 5 command from commands section.
+# by command "./sat macros init" will run consistently 3 command from commands section.
 # that commands will run from sections described above
 macros:
-  - name: "init"
+  - name: "multi-run"
     commands:
-      - "composer i --ignore-platform-reqs"
-      - "yarn install"
-      - "bower install"
-      - "yarn build-styles"
-      - "yarn build-dev --some-flag=someValue --some-flag2=someValue2"
-# ------------------------------------------------------------------------------------------------------------------------
+      - "fresh-img"
+      - "composer-command composer i"
+      - "console php -v"

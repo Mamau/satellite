@@ -1,20 +1,17 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 
-	"github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/internal/entity"
 
 	"github.com/mamau/satellite/pkg"
 
 	"github.com/mamau/satellite/internal/config"
-
-	"github.com/mamau/satellite/internal/strategy"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -26,10 +23,8 @@ var rootCmd = &cobra.Command{
 	Long:  "Show all command",
 }
 
-const commandName = "docker"
-
-func Docker(strategy strategy.Strategy) *exec.Cmd {
-	replacedEnv := pkg.ReplaceEnvVariables(strategy.ToCommand())
+func Docker(strategy entity.Runner, args []string) *exec.Cmd {
+	replacedEnv := pkg.ReplaceEnvVariables(strategy.ToCommand(args))
 	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
@@ -49,15 +44,10 @@ func InitServiceCommand() {
 			Run: func(cmd *cobra.Command, args []string) {
 				serviceName := cmd.Name()
 				color.Cyan.Printf("Start %s\n", serviceName)
-				s := config.GetConfig().GetService(serviceName)
-				strgy := determineStrategy(s, args)
 
-				if err := validation(strgy); err != nil {
-					color.Red.Println(err)
-					return
-				}
+				s := config.GetConfig().FindService(serviceName)
 
-				pkg.RunCommandAtPTY(Docker(strgy))
+				pkg.RunCommandAtPTY(Docker(s, args))
 			},
 		})
 	}
@@ -68,18 +58,6 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func validation(strgy strategy.Strategy) error {
-	typeConfig := strgy.GetContext().GetConfig().GetType()
-	if typeConfig == docker.RUN {
-		rstrg := strgy.(*strategy.RunStrategy)
-		if len(rstrg.Args) < 1 {
-			return errors.New("you should pass arguments for service")
-		}
-	}
-
-	return nil
 }
 
 func getReplaceGateWay(data []string) []string {

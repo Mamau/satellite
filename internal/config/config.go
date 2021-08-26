@@ -6,9 +6,9 @@ import (
 	"log"
 	"sync"
 
-	"github.com/mamau/satellite/pkg"
+	"github.com/mamau/satellite/internal/entity"
 
-	"github.com/mamau/satellite/internal/config/docker"
+	"github.com/mamau/satellite/pkg"
 
 	"gopkg.in/yaml.v2"
 )
@@ -26,10 +26,27 @@ type Macros struct {
 	List []string `yaml:"commands"`
 }
 
+type Services struct {
+	ServicesPull []entity.Pull          `yaml:"pull"`
+	ServiceRun   []entity.Run           `yaml:"run"`
+	ServiceExec  []entity.Exec          `yaml:"exec"`
+	ServiceDC    []entity.DockerCompose `yaml:"docker-compose"`
+}
+
 type Config struct {
 	Path     string
-	Macros   []Macros        `yaml:"macros"`
-	Services []docker.Docker `yaml:"services"`
+	Macros   []Macros `yaml:"macros"`
+	Services Services `yaml:"services"`
+}
+
+func NewConfig(path string) *Config {
+	once.Do(func() {
+		instance = &Config{
+			Path: path,
+		}
+	})
+
+	return instance
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -41,34 +58,50 @@ func (c *Config) GetMacros(name string) *Macros {
 	return nil
 }
 
-func (c *Config) GetService(name string) *docker.Docker {
-	for _, v := range c.Services {
-		if v.Name == name {
-			return &v
+func (c *Config) FindService(name string) entity.Runner {
+	for _, v := range c.ServicesList() {
+		if v.GetName() == name {
+			return v
 		}
 	}
 	return nil
 }
 
+func (c *Config) ServicesList() map[string]entity.Runner {
+	data := make(map[string]entity.Runner)
+
+	for i := 0; i < len(c.Services.ServicesPull); i++ {
+		item := &c.Services.ServicesPull[i]
+		data[item.GetName()] = &c.Services.ServicesPull[i]
+	}
+
+	for i := 0; i < len(c.Services.ServiceRun); i++ {
+		item := &c.Services.ServiceRun[i]
+		data[item.GetName()] = &c.Services.ServiceRun[i]
+	}
+
+	for i := 0; i < len(c.Services.ServiceExec); i++ {
+		item := &c.Services.ServiceExec[i]
+		data[item.GetName()] = &c.Services.ServiceExec[i]
+	}
+
+	for i := 0; i < len(c.Services.ServiceDC); i++ {
+		item := &c.Services.ServiceDC[i]
+		data[item.GetName()] = &c.Services.ServiceDC[i]
+	}
+
+	return data
+}
+
 func (c *Config) GetServices() []Service {
 	var list []Service
-	for _, v := range c.Services {
+	for _, v := range c.ServicesList() {
 		list = append(list, Service{
-			Name:        v.Name,
-			Description: v.Description,
+			Name:        v.GetName(),
+			Description: v.GetDescription(),
 		})
 	}
 	return list
-}
-
-func NewConfig(path string) *Config {
-	once.Do(func() {
-		instance = &Config{
-			Path: path,
-		}
-	})
-
-	return instance
 }
 
 func GetConfig() *Config {

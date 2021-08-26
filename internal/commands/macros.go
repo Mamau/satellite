@@ -3,9 +3,8 @@ package commands
 import (
 	"strings"
 
-	"github.com/mamau/satellite/internal/config"
-
 	"github.com/gookit/color"
+	"github.com/mamau/satellite/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -14,14 +13,14 @@ var macrosCmd = &cobra.Command{
 	Short: "Run group of commands",
 	Long:  "Run group of commands",
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			color.Danger.Println("You should pass macros name")
+		var macrosName string
+
+		if len(args) < 1 {
+			color.Red.Printf("You should pass macros name\n")
 			return
 		}
 
-		macrosName := args[0]
-
-		var cl []string
+		macrosName = args[0]
 
 		c := config.GetConfig()
 		macros := c.GetMacros(macrosName)
@@ -33,14 +32,9 @@ var macrosCmd = &cobra.Command{
 
 		for _, v := range macros.List {
 			cml := strings.Split(v, " ")
-			if serviceName := c.GetService(cml[0]); serviceName != nil {
-				cl = append(cl, cml[0])
+			if serviceName := c.FindService(cml[0]); serviceName != nil {
 				serviceCmd.Run(cmd, cml)
 			}
-		}
-
-		if len(cl) == 0 {
-			color.Danger.Println("Commands in group not found")
 		}
 	},
 }
