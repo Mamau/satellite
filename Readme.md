@@ -66,7 +66,8 @@ services:
       user: {USER_ID_FROM_ENV_FILE}     
 ```
 Satellite support use follow commands:  
-* $(pwd) - will get your current dir path  
+* **$(pwd)** - will get your current dir path  
+* **$(gatewayHost)** - will get **Gateway** host from command: "_docker network inspect bridge_"  
 If you define a network property - satellite will create it automatically
 ### Possible services
 * #### Docker pull image
