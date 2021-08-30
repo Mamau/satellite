@@ -50,12 +50,12 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetWorkDir(),
 		e.GetContainerName(),
 	})
-	args = append(e.GetStartCommand(), args...)
+	args = append(e.GetBeginning(), args...)
 	configurator := newConfigConfigurator(bc, args, e)
 	return append(bc, configurator.getClientCommand()...)
 }
 
-func (e *Exec) GetStartCommand() []string {
+func (e *Exec) GetBeginning() []string {
 	if e.Beginning != "" {
 		return strings.Split(e.Beginning, " ")
 	}

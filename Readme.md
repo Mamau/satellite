@@ -116,22 +116,50 @@ docker exec -it --user 1000 --workdir=/home/www/my_project_dir my_project php bi
 services:
   run:
     - name: "my-image"
-    detach: true
-    clean-up: true
-    image: "gitlab.com/my/image"
-    environment-variables:
-      - "PHP_IDE_CONFIG=serverName=192.168.0.1"
-    volumes:
-      - "$(pwd):/home/www"
-    dns:
-      - "8.8.8.8"
-    ports:
-      - "127.0.0.1:443:443"
-      - "80:80"
+      detach: true
+      clean-up: true
+      image: "gitlab.com/my/image"
+      environment-variables:
+        - "PHP_IDE_CONFIG=serverName=192.168.0.1"
+      volumes:
+        - "$(pwd):/home/www"
+      dns:
+        - "8.8.8.8"
+      ports:
+        - "127.0.0.1:443:443"
+        - "80:80"
 ```
 Config above allow you run:
 ```bash
 ./sat my-image
+```
+
+* #### Docker run image with commands 
+*Use it for install dependencies*
+```yaml
+services:
+  run:
+    - name: "my-composer"
+      image: "composer"
+      clean-up: true
+      user: "{USER_ID}" #this will get from .env file
+      interactive: true
+      workdir: "/home/www-data"
+      tty: true
+      beginning: "composer"
+      version: "1.9"
+      volumes:
+        - "$(pwd):/home/www-data"
+```
+Config above allow you run:
+```bash
+./sat my-composer install --ignore-platform-reqs
+```
+
+Run command have a feature field "beginning". This is first part of your command.  
+When you will run command above in fact you will run this:
+```bash
+docker run -it --user 1000 --workdir=/home/www-data composer:1.9 composer install --ignore-platform-reqs
 ```
 
 * #### Start docker-compose

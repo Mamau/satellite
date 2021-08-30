@@ -24,6 +24,7 @@ type Run struct {
 	Hostname      string   `yaml:"hostname"`
 	EnvFile       string   `yaml:"env-file"`
 	User          string   `yaml:"user"`
+	Beginning     string   `yaml:"beginning"`
 	Detach        bool     `yaml:"detach"`
 	Interactive   bool     `yaml:"interactive"`
 	Tty           bool     `yaml:"tty"`
@@ -228,8 +229,17 @@ func (r *Run) ToCommand(args []string) []string {
 		r.GetContainerName(),
 		r.GetImage(),
 	})
+	args = append(r.GetBeginning(), args...)
 	configurator := newConfigConfigurator(bc, args, r)
 	return append(bc, configurator.getClientCommand()...)
+}
+
+func (r *Run) GetBeginning() []string {
+	if r.Beginning != "" {
+		return strings.Split(r.Beginning, " ")
+	}
+
+	return []string{}
 }
 
 func (r *Run) createNetwork() {

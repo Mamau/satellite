@@ -30,6 +30,14 @@ func TestToCommand(t *testing.T) {
 	}
 	result = strings.Join(run.ToCommand([]string{"ls"}), " ")
 	assert.Equal(t, result, "run --dns=0.0.8.8 test:1 ls")
+
+	run = Run{
+		Image:     "composer",
+		Version:   "1.9",
+		Beginning: "composer",
+	}
+	result = strings.Join(run.ToCommand([]string{"install", "--ignore-platform-reqs"}), " ")
+	assert.Equal(t, result, "run composer:1.9 composer install --ignore-platform-reqs")
 }
 
 func TestGetExecCommand(t *testing.T) {

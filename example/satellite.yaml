@@ -21,13 +21,14 @@ services:
       description: "pull node 10"
 
 # ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat composer-command composer i" will run:
-# docker run --rm --workdir=/home/www-data --name composer composer:1.9 /bin/bash -c composer --version; composer i
+# by command "./sat composer-command i" will run:
+# docker run --rm --workdir=/home/www-data --name composer-command composer:1.9 /bin/bash -c composer --version; composer i
   run:
     - name: "composer-command"
-      clean-up: true
       image: "composer"
       version: "1.9"
+      beginning: "composer"
+      clean-up: true
       workdir: "/home/www-data"
       description: "install composer dependencies"
       pre-commands:
