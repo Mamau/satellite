@@ -17,6 +17,7 @@ type Exec struct {
 	User          string   `yaml:"user"`
 	WorkDir       string   `yaml:"workdir"`
 	Description   string   `yaml:"description"`
+	Beginning     string   `yaml:"beginning"`
 	Detach        bool     `yaml:"detach"`
 	Interactive   bool     `yaml:"interactive"`
 	Tty           bool     `yaml:"tty"`
@@ -49,8 +50,17 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetWorkDir(),
 		e.GetContainerName(),
 	})
+	args = append(e.GetStartCommand(), args...)
 	configurator := newConfigConfigurator(bc, args, e)
 	return append(bc, configurator.getClientCommand()...)
+}
+
+func (e *Exec) GetStartCommand() []string {
+	if e.Beginning != "" {
+		return strings.Split(e.Beginning, " ")
+	}
+
+	return []string{}
 }
 
 func (e *Exec) GetPreCommands() []string {

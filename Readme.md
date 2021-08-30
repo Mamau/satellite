@@ -89,19 +89,25 @@ Config above allow you run:
 *Use it for execute command*
 ```yaml
 services:
-  run:
-    - name: "composer-command"
-      clean-up: true
-      image: "composer"
-      version: "1.9"
-      workdir: "/home/www-data"
-      description: "install composer dependencies"
-      pre-commands:
-        - "composer --version"
+  exec:
+    - name: "console"
+      interactive: true
+      tty: true
+      bin-bash: true
+      user: "{USER_ID}" #this will get from .env file
+      container-name: "my_project"
+      workdir: "/home/www/my_project_dir"
+      beginning: "php bin/console"
+      description: "execute console command of container"
 ```
 Config above allow you run:
 ```bash
-./sat composer-command install --ignore-platofrm-reqs
+./sat console cache-clear
+```
+Exec command have a feature field "beginning". This is first part of your command.  
+When you will run command above in fact you will run this:
+```bash
+docker exec -it --user 1000 --workdir=/home/www/my_project_dir my_project php bin/console cache-clear
 ```
 
 * #### Docker start image

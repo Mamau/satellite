@@ -121,6 +121,17 @@ func TestExecToCommand(t *testing.T) {
 	result := strings.Join(exec.ToCommand([]string{"some", "command"}), " ")
 	e := "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command; pre command 2; some command"
 	assert.Equal(t, result, e)
+
+	exec.Beginning = "php bin/console"
+	exec.PreCommands = []string{"pre command", "pre command 2"}
+	result = strings.Join(exec.ToCommand([]string{"cache", "clear"}), " ")
+	e = "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command; pre command 2; php bin/console cache clear"
+	assert.Equal(t, result, e)
+
+	exec.PreCommands = nil
+	result = strings.Join(exec.ToCommand([]string{"cache", "clear"}), " ")
+	e = "exec -it --workdir=/some/work/dir some-container-name php bin/console cache clear"
+	assert.Equal(t, result, e)
 }
 
 func TestExecGetExecCommand(t *testing.T) {
