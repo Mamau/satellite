@@ -3,8 +3,10 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 	"sync"
+
+	"github.com/gookit/color"
 
 	"github.com/mamau/satellite/internal/entity"
 
@@ -115,11 +117,13 @@ func GetConfig() *Config {
 
 	buf, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		log.Fatalln(err)
+		color.Danger.Printf("Error while read config file, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	if err := yaml.Unmarshal(buf, c); err != nil {
-		log.Fatalln(err)
+		color.Danger.Printf("Error while unmarshal config, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	return c

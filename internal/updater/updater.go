@@ -3,7 +3,6 @@ package updater
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"runtime"
 	"strings"
@@ -40,7 +39,8 @@ func (s *SelfUpdater) Update() {
 
 	data, err := ioutil.ReadFile(src)
 	if err != nil {
-		log.Fatalf("error while read source, err: %s\n", err)
+		color.Danger.Printf("Error while read source, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	if !s.replaceFile(data) {
@@ -54,13 +54,13 @@ func (s *SelfUpdater) replaceFile(fileData []byte) bool {
 	dst := fmt.Sprintf("%s_old", s.Name)
 
 	if err := ioutil.WriteFile(dst, fileData, 0744); err != nil {
-		log.Fatalf("error while write file, err: %s\n", err)
-		return false
+		color.Danger.Printf("Error while write file, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	if err := os.Rename(dst, s.Name); err != nil {
-		log.Fatalf("error while rename file, err: %s\n", err)
-		return false
+		color.Danger.Printf("Error while rename file, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	return true
