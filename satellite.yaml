@@ -13,6 +13,7 @@ services:
 
 macros:
   - name: "install-all"
+    description: "install all deps"
     commands:
       - "composer-cmd composer i --ignore-platform-reqs"
       - "node-cmd node i"

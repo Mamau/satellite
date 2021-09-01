@@ -22,8 +22,9 @@ type Service struct {
 }
 
 type Macros struct {
-	Name string   `yaml:"name"`
-	List []string `yaml:"commands"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	List        []string `yaml:"commands"`
 }
 
 type Services struct {
