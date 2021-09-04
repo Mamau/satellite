@@ -14,9 +14,9 @@ import (
 // Run documentation for service params
 // https://docs.docker.com/engine/reference/commandline/run
 type Run struct {
-	Name          string   `yaml:"name"`
+	Name          string   `yaml:"name" validate:"required,min=1"`
 	ContainerName string   `yaml:"container-name"`
-	Image         string   `yaml:"image"`
+	Image         string   `yaml:"image" validate:"required,min=1"`
 	Version       string   `yaml:"version"`
 	WorkDir       string   `yaml:"workdir"`
 	Network       string   `yaml:"network"`

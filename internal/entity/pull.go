@@ -9,8 +9,8 @@ import (
 // Pull documentation for service params
 // https://docs.docker.com/engine/reference/commandline/pull
 type Pull struct {
-	Name                string `yaml:"name"`
-	Image               string `yaml:"image"`
+	Name                string `yaml:"name" validate:"required,min=1"`
+	Image               string `yaml:"image" validate:"required,min=1"`
 	Version             string `yaml:"version"`
 	DisableContentTrust string `yaml:"disable-content-trust"`
 	Description         string `yaml:"description"`

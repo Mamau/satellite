@@ -11,8 +11,8 @@ import (
 // Exec documentation for service params
 // https://docs.docker.com/engine/reference/commandline/exec
 type Exec struct {
-	Name          string   `yaml:"name"`
-	ContainerName string   `yaml:"container-name"`
+	Name          string   `yaml:"name" validate:"required,min=1"`
+	ContainerName string   `yaml:"container-name" validate:"required,min=1"`
 	EnvFile       string   `yaml:"env-file"`
 	User          string   `yaml:"user"`
 	WorkDir       string   `yaml:"workdir"`

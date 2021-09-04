@@ -6,6 +6,8 @@ import (
 	"os"
 	"sync"
 
+	"github.com/mamau/satellite/internal/validator"
+
 	"github.com/gookit/color"
 
 	"github.com/mamau/satellite/internal/entity"
@@ -62,11 +64,23 @@ func (c *Config) GetMacros(name string) *Macros {
 }
 
 func (c *Config) FindService(name string) entity.Runner {
+	var service entity.Runner
 	for _, v := range c.ServicesList() {
 		if v.GetName() == name {
-			return v
+			service = v
+			break
 		}
 	}
+
+	valid := validator.NewValidator()
+	errs, isValid := valid.Validate(service)
+	if isValid {
+		return service
+	}
+	for _, v := range errs {
+		color.Red.Printf("Service %s error: %s\n", service.GetName(), v)
+	}
+	os.Exit(1)
 	return nil
 }
 
