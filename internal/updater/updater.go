@@ -24,7 +24,7 @@ func NewSelfUpdater() *SelfUpdater {
 	return &SelfUpdater{
 		Name:           strings.Replace(os.Args[0], "./", "", -1),
 		CurrentVersion: Version,
-		LatestRelease:  fetchRelease(),
+		LatestRelease:  FetchRelease(),
 	}
 }
 

@@ -11,6 +11,12 @@ import (
 
 const source = "https://api.github.com/repos/Mamau/satellite/releases/latest"
 
+//go:generate mockgen -destination=releaser_mock.go -package=updater github.com/mamau/satellite/internal/updater Releaser
+
+type Releaser interface {
+	FetchRelease() *Release
+}
+
 type Asset struct {
 	Name string `json:"name"`
 	Uri  string `json:"browser_download_url"`
@@ -22,7 +28,7 @@ type Release struct {
 	Assets  []Asset `json:"assets"`
 }
 
-func fetchRelease() *Release {
+func FetchRelease() *Release {
 	res, err := http.Get(source)
 	if err != nil {
 		color.Danger.Printf("cant get info from github, err: %s\n", err)
@@ -37,7 +43,7 @@ func fetchRelease() *Release {
 
 	var release Release
 	if err := json.Unmarshal(body, &release); err != nil {
-		color.Danger.Printf("cant unmarshal objecr, err: %s\n", err)
+		color.Danger.Printf("cant unmarshal object, err: %s\n", err)
 		os.Exit(1)
 	}
 

@@ -1,4 +1,4 @@
-package validator
+package informator
 
 import (
 	"os"
@@ -45,7 +45,7 @@ func (in *Informator) scanEntity(entity interface{}) {
 		switch val.Field(i).Kind() {
 		case reflect.String:
 			in.Strings[structType.Field(i).Name] = val.Field(i).String()
-		case reflect.Int:
+		case reflect.Int64:
 			in.Integers[structType.Field(i).Name] = val.Field(i).Int()
 		case reflect.Bool:
 			in.Booleans[structType.Field(i).Name] = val.Field(i).Bool()
