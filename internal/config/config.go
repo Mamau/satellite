@@ -3,8 +3,12 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 	"sync"
+
+	"github.com/mamau/satellite/internal/validator"
+
+	"github.com/gookit/color"
 
 	"github.com/mamau/satellite/internal/entity"
 
@@ -22,8 +26,9 @@ type Service struct {
 }
 
 type Macros struct {
-	Name string   `yaml:"name"`
-	List []string `yaml:"commands"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	List        []string `yaml:"commands"`
 }
 
 type Services struct {
@@ -59,11 +64,23 @@ func (c *Config) GetMacros(name string) *Macros {
 }
 
 func (c *Config) FindService(name string) entity.Runner {
+	var service entity.Runner
 	for _, v := range c.ServicesList() {
 		if v.GetName() == name {
-			return v
+			service = v
+			break
 		}
 	}
+
+	valid := validator.NewValidator()
+	errs, isValid := valid.Validate(service)
+	if isValid {
+		return service
+	}
+	for _, v := range errs {
+		color.Red.Printf("Service %s error: %s\n", service.GetName(), v)
+	}
+	os.Exit(1)
 	return nil
 }
 
@@ -114,11 +131,13 @@ func GetConfig() *Config {
 
 	buf, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		log.Fatalln(err)
+		color.Danger.Printf("Error while read config file, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	if err := yaml.Unmarshal(buf, c); err != nil {
-		log.Fatalln(err)
+		color.Danger.Printf("Error while unmarshal config, err: %s\n", err)
+		os.Exit(1)
 	}
 
 	return c

@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
+	"github.com/gookit/color"
 	"github.com/mamau/satellite/internal/commands"
 	"github.com/mamau/satellite/internal/updater"
 
@@ -11,9 +9,9 @@ import (
 )
 
 func main() {
-	fmt.Printf("Current version is %s\n", updater.Version)
+	color.Info.Printf("Current version is %s\n", updater.Version)
 	if err := godotenv.Load(); err != nil {
-		log.Println("no .env file")
+		color.Warn.Println("no .env file")
 	}
 
 	commands.InitServiceCommand()

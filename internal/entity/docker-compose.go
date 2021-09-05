@@ -9,7 +9,7 @@ import (
 // DockerCompose describe path to file
 // https://docs.docker.com/compose/reference/
 type DockerCompose struct {
-	Name             string `yaml:"name"`
+	Name             string `yaml:"name" validate:"required,min=1"`
 	Path             string `yaml:"path"`
 	ProjectDirectory string `yaml:"project-directory"`
 	ProjectName      string `yaml:"project-name"`

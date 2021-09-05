@@ -13,7 +13,7 @@ var serviceCmd = &cobra.Command{
 		var arguments []string
 
 		if len(args) < 1 {
-			color.Red.Printf("You should pass service name\n")
+			color.Red.Printf("You must pass a service name\n")
 			return
 		}
 
