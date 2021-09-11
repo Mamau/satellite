@@ -3,57 +3,43 @@ package config
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/mamau/satellite/pkg"
 )
 
 func TestGetMacros(t *testing.T) {
 	c := getConfig("/testdata/satellite")
-	if m := c.GetMacros("test_not_found"); m != nil {
-		t.Errorf("macros must be empty")
-	}
+	assert.Empty(t, c.GetMacros("test_not_found"))
 
-	if m := c.GetMacros("test"); m == nil {
-		t.Errorf("macros must be not empty")
-	}
+	assert.NotEmpty(t, c.GetMacros("test"))
 }
 
 func TestGetServices(t *testing.T) {
 	c := getConfig("/testdata/satellite")
 	services := c.GetServices()
 	e := "php"
-	if services[0].Name != e {
-		t.Errorf("services #1 expected name %q", e)
-	}
+	assert.Equal(t, e, services[0].Name)
 
 	ed := "some description"
-	if services[0].Description != ed {
-		t.Errorf("services #1 expected description %q", ed)
-	}
+	assert.Equal(t, ed, services[0].Description)
 
 	e2 := "mysql"
-	if services[1].Name != e2 {
-		t.Errorf("services #2 expected name %q", e2)
-	}
+	assert.Equal(t, e2, services[1].Name)
 
 	ed2 := "some mysql description"
-	if services[1].Description != ed2 {
-		t.Errorf("services #2 expected description %q", ed2)
-	}
+	assert.Equal(t, ed2, services[1].Description)
 }
 
 func TestGetClientConfig(t *testing.T) {
 	fp := pkg.GetPwd() + "/testdata/satellite"
 	result := GetClientConfig(fp)
 
-	if result != fp+".yaml" {
-		t.Errorf("file %s is not exist", fp)
-	}
+	assert.Equal(t, fp+".yaml", result)
 
 	fp = pkg.GetPwd() + "/testdata/satellite_not_exists"
 	result = GetClientConfig(fp)
-	if result != "" {
-		t.Errorf("file %s not exists and return non empty string", fp)
-	}
+	assert.Empty(t, result)
 }
 
 func getConfig(cn string) *Config {

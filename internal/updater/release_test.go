@@ -25,6 +25,6 @@ func TestFetchRelease(t *testing.T) {
 	releaser := NewMockReleaser(ctrl)
 
 	releaser.EXPECT().FetchRelease().Return(&release).MaxTimes(1)
-	result := FetchRelease()
+	result := releaser.FetchRelease()
 	assert.ObjectsAreEqual(release, result)
 }
