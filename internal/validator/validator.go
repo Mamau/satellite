@@ -22,7 +22,7 @@ func NewValidator() *Validator {
 // Validate Return slice of errors if exists, and bool is valid
 func (v *Validator) Validate(entity interface{}) ([]string, bool) {
 	err := v.ValidatorService.Struct(entity)
-	v.translateError(err)
+	//v.translateError(err)
 	errors := v.translateError(err)
 	if len(errors) > 0 {
 		return errors, false

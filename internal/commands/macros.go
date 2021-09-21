@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"os"
 	"strings"
 
 	"github.com/gookit/color"
@@ -11,7 +12,7 @@ import (
 var macrosCmd = &cobra.Command{
 	Use:   "macros",
 	Short: "Run group of commands",
-	Long:  "Run group of commands",
+	Long:  "Run separate commands from service section in one macros command",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := cmd.Help(); err != nil {
 			color.Danger.Println("Error while running help of macros")
@@ -39,18 +40,28 @@ func initMacrosSubCommand() {
 
 				if macros == nil {
 					color.Danger.Println("Macros not found")
-					return
+					os.Exit(1)
 				}
 
-				for _, v := range macros.List {
-					cml := strings.Split(v, " ")
-					if serviceName := c.FindService(cml[0]); serviceName != nil {
-						serviceCmd.Run(cmd, cml)
-						continue
-					}
-					color.Danger.Printf("Service %s not found\n", cml[0])
+				for _, v := range getServices(macros.List) {
+					serviceCmd.Run(cmd, v)
 				}
 			},
 		})
 	}
+}
+
+func getServices(macrosList []string) [][]string {
+	var commandList [][]string
+	c := config.GetConfig()
+	for _, v := range macrosList {
+		cml := strings.Split(v, " ")
+		if serviceName := c.FindService(cml[0]); serviceName != nil {
+			commandList = append(commandList, cml)
+			continue
+		}
+		color.Danger.Printf("Service %s not found\n", cml[0])
+	}
+
+	return commandList
 }
