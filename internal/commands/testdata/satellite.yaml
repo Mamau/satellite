@@ -1,9 +1,0 @@
-services:
-  run:
-    - name: "php"
-      image: "php"
-      description: "some description in commands"
-      version: "7.4"
-    - name: "yarn"
-      image: "node"
-      description: "install front dependencies in commands"

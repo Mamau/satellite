@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"sync"
 
@@ -42,16 +41,6 @@ type Config struct {
 	Path     string
 	Macros   []Macros `yaml:"macros"`
 	Services Services `yaml:"services"`
-}
-
-func NewConfig(path string) *Config {
-	once.Do(func() {
-		instance = &Config{
-			Path: path,
-		}
-	})
-
-	return instance
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -121,34 +110,43 @@ func (c *Config) GetServices() []Service {
 	return list
 }
 
-func GetConfig() *Config {
-	path := fmt.Sprintf("%s/satellite", pkg.GetPwd())
-	c := NewConfig(path)
-	fileName := GetClientConfig(c.Path)
-	if fileName == "" {
-		return c
-	}
+func mappingConfig(path string) *Config {
+	config := &Config{}
 
-	buf, err := ioutil.ReadFile(fileName)
+	file, err := os.Open(path)
 	if err != nil {
-		color.Danger.Printf("Error while read config file, err: %s\n", err)
+		color.Danger.Printf("error open config file, err: %s\n", err)
 		os.Exit(1)
 	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			color.Danger.Printf("error while closing file, err: %s\n", err)
+			os.Exit(1)
+		}
+	}()
 
-	if err := yaml.Unmarshal(buf, c); err != nil {
-		color.Danger.Printf("Error while unmarshal config, err: %s\n", err)
+	decoder := yaml.NewDecoder(file)
+	if err = decoder.Decode(&config); err != nil {
+		color.Danger.Printf("error while decode config file, err: %s\n", err)
 		os.Exit(1)
 	}
-
-	return c
+	return config
 }
 
-func GetClientConfig(filePath string) string {
-	for _, ext := range []string{"yaml", "yml"} {
-		file := fmt.Sprintf("%s.%s", filePath, ext)
-		if pkg.FileExists(file) {
-			return file
+func GetConfig() *Config {
+	once.Do(func() {
+		configName := os.Getenv("CONFIG_NAME")
+		if configName == "" {
+			configName = "satellite.yaml"
 		}
-	}
-	return ""
+
+		path := fmt.Sprintf("%s/%s", pkg.GetPwd(), configName)
+		instance = mappingConfig(path)
+	})
+
+	return instance
+}
+
+func NewConfig(path string) *Config {
+	return mappingConfig(path)
 }

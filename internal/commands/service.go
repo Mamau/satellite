@@ -13,7 +13,7 @@ var serviceCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		serviceName, arguments := prepareArgs(args)
 
-		color.Cyan.Printf("Start %s\n", serviceName)
+		color.Cyan.Printf("Start %q\n", serviceName)
 
 		s := config.GetConfig().FindService(serviceName)
 

@@ -63,8 +63,11 @@ Then use it in .yaml file like this:
 services:
   run:
     - name: "my-command"
-      user: {USER_ID_FROM_ENV_FILE}     
+      user: "${USER_ID_FROM_ENV_FILE}"     
 ```
+In .env file you can define CONFIG_NAME variable.
+This variable set name of config which will be used by satellite.
+If it not set, satellite will search "satellite.yaml"  
 Satellite support use follow commands:  
 * **$(pwd)** - will get your current dir path  
 * **$(gatewayHost)** - will get **Gateway** host from command: "_docker network inspect bridge_"  
@@ -94,7 +97,7 @@ services:
       interactive: true
       tty: true
       bin-bash: true
-      user: "{USER_ID}" #this will get from .env file
+      user: "${USER_ID}" #this will get from .env file
       container-name: "my_project"
       workdir: "/home/www/my_project_dir"
       beginning: "php bin/console"
@@ -142,7 +145,7 @@ services:
     - name: "my-composer"
       image: "composer"
       clean-up: true
-      user: "{USER_ID}" #this will get from .env file
+      user: "${USER_ID}" #this will get from .env file
       interactive: true
       workdir: "/home/www-data"
       tty: true

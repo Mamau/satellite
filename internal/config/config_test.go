@@ -9,14 +9,14 @@ import (
 )
 
 func TestGetMacros(t *testing.T) {
-	c := getConfig("/testdata/satellite")
+	c := getConfig()
 	assert.Empty(t, c.GetMacros("test_not_found"))
 
 	assert.NotEmpty(t, c.GetMacros("test"))
 }
 
 func TestGetServices(t *testing.T) {
-	c := getConfig("/testdata/satellite")
+	c := getConfig()
 	services := c.GetServices()
 	e := "php"
 	assert.Equal(t, e, services[0].Name)
@@ -31,19 +31,6 @@ func TestGetServices(t *testing.T) {
 	assert.Equal(t, ed2, services[1].Description)
 }
 
-func TestGetClientConfig(t *testing.T) {
-	fp := pkg.GetPwd() + "/testdata/satellite"
-	result := GetClientConfig(fp)
-
-	assert.Equal(t, fp+".yaml", result)
-
-	fp = pkg.GetPwd() + "/testdata/satellite_not_exists"
-	result = GetClientConfig(fp)
-	assert.Empty(t, result)
-}
-
-func getConfig(cn string) *Config {
-	c := NewConfig(pkg.GetPwd() + "/testdata/satellite")
-	c.Path = pkg.GetPwd() + cn
-	return GetConfig()
+func getConfig() *Config {
+	return NewConfig(pkg.GetPwd() + "/testdata/satellite.yaml")
 }

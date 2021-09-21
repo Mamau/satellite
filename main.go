@@ -15,5 +15,6 @@ func main() {
 	}
 
 	commands.InitServiceCommand()
+	commands.InitMacrosSubCommand()
 	commands.Execute()
 }

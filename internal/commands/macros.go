@@ -4,6 +4,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/mamau/satellite/internal/entity"
+
 	"github.com/gookit/color"
 	"github.com/mamau/satellite/internal/config"
 	"github.com/spf13/cobra"
@@ -21,11 +23,10 @@ var macrosCmd = &cobra.Command{
 }
 
 func init() {
-	initMacrosSubCommand()
 	rootCmd.AddCommand(macrosCmd)
 }
 
-func initMacrosSubCommand() {
+func InitMacrosSubCommand() {
 	c := config.GetConfig()
 	for _, item := range c.Macros {
 		macrosCmd.AddCommand(&cobra.Command{
@@ -34,7 +35,7 @@ func initMacrosSubCommand() {
 			Long:  item.Description,
 			Run: func(cmd *cobra.Command, args []string) {
 				macrosName := cmd.Name()
-				color.Cyan.Printf("Start %s\n", macrosName)
+				color.Cyan.Printf("Start macros %q\n", macrosName)
 
 				macros := c.GetMacros(macrosName)
 
@@ -43,7 +44,7 @@ func initMacrosSubCommand() {
 					os.Exit(1)
 				}
 
-				for _, v := range getServices(macros.List) {
+				for _, v := range getServices(c.FindService, macros.List) {
 					serviceCmd.Run(cmd, v)
 				}
 			},
@@ -51,16 +52,15 @@ func initMacrosSubCommand() {
 	}
 }
 
-func getServices(macrosList []string) [][]string {
+func getServices(finder func(name string) entity.Runner, macrosList []string) [][]string {
 	var commandList [][]string
-	c := config.GetConfig()
 	for _, v := range macrosList {
 		cml := strings.Split(v, " ")
-		if serviceName := c.FindService(cml[0]); serviceName != nil {
+		if serviceName := finder(cml[0]); serviceName != nil {
 			commandList = append(commandList, cml)
 			continue
 		}
-		color.Danger.Printf("Service %s not found\n", cml[0])
+		color.Danger.Printf("Service %q not found\n", cml[0])
 	}
 
 	return commandList

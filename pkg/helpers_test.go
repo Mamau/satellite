@@ -130,25 +130,10 @@ func TestReplaceEnvVariables(t *testing.T) {
 	setEnvVar("TEST_VAR2", "TEST_VAL2", t)
 	setEnvVar("TEST_VAR3", "TEST_VAL3", t)
 
-	data := []string{"some-string{TEST_VAR}for change", "second{TEST_VAR2}string{TEST_VAR3}"}
+	data := []string{"some-string${TEST_VAR}for change", "second${TEST_VAR2}string${TEST_VAR3}"}
 	expected := "some-stringTEST_VALfor change secondTEST_VAL2stringTEST_VAL3"
 	if result := ReplaceEnvVariables(data); strings.Join(result, " ") != expected {
 		t.Errorf("error while replace env, excpected: %q, got %q", expected, strings.Join(result, " "))
-	}
-}
-
-func TestReplaceEnv(t *testing.T) {
-	setEnvVar("TEST_VAR", "TEST_VAL", t)
-	target := "some-string{TEST_VAR}for change"
-	expected := "some-stringTEST_VALfor change"
-	if result := replaceEnv(target, "{TEST_VAR}"); result != expected {
-		t.Errorf("error while replace env var, expected: %q, got %q", expected, result)
-	}
-
-	target = "no vars"
-	expected = "no vars"
-	if result := replaceEnv(target, "{NOT_EXISTS_VAR}"); result != expected {
-		t.Errorf("error while replace env var, expected: %q, got %q", expected, result)
 	}
 }
 

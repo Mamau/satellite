@@ -65,23 +65,10 @@ func ReplaceInternalVariables(from string, to string, list []string) []string {
 
 func ReplaceEnvVariables(args []string) []string {
 	for i, v := range args {
-		r := regexp.MustCompile("{(.*?)}")
-		if found := r.FindAllString(v, -1); found != nil {
-			for _, vv := range found {
-				args[i] = replaceEnv(args[i], vv)
-			}
-		}
+		args[i] = os.ExpandEnv(v)
 	}
 
 	return args
-}
-
-func replaceEnv(target, pattern string) string {
-	trimmed := strings.TrimRight(strings.TrimLeft(pattern, "{"), "}")
-	if ev := os.Getenv(trimmed); ev != "" {
-		return strings.Replace(target, pattern, ev, 1)
-	}
-	return target
 }
 
 func MergeSliceOfString(data []string) []string {
