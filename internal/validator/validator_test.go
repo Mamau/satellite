@@ -3,7 +3,7 @@ package validator
 import (
 	"testing"
 
-	"github.com/mamau/satellite/internal/entity"
+	"satellite/internal/entity"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
 func TestGetMacros(t *testing.T) {

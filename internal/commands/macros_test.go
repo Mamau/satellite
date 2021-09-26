@@ -3,7 +3,7 @@ package commands
 import (
 	"testing"
 
-	"github.com/mamau/satellite/internal/entity"
+	"satellite/internal/entity"
 
 	"github.com/stretchr/testify/assert"
 )

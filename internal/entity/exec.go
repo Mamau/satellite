@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
 // Exec documentation for service params

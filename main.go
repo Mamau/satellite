@@ -1,9 +1,10 @@
 package main
 
 import (
+	"satellite/internal/commands"
+	"satellite/internal/updater"
+
 	"github.com/gookit/color"
-	"github.com/mamau/satellite/internal/commands"
-	"github.com/mamau/satellite/internal/updater"
 
 	"github.com/joho/godotenv"
 )

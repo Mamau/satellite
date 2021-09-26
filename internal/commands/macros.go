@@ -4,10 +4,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/mamau/satellite/internal/entity"
+	"satellite/internal/entity"
+
+	"satellite/internal/config"
 
 	"github.com/gookit/color"
-	"github.com/mamau/satellite/internal/config"
 	"github.com/spf13/cobra"
 )
 

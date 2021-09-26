@@ -3,9 +3,10 @@ package commands
 import (
 	"os"
 
+	"satellite/internal/config"
+	"satellite/pkg"
+
 	"github.com/gookit/color"
-	"github.com/mamau/satellite/internal/config"
-	"github.com/mamau/satellite/pkg"
 	"github.com/spf13/cobra"
 )
 

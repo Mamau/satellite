@@ -1,4 +1,4 @@
-module github.com/mamau/satellite
+module satellite
 
 go 1.14
 

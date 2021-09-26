@@ -3,7 +3,7 @@ package entity
 import (
 	"fmt"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
 // DockerCompose describe path to file

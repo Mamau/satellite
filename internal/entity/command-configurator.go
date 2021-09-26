@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
 type BinBasher interface {

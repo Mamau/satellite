@@ -7,11 +7,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mamau/satellite/internal/entity"
+	"satellite/internal/entity"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 
-	"github.com/mamau/satellite/internal/config"
+	"satellite/internal/config"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"

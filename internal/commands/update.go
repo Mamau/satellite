@@ -1,7 +1,8 @@
 package commands
 
 import (
-	"github.com/mamau/satellite/internal/updater"
+	"satellite/internal/updater"
+
 	"github.com/spf13/cobra"
 )
 

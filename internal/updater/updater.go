@@ -9,10 +9,10 @@ import (
 
 	"github.com/gookit/color"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
-const Version = "v0.24"
+const Version = "v0.25"
 
 type SelfUpdater struct {
 	Name           string

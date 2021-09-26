@@ -8,7 +8,7 @@ import (
 
 	"github.com/gookit/color"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 )
 
 // Run documentation for service params

@@ -5,13 +5,13 @@ import (
 	"os"
 	"sync"
 
-	"github.com/mamau/satellite/internal/validator"
+	"satellite/internal/validator"
 
 	"github.com/gookit/color"
 
-	"github.com/mamau/satellite/internal/entity"
+	"satellite/internal/entity"
 
-	"github.com/mamau/satellite/pkg"
+	"satellite/pkg"
 
 	"gopkg.in/yaml.v2"
 )
