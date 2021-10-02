@@ -1,4 +1,4 @@
-package entity
+package docker
 
 import (
 	"strings"
@@ -20,14 +20,7 @@ type commandConfigurator struct {
 	isBinBash bool
 }
 
-func newPureConfigConfigurator(configCmd, mainCmd []string) *commandConfigurator {
-	return &commandConfigurator{
-		configCmd: configCmd,
-		mainCmd:   mainCmd,
-	}
-}
-
-func newConfigConfigurator(configCmd, mainCmd []string, binBasher BinBasher) *commandConfigurator {
+func NewConfigConfigurator(configCmd, mainCmd []string, binBasher BinBasher) *commandConfigurator {
 	var bb bool
 	if binBasher.GetBinBash() || len(binBasher.GetPreCommands()) > 0 || len(binBasher.GetPostCommands()) > 0 {
 		bb = true
@@ -42,7 +35,7 @@ func newConfigConfigurator(configCmd, mainCmd []string, binBasher BinBasher) *co
 	}
 }
 
-func (c *commandConfigurator) getClientCommand() []string {
+func (c *commandConfigurator) GetClientCommand() []string {
 	fullCmd := c.prepareCommand()
 
 	if c.isBinBash {

@@ -1,6 +1,7 @@
-package entity
+package docker
 
 import (
+	"satellite/internal/entity"
 	"strings"
 	"testing"
 
@@ -9,7 +10,7 @@ import (
 
 func TestPullGetExecCommand(t *testing.T) {
 	pull := Pull{}
-	assert.Equal(t, pull.GetExecCommand(), string(DOCKER))
+	assert.Equal(t, pull.GetExecCommand(), string(entity.DOCKER))
 }
 
 func TestPullGetDescription(t *testing.T) {

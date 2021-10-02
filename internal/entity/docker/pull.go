@@ -1,8 +1,8 @@
-package entity
+package docker
 
 import (
 	"fmt"
-
+	"satellite/internal/entity"
 	"satellite/pkg"
 )
 
@@ -19,7 +19,7 @@ type Pull struct {
 }
 
 func (p *Pull) GetExecCommand() string {
-	return string(DOCKER)
+	return string(entity.DOCKER)
 }
 
 func (p *Pull) GetDescription() string {
@@ -59,13 +59,11 @@ func (p *Pull) GetName() string {
 }
 
 func (p *Pull) ToCommand(args []string) []string {
-	bc := pkg.MergeSliceOfString([]string{
+	return pkg.MergeSliceOfString([]string{
 		"pull",
 		p.GetDisableContentTrust(),
 		p.GetAllTags(),
 		p.GetQuiet(),
 		p.GetImage(),
 	})
-	configurator := newPureConfigConfigurator(bc, []string{})
-	return append(bc, configurator.getClientCommand()...)
 }

@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"testing"
-
 	"satellite/internal/entity"
+	"satellite/internal/entity/docker"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -22,6 +22,6 @@ func TestGetServices(t *testing.T) {
 }
 
 func finder(name string) entity.Runner {
-	e := &entity.Run{Name: "yarn"}
+	e := &docker.Run{Name: "yarn"}
 	return e
 }

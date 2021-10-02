@@ -1,9 +1,8 @@
 package validator
 
 import (
+	"satellite/internal/entity/docker"
 	"testing"
-
-	"satellite/internal/entity"
 
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -13,7 +12,7 @@ import (
 
 func TestValidate(t *testing.T) {
 	v := NewValidator()
-	r := entity.Run{}
+	r := docker.Run{}
 	errorsList, isValid := v.Validate(r)
 	assert.False(t, isValid)
 	assert.NotEmpty(t, errorsList)
@@ -29,7 +28,7 @@ func TestValidate(t *testing.T) {
 
 func TestTranslateError(t *testing.T) {
 	v := NewValidator()
-	r := entity.Run{}
+	r := docker.Run{}
 	err := v.ValidatorService.Struct(r)
 
 	result := v.translateError(err)

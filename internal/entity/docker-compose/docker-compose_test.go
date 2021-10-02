@@ -1,4 +1,4 @@
-package entity
+package docker_compose
 
 import (
 	"strings"
@@ -16,31 +16,6 @@ func TestDCToCommand(t *testing.T) {
 
 	result := strings.Join(dc.ToCommand([]string{"up"}), " ")
 	e := "--file /some/path --verbose up"
-	assert.Equal(t, result, e)
-
-	dc.RemoveOrphans = true
-	result = strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e = "--file /some/path --remove-orphans --verbose up"
-	assert.Equal(t, result, e)
-
-	dc.EnvFile = "/some/path/to/.env"
-	result = strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e = "--file /some/path --env-file=/some/path/to/.env --remove-orphans --verbose up"
-	assert.Equal(t, result, e)
-
-	dc.BuildArgs = []string{"VAR1=123", "VAR2=45"}
-	result = strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e = "--file /some/path --env-file=/some/path/to/.env --remove-orphans --build-arg VAR1=123 --build-arg VAR2=45 --verbose up"
-	assert.Equal(t, result, e)
-
-	dc.User = "1000"
-	result = strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e = "--file /some/path -u 1000 --env-file=/some/path/to/.env --remove-orphans --build-arg VAR1=123 --build-arg VAR2=45 --verbose up"
-	assert.Equal(t, result, e)
-
-	dc.Detach = true
-	result = strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e = "--file /some/path -u 1000 -d --env-file=/some/path/to/.env --remove-orphans --build-arg VAR1=123 --build-arg VAR2=45 --verbose up"
 	assert.Equal(t, result, e)
 }
 
@@ -102,5 +77,5 @@ func TestDCGetDescription(t *testing.T) {
 
 func TestDCGetExecCommand(t *testing.T) {
 	dc := DockerCompose{}
-	assert.Equal(t, dc.GetExecCommand(), string(DOCKER_COMPOSE))
+	assert.Equal(t, dc.GetExecCommand(), "docker-compose")
 }

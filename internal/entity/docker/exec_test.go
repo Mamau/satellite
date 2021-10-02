@@ -1,6 +1,7 @@
-package entity
+package docker
 
 import (
+	"satellite/internal/entity"
 	"strings"
 	"testing"
 
@@ -136,7 +137,7 @@ func TestExecToCommand(t *testing.T) {
 
 func TestExecGetExecCommand(t *testing.T) {
 	exec := Exec{}
-	assert.Equal(t, exec.GetExecCommand(), string(DOCKER))
+	assert.Equal(t, exec.GetExecCommand(), string(entity.DOCKER))
 }
 
 func TestExecGetName(t *testing.T) {

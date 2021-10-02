@@ -1,9 +1,10 @@
-package entity
+package docker
 
 import (
 	"fmt"
 	"os/exec"
 	"runtime"
+	"satellite/internal/entity"
 	"strings"
 
 	"github.com/gookit/color"
@@ -205,7 +206,7 @@ func (r *Run) GetBinBash() bool {
 }
 
 func (r *Run) GetExecCommand() string {
-	return string(DOCKER)
+	return string(entity.DOCKER)
 }
 
 func (r *Run) ToCommand(args []string) []string {
@@ -230,8 +231,8 @@ func (r *Run) ToCommand(args []string) []string {
 		r.GetImage(),
 	})
 	args = append(r.GetBeginning(), args...)
-	configurator := newConfigConfigurator(bc, args, r)
-	return append(bc, configurator.getClientCommand()...)
+	configurator := NewConfigConfigurator(bc, args, r)
+	return append(bc, configurator.GetClientCommand()...)
 }
 
 func (r *Run) GetBeginning() []string {

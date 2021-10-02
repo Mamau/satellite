@@ -2,9 +2,8 @@ package commands
 
 import (
 	"os"
-	"strings"
-
 	"satellite/internal/entity"
+	"strings"
 
 	"satellite/internal/config"
 

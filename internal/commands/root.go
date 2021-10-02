@@ -5,9 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"strings"
-
 	"satellite/internal/entity"
+	"strings"
 
 	"satellite/pkg"
 

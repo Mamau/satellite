@@ -1,8 +1,9 @@
-package entity
+package docker
 
 import (
 	"fmt"
 	"runtime"
+	"satellite/internal/entity"
 	"strings"
 
 	"satellite/pkg"
@@ -36,7 +37,7 @@ func (e *Exec) GetName() string {
 }
 
 func (e *Exec) GetExecCommand() string {
-	return string(DOCKER)
+	return string(entity.DOCKER)
 }
 
 func (e *Exec) ToCommand(args []string) []string {
@@ -51,8 +52,8 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetContainerName(),
 	})
 	args = append(e.GetBeginning(), args...)
-	configurator := newConfigConfigurator(bc, args, e)
-	return append(bc, configurator.getClientCommand()...)
+	configurator := NewConfigConfigurator(bc, args, e)
+	return append(bc, configurator.GetClientCommand()...)
 }
 
 func (e *Exec) GetBeginning() []string {
