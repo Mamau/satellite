@@ -15,13 +15,12 @@ import (
 // Run documentation for service params
 // https://docs.docker.com/engine/reference/commandline/run
 type Run struct {
-	Name          string   `yaml:"name" validate:"required,min=1"`
+	docker        `yaml:",inline"`
 	ContainerName string   `yaml:"container-name"`
 	Image         string   `yaml:"image" validate:"required,min=1"`
 	Version       string   `yaml:"version"`
 	WorkDir       string   `yaml:"workdir"`
 	Network       string   `yaml:"network"`
-	Description   string   `yaml:"description"`
 	Hostname      string   `yaml:"hostname"`
 	EnvFile       string   `yaml:"env-file"`
 	User          string   `yaml:"user"`
@@ -38,10 +37,6 @@ type Run struct {
 	Ports         []string `yaml:"ports"`
 	AddHosts      []string `yaml:"add-hosts"`
 	Env           []string `yaml:"env"`
-}
-
-func (r *Run) GetDescription() string {
-	return r.Description
 }
 
 func (r *Run) GetDetached() string {
@@ -159,10 +154,6 @@ func (r *Run) GetVolumes() string {
 		volumes = append(volumes, fmt.Sprintf("-v %s", v))
 	}
 	return strings.Join(volumes, " ")
-}
-
-func (r *Run) GetName() string {
-	return r.Name
 }
 
 func (r *Run) GetContainerName() string {

@@ -1,16 +1,4 @@
-services:
-# ------------------------------------------------------------------------------------------------------------------------
-# by command "./sat run-docker-compose run" will run:
-# docker-compose up --file ./path/to/file/docker-compose --project-directory ./path/to/file/docker-compose --verbose --project-name anyName
-  docker-compose:
-    - name: "run-docker-compose"
-      path: "./path/to/file/docker-compose"
-      project-directory: "./path/to/file/docker-compose"
-      project-name: "anyName"
-      description: "run docker compose data"
-      verbose: true
-      log-level: "DEBUG"
-
+docker:
 # ------------------------------------------------------------------------------------------------------------------------
 # by command "./sat fresh-img" will run:
 # docker pull node:10
@@ -45,6 +33,20 @@ services:
       pre-commands:
         - "cd /home"
         - "ls -la"
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# by command "./sat run-docker-compose run" will run:
+# docker-compose up --file ./path/to/file/docker-compose --project-directory ./path/to/file/docker-compose --verbose --project-name anyName
+docker-compose:
+  run:
+    - name: "run-docker-compose"
+      path: "./path/to/file/docker-compose"
+      project-directory: "./path/to/file/docker-compose"
+      project-name: "anyName"
+      description: "run docker compose data"
+      verbose: true
+      log-level: "DEBUG"
 
 # ------------------------------------------------------------------------------------------------------------------------
 # by command "./sat macros init" will run consistently 3 command from commands section.

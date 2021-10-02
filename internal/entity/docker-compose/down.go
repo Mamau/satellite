@@ -9,7 +9,7 @@ import (
 // https://docs.docker.com/compose/reference/down/
 type Down struct {
 	DockerCompose `yaml:",inline"`
-	Rmi           string `yaml:"rmi"`
+	Rmi           string `yaml:"rmi" validate:"in=all local"`
 	RemoveVolumes bool   `yaml:"volumes"`
 	RemoveOrphans bool   `yaml:"remove-orphans"`
 }

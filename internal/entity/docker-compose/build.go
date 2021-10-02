@@ -39,14 +39,12 @@ func (b *Build) GetParallel() string {
 	}
 	return ""
 }
-
 func (b *Build) GetNoRm() string {
 	if b.NoRm {
 		return "--no-rm"
 	}
 	return ""
 }
-
 func (b *Build) GetNoCache() string {
 	if b.NoCache {
 		return "--no-cache"
@@ -71,7 +69,6 @@ func (b *Build) GetCompress() string {
 	}
 	return ""
 }
-
 func (b *Build) GetBuildArgs() string {
 	var args []string
 	for _, v := range b.BuildArgs {
@@ -79,7 +76,6 @@ func (b *Build) GetBuildArgs() string {
 	}
 	return strings.Join(args, " ")
 }
-
 func (b *Build) ToCommand(args []string) []string {
 
 	return pkg.MergeSliceOfString([]string{

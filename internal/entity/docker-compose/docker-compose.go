@@ -2,6 +2,7 @@ package docker_compose
 
 import (
 	"fmt"
+	"satellite/internal/entity"
 	"satellite/pkg"
 )
 
@@ -18,7 +19,7 @@ type DockerCompose struct {
 }
 
 func (d *DockerCompose) GetExecCommand() string {
-	return "docker-compose"
+	return string(entity.DOCKER_COMPOSE)
 }
 
 func (d *DockerCompose) GetDescription() string {

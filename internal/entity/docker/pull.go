@@ -9,21 +9,16 @@ import (
 // Pull documentation for service params
 // https://docs.docker.com/engine/reference/commandline/pull
 type Pull struct {
-	Name                string `yaml:"name" validate:"required,min=1"`
+	docker              `yaml:",inline"`
 	Image               string `yaml:"image" validate:"required,min=1"`
 	Version             string `yaml:"version"`
 	DisableContentTrust string `yaml:"disable-content-trust"`
-	Description         string `yaml:"description"`
 	AllTags             bool   `yaml:"all-tags"`
 	Quiet               bool   `yaml:"quiet"`
 }
 
 func (p *Pull) GetExecCommand() string {
 	return string(entity.DOCKER)
-}
-
-func (p *Pull) GetDescription() string {
-	return p.Description
 }
 
 func (p *Pull) GetQuiet() string {
@@ -52,10 +47,6 @@ func (p *Pull) GetAllTags() string {
 		return "--all-tags"
 	}
 	return ""
-}
-
-func (p *Pull) GetName() string {
-	return p.Name
 }
 
 func (p *Pull) ToCommand(args []string) []string {

@@ -22,6 +22,7 @@ func TestGetServices(t *testing.T) {
 }
 
 func finder(name string) entity.Runner {
-	e := &docker.Run{Name: "yarn"}
+	e := &docker.Run{}
+	e.Name = name
 	return e
 }

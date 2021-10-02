@@ -1,6 +1,11 @@
 package validator
 
 import (
+	"fmt"
+	"os"
+	"satellite/pkg"
+	"strings"
+
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -22,7 +27,6 @@ func NewValidator() *Validator {
 // Validate Return slice of errors if exists, and bool is valid
 func (v *Validator) Validate(entity interface{}) ([]string, bool) {
 	err := v.ValidatorService.Struct(entity)
-	//v.translateError(err)
 	errors := v.translateError(err)
 	if len(errors) > 0 {
 		return errors, false
@@ -37,6 +41,10 @@ func (v *Validator) initService() {
 
 func (v *Validator) initValidator() {
 	v.ValidatorService = validator.New()
+	if err := v.ValidatorService.RegisterValidation("in", ValidateIn); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func (v *Validator) initEnTranslator() {
@@ -45,6 +53,11 @@ func (v *Validator) initEnTranslator() {
 	trans, _ := uni.GetTranslator("en")
 	_ = enTranslations.RegisterDefaultTranslations(v.ValidatorService, trans)
 	v.Translator = trans
+
+	if err := v.ValidatorService.RegisterTranslation("in", trans, register, messageIn); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func (v *Validator) translateError(err error) []string {
@@ -59,4 +72,21 @@ func (v *Validator) translateError(err error) []string {
 		errs = append(errs, translatedErr)
 	}
 	return errs
+}
+
+func register(ut ut.Translator) (err error) {
+	return nil
+}
+func messageIn(ut ut.Translator, fe validator.FieldError) string {
+	params := strings.Split(fe.Param(), " ")
+	return fmt.Sprintf("Field %q must be one of %q, got %q", strings.ToLower(fe.Field()), strings.Join(params, ","), fe.Value())
+}
+
+func ValidateIn(fl validator.FieldLevel) bool {
+	list := strings.Split(fl.Param(), " ")
+	if pkg.Contains(list, fl.Field().String()) {
+		return true
+	}
+
+	return false
 }

@@ -94,7 +94,7 @@ func TestGetContainerName(t *testing.T) {
 	run := Run{}
 	assert.Empty(t, run.GetContainerName())
 
-	run = Run{Name: "some-name"}
+	run.Name = "some-name"
 	assert.Equal(t, run.GetContainerName(), "--name some-name")
 
 	run.ContainerName = "container-name"
@@ -105,7 +105,7 @@ func TestGetName(t *testing.T) {
 	run := Run{}
 	assert.Empty(t, run.GetName())
 
-	run = Run{Name: "some-name"}
+	run.Name = "some-name"
 	assert.Equal(t, run.GetName(), "some-name")
 }
 
@@ -229,6 +229,6 @@ func TestGetDescription(t *testing.T) {
 	run := Run{}
 	assert.Empty(t, run.GetDescription())
 
-	run = Run{Description: "install composer dependencies"}
+	run.Description = "install composer dependencies"
 	assert.Equal(t, run.GetDescription(), "install composer dependencies")
 }
