@@ -84,7 +84,7 @@ func messageIn(ut ut.Translator, fe validator.FieldError) string {
 
 func ValidateIn(fl validator.FieldLevel) bool {
 	list := strings.Split(fl.Param(), " ")
-	if pkg.Contains(list, fl.Field().String()) {
+	if pkg.Contains(list, fl.Field().String()) || fl.Field().String() == "" {
 		return true
 	}
 

@@ -57,8 +57,13 @@ func (u *Up) GetNoDeps() string {
 }
 
 func (u *Up) ToCommand(args []string) []string {
+	var arguments []string
 
-	return pkg.MergeSliceOfString([]string{
+	if len(args) >= 1 {
+		arguments = args[0:]
+	}
+
+	bc := pkg.MergeSliceOfString([]string{
 		u.GetPath(),
 		u.GetProjectDirectory(),
 		u.GetVerbose(),
@@ -71,4 +76,5 @@ func (u *Up) ToCommand(args []string) []string {
 		u.GetNoBuild(),
 		u.GetBuild(),
 	})
+	return append(bc, pkg.DeleteEmpty(arguments)...)
 }

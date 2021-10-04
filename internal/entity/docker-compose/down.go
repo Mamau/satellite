@@ -33,8 +33,13 @@ func (d *Down) GetRemoveOrphans() string {
 	return ""
 }
 func (d *Down) ToCommand(args []string) []string {
+	var arguments []string
 
-	return pkg.MergeSliceOfString([]string{
+	if len(args) >= 1 {
+		arguments = args[0:]
+	}
+
+	bc := pkg.MergeSliceOfString([]string{
 		d.GetPath(),
 		d.GetProjectDirectory(),
 		d.GetVerbose(),
@@ -44,4 +49,6 @@ func (d *Down) ToCommand(args []string) []string {
 		d.GetRmi(),
 		d.GetRemoveVolumes(),
 	})
+
+	return append(bc, pkg.DeleteEmpty(arguments)...)
 }
