@@ -12,4 +12,5 @@ type Runner interface {
 	ToCommand(args []string) []string
 	GetName() string
 	GetDescription() string
+	//GetParams() []string TODO: make a list of available commands docker
 }
