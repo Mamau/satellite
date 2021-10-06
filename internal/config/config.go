@@ -35,7 +35,7 @@ type DockerCompose struct {
 	Run   []docker_compose.Run   `yaml:"run"`
 	Up    []docker_compose.Up    `yaml:"up"`
 	Down  []docker_compose.Down  `yaml:"down"`
-	Exec  []docker_compose.Run   `yaml:"exec"`
+	Exec  []docker_compose.Exec  `yaml:"exec"`
 	Build []docker_compose.Build `yaml:"build"`
 }
 

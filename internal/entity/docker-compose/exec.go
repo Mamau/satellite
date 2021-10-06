@@ -10,10 +10,15 @@ import (
 // https://docs.docker.com/compose/reference/exec/
 type Exec struct {
 	DockerCompose `yaml:",inline"`
+	ContainerName string   `yaml:"container-name" validate:"required,min=1"`
 	User          string   `yaml:"user"`
 	Workdir       string   `yaml:"workdir"`
 	Detach        bool     `yaml:"detach"`
 	Env           []string `yaml:"environment"`
+}
+
+func (e *Exec) GetContainerName() string {
+	return e.ContainerName
 }
 
 func (e *Exec) GetWorkdir() string {
@@ -61,6 +66,7 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetUserId(),
 		e.GetEnv(),
 		e.GetWorkdir(),
+		e.GetContainerName(),
 	})
 
 	return append(bc, pkg.DeleteEmpty(arguments)...)
