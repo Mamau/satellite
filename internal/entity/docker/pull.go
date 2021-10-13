@@ -1,29 +1,24 @@
-package entity
+package docker
 
 import (
 	"fmt"
-
+	"satellite/internal/entity"
 	"satellite/pkg"
 )
 
 // Pull documentation for service params
 // https://docs.docker.com/engine/reference/commandline/pull
 type Pull struct {
-	Name                string `yaml:"name" validate:"required,min=1"`
+	docker              `yaml:",inline"`
 	Image               string `yaml:"image" validate:"required,min=1"`
 	Version             string `yaml:"version"`
 	DisableContentTrust string `yaml:"disable-content-trust"`
-	Description         string `yaml:"description"`
 	AllTags             bool   `yaml:"all-tags"`
 	Quiet               bool   `yaml:"quiet"`
 }
 
 func (p *Pull) GetExecCommand() string {
-	return string(DOCKER)
-}
-
-func (p *Pull) GetDescription() string {
-	return p.Description
+	return string(entity.DOCKER)
 }
 
 func (p *Pull) GetQuiet() string {
@@ -54,18 +49,12 @@ func (p *Pull) GetAllTags() string {
 	return ""
 }
 
-func (p *Pull) GetName() string {
-	return p.Name
-}
-
 func (p *Pull) ToCommand(args []string) []string {
-	bc := pkg.MergeSliceOfString([]string{
+	return pkg.MergeSliceOfString([]string{
 		"pull",
 		p.GetDisableContentTrust(),
 		p.GetAllTags(),
 		p.GetQuiet(),
 		p.GetImage(),
 	})
-	configurator := newPureConfigConfigurator(bc, []string{})
-	return append(bc, configurator.getClientCommand()...)
 }

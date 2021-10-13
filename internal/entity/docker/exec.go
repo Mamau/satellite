@@ -1,8 +1,9 @@
-package entity
+package docker
 
 import (
 	"fmt"
 	"runtime"
+	"satellite/internal/entity"
 	"strings"
 
 	"satellite/pkg"
@@ -11,12 +12,11 @@ import (
 // Exec documentation for service params
 // https://docs.docker.com/engine/reference/commandline/exec
 type Exec struct {
-	Name          string   `yaml:"name" validate:"required,min=1"`
+	docker        `yaml:",inline"`
 	ContainerName string   `yaml:"container-name" validate:"required,min=1"`
 	EnvFile       string   `yaml:"env-file"`
 	User          string   `yaml:"user"`
 	WorkDir       string   `yaml:"workdir"`
-	Description   string   `yaml:"description"`
 	Beginning     string   `yaml:"beginning"`
 	Detach        bool     `yaml:"detach"`
 	Interactive   bool     `yaml:"interactive"`
@@ -27,16 +27,12 @@ type Exec struct {
 	Env           []string `yaml:"env"`
 }
 
-func (e *Exec) GetDescription() string {
-	return e.Description
-}
-
-func (e *Exec) GetName() string {
-	return e.Name
+func (e *Exec) GetContainerName() string {
+	return e.ContainerName
 }
 
 func (e *Exec) GetExecCommand() string {
-	return string(DOCKER)
+	return string(entity.DOCKER)
 }
 
 func (e *Exec) ToCommand(args []string) []string {
@@ -51,8 +47,8 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetContainerName(),
 	})
 	args = append(e.GetBeginning(), args...)
-	configurator := newConfigConfigurator(bc, args, e)
-	return append(bc, configurator.getClientCommand()...)
+	configurator := NewConfigConfigurator(bc, args, e)
+	return append(bc, configurator.GetClientCommand()...)
 }
 
 func (e *Exec) GetBeginning() []string {
@@ -145,8 +141,4 @@ func (e *Exec) GetEnvFile() string {
 	}
 
 	return ""
-}
-
-func (e *Exec) GetContainerName() string {
-	return e.ContainerName
 }

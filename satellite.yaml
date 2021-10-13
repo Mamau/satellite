@@ -1,4 +1,4 @@
-services:
+docker:
   run:
     - name: "composer-cmd"
       clean-up: true
@@ -10,6 +10,16 @@ services:
       image: "node"
       version: "12"
       description: "work with node dependencies"
+
+docker-compose:
+  run:
+    - name: "up"
+      path: "./path/to/file/docker-compose"
+      project-directory: "./path/to/file/docker-compose"
+      project-name: "anyName"
+      description: "run docker compose data"
+      verbose: true
+      log-level: "DEBUG"
 
 macros:
   - name: "install-all"

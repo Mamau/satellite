@@ -3,13 +3,14 @@ package config
 import (
 	"fmt"
 	"os"
+	"satellite/internal/entity"
+	"satellite/internal/entity/docker"
+	docker_compose "satellite/internal/entity/docker-compose"
 	"sync"
 
 	"satellite/internal/validator"
 
 	"github.com/gookit/color"
-
-	"satellite/internal/entity"
 
 	"satellite/pkg"
 
@@ -30,17 +31,25 @@ type Macros struct {
 	List        []string `yaml:"commands"`
 }
 
-type Services struct {
-	ServicesPull []entity.Pull          `yaml:"pull"`
-	ServiceRun   []entity.Run           `yaml:"run"`
-	ServiceExec  []entity.Exec          `yaml:"exec"`
-	ServiceDC    []entity.DockerCompose `yaml:"docker-compose"`
+type DockerCompose struct {
+	Run   []docker_compose.Run   `yaml:"run"`
+	Up    []docker_compose.Up    `yaml:"up"`
+	Down  []docker_compose.Down  `yaml:"down"`
+	Exec  []docker_compose.Exec  `yaml:"exec"`
+	Build []docker_compose.Build `yaml:"build"`
+}
+
+type Docker struct {
+	Pulls []docker.Pull `yaml:"pull"`
+	Runs  []docker.Run  `yaml:"run"`
+	Execs []docker.Exec `yaml:"exec"`
 }
 
 type Config struct {
 	Path     string
-	Macros   []Macros `yaml:"macros"`
-	Services Services `yaml:"services"`
+	Macros   []Macros      `yaml:"macros"`
+	Services Docker        `yaml:"docker"`
+	DCompose DockerCompose `yaml:"docker-compose"`
 }
 
 func (c *Config) GetMacros(name string) *Macros {
@@ -76,24 +85,44 @@ func (c *Config) FindService(name string) entity.Runner {
 func (c *Config) ServicesList() map[string]entity.Runner {
 	data := make(map[string]entity.Runner)
 
-	for i := 0; i < len(c.Services.ServicesPull); i++ {
-		item := &c.Services.ServicesPull[i]
-		data[item.GetName()] = &c.Services.ServicesPull[i]
+	for i := 0; i < len(c.Services.Pulls); i++ {
+		item := &c.Services.Pulls[i]
+		data[item.GetName()] = &c.Services.Pulls[i]
 	}
 
-	for i := 0; i < len(c.Services.ServiceRun); i++ {
-		item := &c.Services.ServiceRun[i]
-		data[item.GetName()] = &c.Services.ServiceRun[i]
+	for i := 0; i < len(c.Services.Runs); i++ {
+		item := &c.Services.Runs[i]
+		data[item.GetName()] = &c.Services.Runs[i]
 	}
 
-	for i := 0; i < len(c.Services.ServiceExec); i++ {
-		item := &c.Services.ServiceExec[i]
-		data[item.GetName()] = &c.Services.ServiceExec[i]
+	for i := 0; i < len(c.Services.Execs); i++ {
+		item := &c.Services.Execs[i]
+		data[item.GetName()] = &c.Services.Execs[i]
 	}
 
-	for i := 0; i < len(c.Services.ServiceDC); i++ {
-		item := &c.Services.ServiceDC[i]
-		data[item.GetName()] = &c.Services.ServiceDC[i]
+	for i := 0; i < len(c.DCompose.Run); i++ {
+		item := &c.DCompose.Run[i]
+		data[item.GetName()] = &c.DCompose.Run[i]
+	}
+
+	for i := 0; i < len(c.DCompose.Up); i++ {
+		item := &c.DCompose.Up[i]
+		data[item.GetName()] = &c.DCompose.Up[i]
+	}
+
+	for i := 0; i < len(c.DCompose.Exec); i++ {
+		item := &c.DCompose.Exec[i]
+		data[item.GetName()] = &c.DCompose.Exec[i]
+	}
+
+	for i := 0; i < len(c.DCompose.Down); i++ {
+		item := &c.DCompose.Down[i]
+		data[item.GetName()] = &c.DCompose.Down[i]
+	}
+
+	for i := 0; i < len(c.DCompose.Build); i++ {
+		item := &c.DCompose.Build[i]
+		data[item.GetName()] = &c.DCompose.Build[i]
 	}
 
 	return data

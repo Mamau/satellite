@@ -1,4 +1,4 @@
-package entity
+package docker_compose
 
 import (
 	"strings"
@@ -15,7 +15,7 @@ func TestDCToCommand(t *testing.T) {
 	dc.Verbose = true
 
 	result := strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e := "up --file /some/path --verbose"
+	e := "--file /some/path --verbose up"
 	assert.Equal(t, result, e)
 }
 
@@ -77,5 +77,5 @@ func TestDCGetDescription(t *testing.T) {
 
 func TestDCGetExecCommand(t *testing.T) {
 	dc := DockerCompose{}
-	assert.Equal(t, dc.GetExecCommand(), string(DOCKER_COMPOSE))
+	assert.Equal(t, dc.GetExecCommand(), "docker-compose")
 }

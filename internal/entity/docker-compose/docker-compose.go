@@ -1,8 +1,8 @@
-package entity
+package docker_compose
 
 import (
 	"fmt"
-
+	"satellite/internal/entity"
 	"satellite/pkg"
 )
 
@@ -19,7 +19,7 @@ type DockerCompose struct {
 }
 
 func (d *DockerCompose) GetExecCommand() string {
-	return string(DOCKER_COMPOSE)
+	return string(entity.DOCKER_COMPOSE)
 }
 
 func (d *DockerCompose) GetDescription() string {
@@ -78,12 +78,12 @@ func (d *DockerCompose) ToCommand(args []string) []string {
 	}
 
 	bc := pkg.MergeSliceOfString([]string{
-		command,
 		d.GetPath(),
 		d.GetProjectDirectory(),
 		d.GetVerbose(),
 		d.GetProjectName(),
+		command,
 	})
-	configurator := newPureConfigConfigurator(bc, arguments)
-	return append(bc, configurator.getClientCommand()...)
+
+	return append(bc, pkg.DeleteEmpty(arguments)...)
 }

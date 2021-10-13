@@ -4,7 +4,7 @@
 This utility just transform .yaml command presentation for docker command.  
 This:
 ```yaml
-services:
+docker:
   run:
     - name: "my-image"
       detach: true
@@ -60,7 +60,7 @@ Docker-compose allow you to run command using docker-compose file (e.g. docker-c
 Satellite support .env file. All variables you can define there.
 Then use it in .yaml file like this:
 ```yaml
-services:
+docker:
   run:
     - name: "my-command"
       user: "${USER_ID_FROM_ENV_FILE}"     
@@ -76,7 +76,7 @@ If you define a network property - satellite will create it automatically
 * #### Docker pull image
 *Use it for pull image*
 ```yaml
-services:
+docker:
   pull:
     - name: "fresh-img"
       image: "node"
@@ -91,7 +91,7 @@ Config above allow you run:
 * #### Docker exec command through container
 *Use it for execute command*
 ```yaml
-services:
+docker:
   exec:
     - name: "console"
       interactive: true
@@ -116,7 +116,7 @@ docker exec -it --user 1000 --workdir=/home/www/my_project_dir my_project php bi
 * #### Docker start image
 *Use it for run your image as detached service*
 ```yaml
-services:
+docker:
   run:
     - name: "my-image"
       detach: true
@@ -140,7 +140,7 @@ Config above allow you run:
 * #### Docker run image with commands 
 *Use it for install dependencies*
 ```yaml
-services:
+docker:
   run:
     - name: "my-composer"
       image: "composer"
@@ -168,8 +168,8 @@ docker run -it --user 1000 --workdir=/home/www-data composer:1.9 composer instal
 * #### Start docker-compose
 *Use it for run docker-compose files*
 ```yaml
-services:
-  docker-compose:
+docker-compose:
+  up:
     - name: "run-docker-compose"
       path: "./path/to/file/docker-compose"
       project-directory: "./path/to/file/docker-compose"
