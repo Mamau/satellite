@@ -69,6 +69,9 @@ func (c *Config) FindService(name string) entity.Runner {
 			break
 		}
 	}
+	if service == nil {
+		return service
+	}
 
 	valid := validator.NewValidator()
 	errs, isValid := valid.Validate(service)
