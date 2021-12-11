@@ -56,7 +56,7 @@ func ReplaceInternalVariables(from string, to string, list []string) []string {
 		r := regexp.MustCompile(from)
 		if found := r.FindAllString(v, -1); found != nil {
 			for _, vv := range found {
-				list[i] = strings.Replace(list[i], vv, to, -1)
+				list[i] = strings.ReplaceAll(list[i], vv, to)
 			}
 		}
 	}
@@ -76,10 +76,7 @@ func MergeSliceOfString(data []string) []string {
 }
 
 func IndexExists(slice []string, index int) bool {
-	if (len(slice) - 1) >= index {
-		return true
-	}
-	return false
+	return (len(slice) - 1) >= index
 }
 
 func DockerExec(signature []string) []byte {
@@ -111,7 +108,6 @@ func DownloadFile(uri, fileName, dst string) string {
 	resp, err := http.Get(uri)
 	if err != nil {
 		log.Fatalf("error while get latest file, err: %s\n", err)
-		return ""
 	}
 
 	defer func() {
@@ -123,12 +119,10 @@ func DownloadFile(uri, fileName, dst string) string {
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalf("error while read source, err: %s\n", err)
-		return ""
 	}
 
 	if err := ioutil.WriteFile(tmpFile, data, 0755); err != nil {
 		log.Fatalf("error while write file, err: %s\n", err)
-		return ""
 	}
 
 	return tmpFile

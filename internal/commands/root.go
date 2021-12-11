@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"regexp"
 	"satellite/internal/entity"
+	"satellite/internal/informator"
 	"strings"
 
 	"satellite/pkg"
@@ -35,11 +36,11 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 func InitServiceCommand() {
 	c := config.GetConfig()
 	for _, service := range c.GetServices() {
-		rootCmd.AddCommand(&cobra.Command{
-			Use:                service.Name,
-			Short:              service.Description,
-			Long:               service.Description,
-			DisableFlagParsing: true,
+		cmd := &cobra.Command{
+			Use:   service.Name,
+			Short: service.Description,
+			Long:  service.Description,
+			//DisableFlagParsing: true,
 			Run: func(cmd *cobra.Command, args []string) {
 				serviceName := cmd.Name()
 				color.Cyan.Printf("Start %s\n", serviceName)
@@ -48,7 +49,17 @@ func InitServiceCommand() {
 
 				pkg.RunCommandAtPTY(Docker(s, args))
 			},
+		}
+		cmd.SetHelpFunc(func(command *cobra.Command, strings []string) {
+			s := config.GetConfig().FindService(command.Name())
+			inf := informator.NewInformator(s)
+			fmt.Println("available commands:")
+			for i := range inf.Strings {
+				fmt.Println(i, "-")
+			}
 		})
+
+		rootCmd.AddCommand(cmd)
 	}
 }
 
