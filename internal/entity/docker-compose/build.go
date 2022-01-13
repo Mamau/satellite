@@ -80,6 +80,7 @@ func (b *Build) ToCommand(args []string) []string {
 
 	return pkg.MergeSliceOfString([]string{
 		b.GetPath(),
+		b.GetMultiPath(),
 		b.GetProjectDirectory(),
 		b.GetVerbose(),
 		b.GetProjectName(),

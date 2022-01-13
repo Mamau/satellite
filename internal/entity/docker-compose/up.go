@@ -65,6 +65,7 @@ func (u *Up) ToCommand(args []string) []string {
 
 	bc := pkg.MergeSliceOfString([]string{
 		u.GetPath(),
+		u.GetMultiPath(),
 		u.GetProjectDirectory(),
 		u.GetVerbose(),
 		u.GetProjectName(),

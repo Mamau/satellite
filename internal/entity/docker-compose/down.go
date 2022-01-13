@@ -41,6 +41,7 @@ func (d *Down) ToCommand(args []string) []string {
 
 	bc := pkg.MergeSliceOfString([]string{
 		d.GetPath(),
+		d.GetMultiPath(),
 		d.GetProjectDirectory(),
 		d.GetVerbose(),
 		d.GetProjectName(),

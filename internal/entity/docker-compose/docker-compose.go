@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"satellite/internal/entity"
 	"satellite/pkg"
+	"strings"
 )
 
 // DockerCompose describe path to file
 // https://docs.docker.com/compose/reference/
 type DockerCompose struct {
-	Name             string `yaml:"name" validate:"required,min=1"`
-	Path             string `yaml:"path"`
-	ProjectDirectory string `yaml:"project-directory"`
-	ProjectName      string `yaml:"project-name"`
-	LogLevel         string `yaml:"log-level"`
-	Description      string `yaml:"description"`
-	Verbose          bool   `yaml:"verbose"`
+	Name             string   `yaml:"name" validate:"required,min=1"`
+	Path             string   `yaml:"path"`
+	ProjectDirectory string   `yaml:"project-directory"`
+	ProjectName      string   `yaml:"project-name"`
+	LogLevel         string   `yaml:"log-level"`
+	Description      string   `yaml:"description"`
+	MultiPath        []string `yaml:"multi-path"`
+	Verbose          bool     `yaml:"verbose"`
 }
 
 func (d *DockerCompose) GetExecCommand() string {
@@ -58,6 +60,14 @@ func (d *DockerCompose) GetPath() string {
 	return ""
 }
 
+func (d *DockerCompose) GetMultiPath() string {
+	var args []string
+	for _, v := range d.MultiPath {
+		args = append(args, fmt.Sprintf("--file %s", v))
+	}
+	return strings.Join(args, " ")
+}
+
 func (d *DockerCompose) GetProjectDirectory() string {
 	if d.ProjectDirectory != "" {
 		return fmt.Sprintf("--project-directory %s", d.ProjectDirectory)
@@ -79,6 +89,7 @@ func (d *DockerCompose) ToCommand(args []string) []string {
 
 	bc := pkg.MergeSliceOfString([]string{
 		d.GetPath(),
+		d.GetMultiPath(),
 		d.GetProjectDirectory(),
 		d.GetVerbose(),
 		d.GetProjectName(),

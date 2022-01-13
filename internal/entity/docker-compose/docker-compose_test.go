@@ -8,15 +8,64 @@ import (
 )
 
 func TestDCToCommand(t *testing.T) {
-	dc := DockerCompose{}
-	assert.Empty(t, dc.ToCommand([]string{}))
-
-	dc.Path = "/some/path"
-	dc.Verbose = true
-
-	result := strings.Join(dc.ToCommand([]string{"up"}), " ")
-	e := "--file /some/path --verbose up"
-	assert.Equal(t, result, e)
+	cases := []struct {
+		Name      string
+		Expected  string
+		Path      string
+		Command   string
+		Verbose   bool
+		MultiPath []string
+	}{
+		{
+			Name:      "путей нет",
+			Expected:  "",
+			Command:   "",
+			Path:      "",
+			Verbose:   false,
+			MultiPath: nil,
+		},
+		{
+			Name:      "добавлено один путь",
+			Expected:  "--file /some/path --verbose up",
+			Path:      "/some/path",
+			Command:   "up",
+			Verbose:   true,
+			MultiPath: nil,
+		},
+		{
+			Name:     "добавлено несколько путей",
+			Expected: "--file /path/1 --file /path/2 --verbose up",
+			Path:     "",
+			Command:  "up",
+			Verbose:  true,
+			MultiPath: []string{
+				"/path/1",
+				"/path/2",
+			},
+		},
+		{
+			Name:     "добавлено несколько путей и дефолтный",
+			Expected: "--file /some/path --file /path/1 --file /path/2 --verbose up",
+			Path:     "/some/path",
+			Verbose:  true,
+			Command:  "up",
+			MultiPath: []string{
+				"/path/1",
+				"/path/2",
+			},
+		},
+	}
+	for _, v := range cases {
+		t.Run(v.Name, func(t *testing.T) {
+			dc := DockerCompose{
+				MultiPath: v.MultiPath,
+				Path:      v.Path,
+				Verbose:   v.Verbose,
+			}
+			result := strings.Join(dc.ToCommand([]string{v.Command}), " ")
+			assert.Equal(t, v.Expected, result)
+		})
+	}
 }
 
 func TestGetProjectDirectory(t *testing.T) {
@@ -33,6 +82,38 @@ func TestGetPath(t *testing.T) {
 
 	dc.Path = "/some/path"
 	assert.Equal(t, dc.GetPath(), "--file /some/path")
+}
+
+func TestGetMultiPath(t *testing.T) {
+	cases := []struct {
+		Name      string
+		Expected  string
+		MultiPath []string
+	}{
+		{
+			Name:      "путей нет",
+			Expected:  "",
+			MultiPath: nil,
+		},
+		{
+			Name:     "добавлено несколько путей",
+			Expected: "--file /path/1 --file /path/2",
+			MultiPath: []string{
+				"/path/1",
+				"/path/2",
+			},
+		},
+	}
+
+	for _, v := range cases {
+		t.Run(v.Name, func(t *testing.T) {
+			dc := DockerCompose{
+				MultiPath: v.MultiPath,
+			}
+
+			assert.Equal(t, v.Expected, dc.GetMultiPath())
+		})
+	}
 }
 
 func TestGetProjectName(t *testing.T) {
