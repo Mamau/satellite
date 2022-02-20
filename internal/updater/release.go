@@ -9,8 +9,6 @@ import (
 	"github.com/gookit/color"
 )
 
-const source = "https://api.github.com/repos/Mamau/satellite/releases/latest"
-
 //go:generate mockgen -destination=releaser_mock.go -package=updater github.com/mamau/satellite/internal/updater Releaser
 
 type Releaser interface {
@@ -29,11 +27,16 @@ type Release struct {
 }
 
 func FetchRelease() *Release {
-	res, err := http.Get(source)
+	res, err := http.Get("https://api.github.com/repos/Mamau/satellite/releases/latest")
 	if err != nil {
 		color.Danger.Printf("cant get info from github, err: %s\n", err)
 		os.Exit(1)
 	}
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			os.Exit(1)
+		}
+	}()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {

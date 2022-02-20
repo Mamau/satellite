@@ -3,11 +3,7 @@ package commands
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"regexp"
-	"satellite/internal/entity"
-	"strings"
-
+	"satellite/internal/usecase/collector"
 	"satellite/pkg"
 
 	"satellite/internal/config"
@@ -22,51 +18,42 @@ var rootCmd = &cobra.Command{
 	Long:  "Show all command",
 }
 
-func Docker(strategy entity.Runner, args []string) *exec.Cmd {
-	replacedEnv := pkg.ReplaceEnvVariables(strategy.ToCommand(args))
-	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
-	replaceGateWay := getReplaceGateWay(replacedPwd)
+func InitCommands() {
+	registerCommands()
+	initServiceCommand()
+	initMacrosSubCommand()
 
-	dcCommand := exec.Command(strategy.GetExecCommand(), replaceGateWay...)
-	color.Info.Printf("Running command: %v\n", dcCommand.String())
-	return dcCommand
+	execute()
 }
 
-func InitServiceCommand() {
-	c := config.GetConfig()
-	for _, service := range c.GetServices() {
+func registerCommands() {
+	rootCmd.AddCommand(macrosCmd)
+	rootCmd.AddCommand(updateCmd)
+}
+
+func initServiceCommand() {
+	serv := collector.NewService(config.GetConfig())
+	for _, service := range serv.ServicesList() {
 		rootCmd.AddCommand(&cobra.Command{
-			Use:                service.Name,
-			Short:              service.Description,
-			Long:               service.Description,
+			Use:                service.GetName(),
+			Short:              service.GetDescription(),
+			Long:               service.GetDescription(),
 			DisableFlagParsing: true,
+			PreRun: func(cmd *cobra.Command, args []string) {
+				color.Cyan.Printf("Start %s\n", cmd.Name())
+			},
 			Run: func(cmd *cobra.Command, args []string) {
-				serviceName := cmd.Name()
-				color.Cyan.Printf("Start %s\n", serviceName)
+				s := serv.FindCommand(cmd.Name())
 
-				s := config.GetConfig().FindService(serviceName)
-
-				pkg.RunCommandAtPTY(Docker(s, args))
+				pkg.RunCommandAtPTY(serv.ExecuteCommand(s, args))
 			},
 		})
 	}
 }
 
-func Execute() {
+func execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func getReplaceGateWay(data []string) []string {
-	from := "\\$(\\(gatewayHost\\))"
-	r := regexp.MustCompile(from)
-	if found := r.Find([]byte(strings.Join(data, " "))); found == nil {
-		return data
-	}
-
-	inspectData := pkg.DockerExec([]string{"network", "inspect", "bridge"})
-	host := pkg.RetrieveGatewayHost(inspectData)
-	return pkg.ReplaceInternalVariables(from, host, data)
 }

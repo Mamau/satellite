@@ -39,14 +39,14 @@ type Run struct {
 	Env           []string `yaml:"env"`
 }
 
-func (r *Run) GetDetached() string {
+func (r Run) GetDetached() string {
 	if r.Detach {
 		return "-d"
 	}
 	return ""
 }
 
-func (r *Run) GetEnvFile() string {
+func (r Run) GetEnvFile() string {
 	if r.EnvFile != "" {
 		return fmt.Sprintf("--env-file %s", r.EnvFile)
 	}
@@ -54,7 +54,7 @@ func (r *Run) GetEnvFile() string {
 	return ""
 }
 
-func (r *Run) GetHostname() string {
+func (r Run) GetHostname() string {
 	if r.Hostname != "" {
 		return fmt.Sprintf("--hostname %s", r.Hostname)
 	}
@@ -62,7 +62,7 @@ func (r *Run) GetHostname() string {
 	return ""
 }
 
-func (r *Run) GetWorkDir() string {
+func (r Run) GetWorkDir() string {
 	if r.WorkDir != "" {
 		return fmt.Sprintf("--workdir=%s", r.WorkDir)
 	}
@@ -70,7 +70,7 @@ func (r *Run) GetWorkDir() string {
 	return ""
 }
 
-func (r *Run) GetFlags() string {
+func (r Run) GetFlags() string {
 	var flags []string
 	var flagData string
 
@@ -93,21 +93,21 @@ func (r *Run) GetFlags() string {
 	return flagData
 }
 
-func (r *Run) GetCleanUp() string {
+func (r Run) GetCleanUp() string {
 	if r.CleanUp {
 		return "--rm"
 	}
 	return ""
 }
 
-func (r *Run) GetNetwork() string {
+func (r Run) GetNetwork() string {
 	if r.Network != "" {
 		return fmt.Sprintf("--network %s", r.Network)
 	}
 	return ""
 }
 
-func (r *Run) GetUserId() string {
+func (r Run) GetUserId() string {
 	if r.User != "" {
 		return fmt.Sprintf("--user %s", r.User)
 	}
@@ -115,7 +115,7 @@ func (r *Run) GetUserId() string {
 	return ""
 }
 
-func (r *Run) GetEnv() string {
+func (r Run) GetEnv() string {
 	var envVars []string
 	for _, v := range r.Env {
 		envVars = append(envVars, fmt.Sprintf("--env %s", v))
@@ -123,7 +123,7 @@ func (r *Run) GetEnv() string {
 	return strings.Join(envVars, " ")
 }
 
-func (r *Run) GetHosts() string {
+func (r Run) GetHosts() string {
 	var hosts []string
 	for _, v := range r.AddHosts {
 		hosts = append(hosts, fmt.Sprintf("--add-host=%s", v))
@@ -131,7 +131,7 @@ func (r *Run) GetHosts() string {
 	return strings.Join(hosts, " ")
 }
 
-func (r *Run) GetPorts() string {
+func (r Run) GetPorts() string {
 	var ports []string
 	for _, v := range r.Ports {
 		ports = append(ports, fmt.Sprintf("-p %s", v))
@@ -139,7 +139,7 @@ func (r *Run) GetPorts() string {
 	return strings.Join(ports, " ")
 }
 
-func (r *Run) GetDns() string {
+func (r Run) GetDns() string {
 	var dns []string
 	for _, v := range r.Dns {
 		dns = append(dns, fmt.Sprintf("--dns=%s", v))
@@ -148,7 +148,7 @@ func (r *Run) GetDns() string {
 	return strings.Join(dns, " ")
 }
 
-func (r *Run) GetVolumes() string {
+func (r Run) GetVolumes() string {
 	var volumes []string
 	for _, v := range r.Volumes {
 		volumes = append(volumes, fmt.Sprintf("-v %s", v))
@@ -156,7 +156,7 @@ func (r *Run) GetVolumes() string {
 	return strings.Join(volumes, " ")
 }
 
-func (r *Run) GetContainerName() string {
+func (r Run) GetContainerName() string {
 	if r.ContainerName != "" {
 		return fmt.Sprintf("--name %s", r.ContainerName)
 	}
@@ -167,14 +167,14 @@ func (r *Run) GetContainerName() string {
 	return ""
 }
 
-func (r *Run) GetImage() string {
+func (r Run) GetImage() string {
 	if r.Version != "" {
 		return fmt.Sprintf("%s:%s", r.Image, r.Version)
 	}
 	return r.Image
 }
 
-func (r *Run) GetPreCommands() []string {
+func (r Run) GetPreCommands() []string {
 	if len(r.PreCommands) == 0 {
 		return nil
 	}
@@ -183,7 +183,7 @@ func (r *Run) GetPreCommands() []string {
 	return strings.Split(commands, " ")
 }
 
-func (r *Run) GetPostCommands() []string {
+func (r Run) GetPostCommands() []string {
 	if len(r.PostCommands) == 0 {
 		return nil
 	}
@@ -192,15 +192,15 @@ func (r *Run) GetPostCommands() []string {
 	return strings.Split(commands, " ")
 }
 
-func (r *Run) GetBinBash() bool {
+func (r Run) GetBinBash() bool {
 	return r.BinBash
 }
 
-func (r *Run) GetExecCommand() string {
+func (r Run) GetExecCommand() string {
 	return string(entity.DOCKER)
 }
 
-func (r *Run) ToCommand(args []string) []string {
+func (r Run) ToCommand(args []string) []string {
 	r.createNetwork()
 
 	bc := pkg.MergeSliceOfString([]string{
@@ -226,7 +226,7 @@ func (r *Run) ToCommand(args []string) []string {
 	return append(bc, configurator.GetClientCommand()...)
 }
 
-func (r *Run) GetBeginning() []string {
+func (r Run) GetBeginning() []string {
 	if r.Beginning != "" {
 		return strings.Split(r.Beginning, " ")
 	}
@@ -234,7 +234,7 @@ func (r *Run) GetBeginning() []string {
 	return []string{}
 }
 
-func (r *Run) createNetwork() {
+func (r Run) createNetwork() {
 	if r.Network == "" {
 		return
 	}
