@@ -6,6 +6,6 @@ help:
 
 build: ## Build project.
 	gotest ./...
-	GOOS=darwin go build -ldflags "-s -w" -o bin/darwin_$(PROJECT_NAME)
-	GOOS=windows go build -ldflags "-s -w" -o bin/windows_$(PROJECT_NAME).exe
-	GOOS=linux go build -ldflags "-s -w" -o bin/linux_$(PROJECT_NAME)
+	GOOS=darwin go build -ldflags "-s -w" -o bin/darwin_$(PROJECT_NAME) cmd/satellite/main.go
+	GOOS=windows go build -ldflags "-s -w" -o bin/windows_$(PROJECT_NAME).exe cmd/satellite/main.go
+	GOOS=linux go build -ldflags "-s -w" -o bin/linux_$(PROJECT_NAME) cmd/satellite/main.go

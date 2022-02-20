@@ -1,28 +1,18 @@
 package commands
 
 import (
-	"satellite/internal/entity"
-	"satellite/internal/entity/docker"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-func TestGetServices(t *testing.T) {
-	var emptyMacrosList []string
-	r := getServices(finder, emptyMacrosList)
-	assert.Empty(t, r)
+func TestPrepareArgs(t *testing.T) {
+	args := []string{"composer-cmd-name", "composer", "i", "--ignore-platform-reqs"}
+	sn, command := prepareArgs(args)
+	assert.Equal(t, sn, args[0])
+	assert.Equal(t, command, args[1:])
 
-	macrosList := []string{"yarn install", "php -v"}
-	r = getServices(finder, macrosList)
-	assert.NotEmpty(t, r)
-	assert.Len(t, r, 2)
-	assert.Equal(t, r[1][0], "php")
-	assert.Equal(t, r[1][1], "-v")
-}
-
-func finder(name string) entity.Runner {
-	e := &docker.Run{}
-	e.Name = name
-	return e
+	args = []string{"composer-cmd-name"}
+	sn, command = prepareArgs(args)
+	assert.Equal(t, sn, args[0])
+	assert.Empty(t, command)
 }
