@@ -27,6 +27,26 @@ type Exec struct {
 	Env           []string `yaml:"env"`
 }
 
+func (e Exec) GetParams() map[string]string {
+
+	return map[string]string{
+		"name":           "string",
+		"description":    "",
+		"container-name": "",
+		"env-file":       "",
+		"user":           "",
+		"workdir":        "",
+		"beginning":      "",
+		"detach":         "",
+		"interactive":    "",
+		"tty":            "",
+		"bin-bash":       "",
+		"pre-commands":   "",
+		"post-commands":  "",
+		"env":            "",
+	}
+}
+
 func (e Exec) GetContainerName() string {
 	return e.ContainerName
 }

@@ -29,6 +29,7 @@ func InitCommands() {
 func registerCommands() {
 	rootCmd.AddCommand(macrosCmd)
 	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(dockerCmd)
 }
 
 func initServiceCommand() {

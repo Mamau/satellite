@@ -1,10 +1,9 @@
 package informator
 
 import (
+	"github.com/gookit/color"
 	"os"
 	"reflect"
-
-	"github.com/gookit/color"
 )
 
 type Informator struct {
@@ -27,6 +26,24 @@ func NewInformator(entity interface{}) *Informator {
 	return &informator
 }
 
+func (in *Informator) GetAll() map[string]string {
+	fields := make(map[string]string)
+	for i := range in.Strings {
+		fields[i] = "string"
+	}
+	for i := range in.Integers {
+		fields[i] = "integer"
+	}
+	for i := range in.Booleans {
+		fields[i] = "boolean"
+	}
+	for i := range in.Slices {
+		fields[i] = "list"
+	}
+
+	return fields
+}
+
 func (in *Informator) scanEntity(entity interface{}) {
 	val := reflect.ValueOf(entity)
 
@@ -44,14 +61,18 @@ func (in *Informator) scanEntity(entity interface{}) {
 	for i := 0; i < val.NumField(); i++ {
 		switch val.Field(i).Kind() {
 		case reflect.String:
-			in.Strings[structType.Field(i).Name] = val.Field(i).String()
+			name := reflect.TypeOf(entity).Field(i).Tag
+			in.Strings[name.Get("yaml")] = val.Field(i).String()
 		case reflect.Int64:
-			in.Integers[structType.Field(i).Name] = val.Field(i).Int()
+			name := reflect.TypeOf(entity).Field(i).Tag
+			in.Integers[name.Get("yaml")] = val.Field(i).Int()
 		case reflect.Bool:
-			in.Booleans[structType.Field(i).Name] = val.Field(i).Bool()
+			name := reflect.TypeOf(entity).Field(i).Tag
+			in.Booleans[name.Get("yaml")] = val.Field(i).Bool()
 		case reflect.Slice:
 			data := val.Field(i).Slice(0, val.Field(i).Len())
-			in.Slices[structType.Field(i).Name] = data.Interface().([]string)
+			name := reflect.TypeOf(entity).Field(i).Tag
+			in.Slices[name.Get("yaml")] = data.Interface().([]string)
 		}
 	}
 }

@@ -7,10 +7,13 @@ const (
 	DOCKER_COMPOSE ExecCommand = "docker-compose"
 )
 
+type Helper interface {
+	GetParams() []string
+}
+
 type Runner interface {
 	GetExecCommand() string
 	ToCommand(args []string) []string
 	GetName() string
 	GetDescription() string
-	//GetParams() []string TODO: make a list of available commands docker
 }
