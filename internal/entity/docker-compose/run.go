@@ -18,7 +18,7 @@ type Run struct {
 	NoDeps        bool     `yaml:"no-deps"`
 }
 
-func (r *Run) GetPorts() string {
+func (r Run) GetPorts() string {
 	var ports []string
 	for _, v := range r.Ports {
 		ports = append(ports, fmt.Sprintf("-p %s", v))
@@ -26,7 +26,7 @@ func (r *Run) GetPorts() string {
 	return strings.Join(ports, " ")
 }
 
-func (r *Run) GetEnv() string {
+func (r Run) GetEnv() string {
 	var args []string
 	for _, v := range r.Env {
 		args = append(args, fmt.Sprintf("-e %s", v))
@@ -34,7 +34,7 @@ func (r *Run) GetEnv() string {
 	return strings.Join(args, " ")
 }
 
-func (r *Run) GetEntryPoint() string {
+func (r Run) GetEntryPoint() string {
 	if r.Entrypoint != "" {
 		return fmt.Sprintf("--entrypoint %s", r.Entrypoint)
 	}
@@ -42,7 +42,7 @@ func (r *Run) GetEntryPoint() string {
 	return ""
 }
 
-func (r *Run) GetUserId() string {
+func (r Run) GetUserId() string {
 	if r.User != "" {
 		return fmt.Sprintf("-u %s", r.User)
 	}
@@ -50,21 +50,21 @@ func (r *Run) GetUserId() string {
 	return ""
 }
 
-func (r *Run) GetNoDeps() string {
+func (r Run) GetNoDeps() string {
 	if r.NoDeps {
 		return "--no-deps"
 	}
 	return ""
 }
 
-func (r *Run) GetDetached() string {
+func (r Run) GetDetached() string {
 	if r.Detach {
 		return "-d"
 	}
 	return ""
 }
 
-func (r *Run) ToCommand(args []string) []string {
+func (r Run) ToCommand(args []string) []string {
 	var arguments []string
 
 	if len(args) >= 1 {

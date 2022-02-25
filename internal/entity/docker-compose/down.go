@@ -14,25 +14,25 @@ type Down struct {
 	RemoveOrphans bool   `yaml:"remove-orphans"`
 }
 
-func (d *Down) GetRemoveVolumes() string {
+func (d Down) GetRemoveVolumes() string {
 	if d.RemoveVolumes {
 		return "--volumes"
 	}
 	return ""
 }
-func (d *Down) GetRmi() string {
+func (d Down) GetRmi() string {
 	if d.Rmi != "" {
 		return fmt.Sprintf("--rmi %s", d.Rmi)
 	}
 	return ""
 }
-func (d *Down) GetRemoveOrphans() string {
+func (d Down) GetRemoveOrphans() string {
 	if d.RemoveOrphans {
 		return "--remove-orphans"
 	}
 	return ""
 }
-func (d *Down) ToCommand(args []string) []string {
+func (d Down) ToCommand(args []string) []string {
 	var arguments []string
 
 	if len(args) >= 1 {

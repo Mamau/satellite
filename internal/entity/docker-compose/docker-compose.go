@@ -20,47 +20,47 @@ type DockerCompose struct {
 	Verbose          bool     `yaml:"verbose"`
 }
 
-func (d *DockerCompose) GetExecCommand() string {
+func (d DockerCompose) GetExecCommand() string {
 	return string(entity.DOCKER_COMPOSE)
 }
 
-func (d *DockerCompose) GetDescription() string {
+func (d DockerCompose) GetDescription() string {
 	return d.Description
 }
 
-func (d *DockerCompose) GetName() string {
+func (d DockerCompose) GetName() string {
 	return d.Name
 }
 
-func (d *DockerCompose) GetVerbose() string {
+func (d DockerCompose) GetVerbose() string {
 	if d.Verbose {
 		return "--verbose"
 	}
 	return ""
 }
 
-func (d *DockerCompose) GetLogLevel() string {
+func (d DockerCompose) GetLogLevel() string {
 	if d.LogLevel != "" {
 		return fmt.Sprintf("--log-level %s", d.LogLevel)
 	}
 	return ""
 }
 
-func (d *DockerCompose) GetProjectName() string {
+func (d DockerCompose) GetProjectName() string {
 	if d.ProjectName != "" {
 		return fmt.Sprintf("--project-name %s", d.ProjectName)
 	}
 	return ""
 }
 
-func (d *DockerCompose) GetPath() string {
+func (d DockerCompose) GetPath() string {
 	if d.Path != "" {
 		return fmt.Sprintf("--file %s", d.Path)
 	}
 	return ""
 }
 
-func (d *DockerCompose) GetMultiPath() string {
+func (d DockerCompose) GetMultiPath() string {
 	var args []string
 	for _, v := range d.MultiPath {
 		args = append(args, fmt.Sprintf("--file %s", v))
@@ -68,7 +68,7 @@ func (d *DockerCompose) GetMultiPath() string {
 	return strings.Join(args, " ")
 }
 
-func (d *DockerCompose) GetProjectDirectory() string {
+func (d DockerCompose) GetProjectDirectory() string {
 	if d.ProjectDirectory != "" {
 		return fmt.Sprintf("--project-directory %s", d.ProjectDirectory)
 	}
@@ -76,7 +76,7 @@ func (d *DockerCompose) GetProjectDirectory() string {
 	return ""
 }
 
-func (d *DockerCompose) ToCommand(args []string) []string {
+func (d DockerCompose) ToCommand(args []string) []string {
 	var command string
 	var arguments []string
 

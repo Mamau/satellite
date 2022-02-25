@@ -13,6 +13,16 @@ type DockerCompose struct {
 	Build []docker_compose.Build `yaml:"build"`
 }
 
+func (d *DockerCompose) GetTypes() []string {
+	return []string{
+		"run",
+		"up",
+		"down",
+		"exec",
+		"build",
+	}
+}
+
 func (d *DockerCompose) GetCommands() []entity.Runner {
 	var list []entity.Runner
 

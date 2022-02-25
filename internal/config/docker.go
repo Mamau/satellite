@@ -11,6 +11,14 @@ type Docker struct {
 	Execs []docker.Exec `yaml:"exec"`
 }
 
+func (d *Docker) GetTypes() []string {
+	return []string{
+		"pull",
+		"run",
+		"exec",
+	}
+}
+
 func (d *Docker) GetCommands() []entity.Runner {
 	var list []entity.Runner
 

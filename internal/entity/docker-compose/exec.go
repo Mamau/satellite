@@ -17,11 +17,11 @@ type Exec struct {
 	Env           []string `yaml:"environment"`
 }
 
-func (e *Exec) GetContainerName() string {
+func (e Exec) GetContainerName() string {
 	return e.ContainerName
 }
 
-func (e *Exec) GetWorkdir() string {
+func (e Exec) GetWorkdir() string {
 	if e.Workdir != "" {
 		return fmt.Sprintf("--workdir %s", e.Workdir)
 	}
@@ -29,27 +29,27 @@ func (e *Exec) GetWorkdir() string {
 	return ""
 }
 
-func (e *Exec) GetEnv() string {
+func (e Exec) GetEnv() string {
 	var args []string
 	for _, v := range e.Env {
 		args = append(args, fmt.Sprintf("-e %s", v))
 	}
 	return strings.Join(args, " ")
 }
-func (e *Exec) GetUserId() string {
+func (e Exec) GetUserId() string {
 	if e.User != "" {
 		return fmt.Sprintf("-u %s", e.User)
 	}
 
 	return ""
 }
-func (e *Exec) GetDetached() string {
+func (e Exec) GetDetached() string {
 	if e.Detach {
 		return "-d"
 	}
 	return ""
 }
-func (e *Exec) ToCommand(args []string) []string {
+func (e Exec) ToCommand(args []string) []string {
 	var arguments []string
 
 	if len(args) >= 1 {
