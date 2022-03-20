@@ -9,8 +9,8 @@ import (
 	"github.com/gookit/color"
 )
 
-//go:generate mockgen -destination=releaser_mock.go -package=updater github.com/mamau/satellite/internal/updater Releaser
-
+//nolint
+//go:generate mockgen -destination=../mock/releaser_mock.go -package=mock satellite/internal/updater Releaser
 type Releaser interface {
 	FetchRelease() *Release
 }

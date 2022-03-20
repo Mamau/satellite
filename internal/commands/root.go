@@ -18,7 +18,11 @@ var rootCmd = &cobra.Command{
 	Long:  "Show all command",
 }
 
+var serviceCollector *collector.Service
+
 func InitCommands() {
+	serviceCollector = collector.NewService(config.GetConfig())
+
 	registerCommands()
 	initServiceCommand()
 	initMacrosSubCommand()
@@ -34,8 +38,7 @@ func registerCommands() {
 }
 
 func initServiceCommand() {
-	serv := collector.NewService(config.GetConfig())
-	for _, service := range serv.ServicesList() {
+	for _, service := range serviceCollector.ServicesList() {
 		rootCmd.AddCommand(&cobra.Command{
 			Use:                service.GetName(),
 			Short:              service.GetDescription(),
@@ -45,9 +48,9 @@ func initServiceCommand() {
 				color.Cyan.Printf("Start %s\n", cmd.Name())
 			},
 			Run: func(cmd *cobra.Command, args []string) {
-				s := serv.FindCommand(cmd.Name())
+				s := serviceCollector.FindCommand(cmd.Name())
 
-				pkg.RunCommandAtPTY(serv.ExecuteCommand(s, args))
+				pkg.RunCommandAtPTY(serviceCollector.ExecuteCommand(s, args))
 			},
 		})
 	}

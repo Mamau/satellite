@@ -1,8 +1,8 @@
 package commands
 
 import (
+	"fmt"
 	"os"
-	"satellite/internal/config"
 	"satellite/internal/usecase/collector"
 	"satellite/pkg"
 
@@ -12,19 +12,23 @@ import (
 
 var macrosCmd = &cobra.Command{
 	Use:     "macros",
-	Short:   "Run group of commands",
-	Long:    "Run separate commands from common section in one macros command",
+	Short:   "Запускает группу команд",
+	Long:    "Запускает группу команд которые описаны в docker-compose или docker секции",
 	Example: "./sat macros init",
 	Run: func(cmd *cobra.Command, args []string) {
+		if err := checkCommand(serviceCollector, args); err != nil {
+			color.Danger.Println(err.Error())
+			os.Exit(1)
+		}
+
 		if err := cmd.Help(); err != nil {
-			color.Danger.Println("Error while running help of macros")
+			color.Danger.Println("Ошибка вызова команды помощи")
 		}
 	},
 }
 
 func initMacrosSubCommand() {
-	service := collector.NewService(config.GetConfig())
-	for _, item := range service.GetMacrosList() {
+	for _, item := range serviceCollector.GetMacrosList() {
 		macrosCmd.AddCommand(&cobra.Command{
 			Use:   item.Name,
 			Short: item.Description,
@@ -33,16 +37,27 @@ func initMacrosSubCommand() {
 				color.Cyan.Printf("Start macros %q\n", cmd.Name())
 			},
 			Run: func(cmd *cobra.Command, args []string) {
-				for _, v := range service.GetMacrosCommands(item.List) {
+				for _, v := range serviceCollector.GetMacrosCommands(item.List) {
 					serviceName, arguments := prepareArgs(v)
-					serv := collector.NewService(config.GetConfig())
-					s := serv.FindCommand(serviceName)
+					s := serviceCollector.FindCommand(serviceName)
 
-					pkg.RunCommandAtPTY(serv.ExecuteCommand(s, arguments))
+					pkg.RunCommandAtPTY(serviceCollector.ExecuteCommand(s, arguments))
 				}
 			},
 		})
 	}
+}
+
+func checkCommand(finder collector.Finder, args []string) error {
+	if len(args) > 0 {
+		serviceName := args[0]
+
+		if s := finder.FindCommand(serviceName); s == nil {
+			return fmt.Errorf("команда %s не найдена в разделе макросов", serviceName)
+		}
+	}
+
+	return nil
 }
 
 func prepareArgs(args []string) (string, []string) {
