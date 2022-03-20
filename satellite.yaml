@@ -3,13 +3,13 @@ docker:
     - name: "composer-cmd"
       clean-up: true
       image: "composer"
-      description: "work with composer dependencies"
+      description: "работа с композером"
 
     - name: "node-cmd"
       clean-up: true
       image: "node"
       version: "12"
-      description: "work with node dependencies"
+      description: "работа с нодой"
 
 docker-compose:
   run:
@@ -17,13 +17,13 @@ docker-compose:
       path: "./path/to/file/docker-compose"
       project-directory: "./path/to/file/docker-compose"
       project-name: "anyName"
-      description: "run docker compose data"
+      description: "запуск docker-compose файла"
       verbose: true
       log-level: "DEBUG"
 
 macros:
   - name: "install-all"
-    description: "install all deps"
+    description: "установить все зависимости"
     commands:
       - "composer-cmd composer i --ignore-platform-reqs"
       - "node-cmd node i"

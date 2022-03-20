@@ -12,8 +12,8 @@ import (
 
 var macrosCmd = &cobra.Command{
 	Use:     "macros",
-	Short:   "Запускает группу команд",
-	Long:    "Запускает группу команд которые описаны в docker-compose или docker секции",
+	Short:   "запускает группу команд",
+	Long:    "запускает группу команд которые описаны в docker-compose или docker секции",
 	Example: "./sat macros init",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := checkCommand(serviceCollector, args); err != nil {
