@@ -2,6 +2,9 @@ package docker_compose
 
 import (
 	"fmt"
+	"github.com/gookit/color"
+	"os"
+	"os/exec"
 	"satellite/internal/entity"
 	"satellite/pkg"
 	"strings"
@@ -21,7 +24,19 @@ type DockerCompose struct {
 }
 
 func (d *DockerCompose) GetExecCommand() string {
-	return string(entity.DOCKER_COMPOSE)
+	_, err := exec.LookPath(string(entity.DOCKER_COMPOSE))
+	if err == nil {
+		return string(entity.DOCKER_COMPOSE)
+	}
+	color.Warn.Println("You have no docker-compose. Checking for docker compose 2nd version...")
+
+	cmd := exec.Command("docker", "compose")
+	if err := cmd.Run(); err != nil {
+		color.Red.Println("Oops... you need to install docker compose")
+		os.Exit(1)
+	}
+
+	return string(entity.DOCKER_COMPOSE_2)
 }
 
 func (d *DockerCompose) GetDescription() string {

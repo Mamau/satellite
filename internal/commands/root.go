@@ -27,7 +27,13 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
-	dcCommand := exec.Command(strategy.GetExecCommand(), replaceGateWay...)
+	cmd := strategy.GetExecCommand()
+	if cmd == string(entity.DOCKER_COMPOSE_2) {
+		replaceGateWay = append([]string{"compose"}, replaceGateWay...)
+		cmd = "docker"
+	}
+
+	dcCommand := exec.Command(cmd, replaceGateWay...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
