@@ -16,6 +16,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type CommandRunner interface {
+	Run() error
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "sat",
 	Short: "All command",
@@ -28,14 +32,40 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
 	cmd := strategy.GetExecCommand()
-	if cmd == string(entity.DOCKER_COMPOSE_2) {
-		replaceGateWay = append([]string{"compose"}, replaceGateWay...)
-		cmd = "docker"
+	compose_2 := exec.Command("docker", "compose")
+	cmdName, collectionAttributes, err := checkDockerService(cmd, replaceGateWay, exec.LookPath, compose_2)
+	if err != nil {
+		color.Red.Println(err)
+		os.Exit(1)
 	}
 
-	dcCommand := exec.Command(cmd, replaceGateWay...)
+	dcCommand := exec.Command(cmdName, collectionAttributes...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
+}
+
+func checkDockerService(
+	cmdName string,
+	collectionAttributes []string,
+	lookPath func(file string) (string, error),
+	command CommandRunner,
+) (string, []string, error) {
+	if _, err := lookPath(cmdName); err == nil {
+		return cmdName, collectionAttributes, nil
+	}
+	color.Warn.Printf("You have no %s.\n", cmdName)
+	if cmdName == string(entity.DOCKER) {
+		return "", nil, fmt.Errorf("%s not found", cmdName)
+	}
+	color.Warn.Println("Checking for docker compose 2nd version...")
+
+	if err := command.Run(); err != nil {
+		return "", nil, fmt.Errorf("oops... you need to install %s", cmdName)
+	}
+
+	prependedAttrs := append([]string{"compose"}, collectionAttributes...)
+
+	return "docker", prependedAttrs, nil
 }
 
 func InitServiceCommand() {
