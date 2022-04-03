@@ -91,8 +91,7 @@ func TestCheckDockerService(t *testing.T) {
 	}
 	for _, v := range cases {
 		t.Run(v.Name, func(t *testing.T) {
-			runner := v.Command("docker", "compose")
-			cmdName, args, err := checkDockerService(v.CmdName, v.ReplaceGateWay, v.LookPath, runner)
+			cmdName, args, err := checkDockerService(v.CmdName, v.ReplaceGateWay, v.LookPath, v.Command)
 			if err == nil {
 				assert.False(t, v.HasError)
 			} else {

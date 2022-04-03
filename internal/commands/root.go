@@ -20,6 +20,10 @@ type CommandRunner interface {
 	Run() error
 }
 
+func newCommandRunner(name string, arg ...string) CommandRunner {
+	return exec.Command(name, arg...)
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "sat",
 	Short: "All command",
@@ -32,8 +36,7 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
 	cmd := strategy.GetExecCommand()
-	compose_2 := exec.Command("docker", "compose")
-	cmdName, collectionAttributes, err := checkDockerService(cmd, replaceGateWay, exec.LookPath, compose_2)
+	cmdName, collectionAttributes, err := checkDockerService(cmd, replaceGateWay, exec.LookPath, newCommandRunner)
 	if err != nil {
 		color.Red.Println(err)
 		os.Exit(1)
@@ -48,7 +51,7 @@ func checkDockerService(
 	cmdName string,
 	collectionAttributes []string,
 	lookPath func(file string) (string, error),
-	command CommandRunner,
+	command func(name string, arg ...string) CommandRunner,
 ) (string, []string, error) {
 	if _, err := lookPath(cmdName); err == nil {
 		return cmdName, collectionAttributes, nil
@@ -59,7 +62,8 @@ func checkDockerService(
 	}
 	color.Warn.Println("Checking for docker compose 2nd version...")
 
-	if err := command.Run(); err != nil {
+	cmd := command("docker", "compose")
+	if err := cmd.Run(); err != nil {
 		return "", nil, fmt.Errorf("oops... you need to install %s", cmdName)
 	}
 
