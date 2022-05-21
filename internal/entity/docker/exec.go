@@ -27,15 +27,35 @@ type Exec struct {
 	Env           []string `yaml:"env"`
 }
 
-func (e *Exec) GetContainerName() string {
+func (e Exec) GetParams() map[string]string {
+
+	return map[string]string{
+		"name":           "string",
+		"description":    "",
+		"container-name": "",
+		"env-file":       "",
+		"user":           "",
+		"workdir":        "",
+		"beginning":      "",
+		"detach":         "",
+		"interactive":    "",
+		"tty":            "",
+		"bin-bash":       "",
+		"pre-commands":   "",
+		"post-commands":  "",
+		"env":            "",
+	}
+}
+
+func (e Exec) GetContainerName() string {
 	return e.ContainerName
 }
 
-func (e *Exec) GetExecCommand() string {
+func (e Exec) GetExecCommand() string {
 	return string(entity.DOCKER)
 }
 
-func (e *Exec) ToCommand(args []string) []string {
+func (e Exec) ToCommand(args []string) []string {
 	bc := pkg.MergeSliceOfString([]string{
 		"exec",
 		e.GetDetached(),
@@ -51,7 +71,7 @@ func (e *Exec) ToCommand(args []string) []string {
 	return append(bc, configurator.GetClientCommand()...)
 }
 
-func (e *Exec) GetBeginning() []string {
+func (e Exec) GetBeginning() []string {
 	if e.Beginning != "" {
 		return strings.Split(e.Beginning, " ")
 	}
@@ -59,7 +79,7 @@ func (e *Exec) GetBeginning() []string {
 	return []string{}
 }
 
-func (e *Exec) GetPreCommands() []string {
+func (e Exec) GetPreCommands() []string {
 	if len(e.PreCommands) == 0 {
 		return nil
 	}
@@ -68,7 +88,7 @@ func (e *Exec) GetPreCommands() []string {
 	return strings.Split(commands, " ")
 }
 
-func (e *Exec) GetPostCommands() []string {
+func (e Exec) GetPostCommands() []string {
 	if len(e.PostCommands) == 0 {
 		return nil
 	}
@@ -77,11 +97,11 @@ func (e *Exec) GetPostCommands() []string {
 	return strings.Split(commands, " ")
 }
 
-func (e *Exec) GetBinBash() bool {
+func (e Exec) GetBinBash() bool {
 	return e.BinBash
 }
 
-func (e *Exec) GetEnv() string {
+func (e Exec) GetEnv() string {
 	var envVars []string
 	for _, v := range e.Env {
 		envVars = append(envVars, fmt.Sprintf("--env %s", v))
@@ -89,7 +109,7 @@ func (e *Exec) GetEnv() string {
 	return strings.Join(envVars, " ")
 }
 
-func (e *Exec) GetFlags() string {
+func (e Exec) GetFlags() string {
 	var flags []string
 	var flagData string
 
@@ -112,14 +132,14 @@ func (e *Exec) GetFlags() string {
 	return flagData
 }
 
-func (e *Exec) GetDetached() string {
+func (e Exec) GetDetached() string {
 	if e.Detach {
 		return "-d"
 	}
 	return ""
 }
 
-func (e *Exec) GetWorkDir() string {
+func (e Exec) GetWorkDir() string {
 	if e.WorkDir != "" {
 		return fmt.Sprintf("--workdir=%s", e.WorkDir)
 	}
@@ -127,7 +147,7 @@ func (e *Exec) GetWorkDir() string {
 	return ""
 }
 
-func (e *Exec) GetUserId() string {
+func (e Exec) GetUserId() string {
 	if e.User != "" {
 		return fmt.Sprintf("--user %s", e.User)
 	}
@@ -135,7 +155,7 @@ func (e *Exec) GetUserId() string {
 	return ""
 }
 
-func (e *Exec) GetEnvFile() string {
+func (e Exec) GetEnvFile() string {
 	if e.EnvFile != "" {
 		return fmt.Sprintf("--env-file %s", e.EnvFile)
 	}

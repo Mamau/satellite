@@ -35,7 +35,7 @@ func NewConfigConfigurator(configCmd, mainCmd []string, binBasher BinBasher) *co
 	}
 }
 
-func (c *commandConfigurator) GetClientCommand() []string {
+func (c commandConfigurator) GetClientCommand() []string {
 	fullCmd := c.prepareCommand()
 
 	if c.isBinBash {
@@ -44,7 +44,7 @@ func (c *commandConfigurator) GetClientCommand() []string {
 	return append(c.binBash(), fullCmd...)
 }
 
-func (c *commandConfigurator) prepareCommand() []string {
+func (c commandConfigurator) prepareCommand() []string {
 	if len(c.preCmd) > 0 {
 		c.preCmd[len(c.preCmd)-1] += ";"
 	}
@@ -59,7 +59,7 @@ func (c *commandConfigurator) prepareCommand() []string {
 	return pkg.DeleteEmpty(fullCmd)
 }
 
-func (c *commandConfigurator) binBash() []string {
+func (c commandConfigurator) binBash() []string {
 	if c.isBinBash {
 		return []string{"/bin/bash", "-c"}
 	}

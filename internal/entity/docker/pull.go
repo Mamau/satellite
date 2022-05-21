@@ -17,39 +17,39 @@ type Pull struct {
 	Quiet               bool   `yaml:"quiet"`
 }
 
-func (p *Pull) GetExecCommand() string {
+func (p Pull) GetExecCommand() string {
 	return string(entity.DOCKER)
 }
 
-func (p *Pull) GetQuiet() string {
+func (p Pull) GetQuiet() string {
 	if p.Quiet {
 		return "--quiet"
 	}
 	return ""
 }
 
-func (p *Pull) GetDisableContentTrust() string {
+func (p Pull) GetDisableContentTrust() string {
 	if p.DisableContentTrust != "" {
 		return fmt.Sprintf("--disable-content-trust=%s", p.DisableContentTrust)
 	}
 
 	return ""
 }
-func (p *Pull) GetImage() string {
+func (p Pull) GetImage() string {
 	if p.Version != "" {
 		return fmt.Sprintf("%s:%s", p.Image, p.Version)
 	}
 	return p.Image
 }
 
-func (p *Pull) GetAllTags() string {
+func (p Pull) GetAllTags() string {
 	if p.AllTags {
 		return "--all-tags"
 	}
 	return ""
 }
 
-func (p *Pull) ToCommand(args []string) []string {
+func (p Pull) ToCommand(args []string) []string {
 	return pkg.MergeSliceOfString([]string{
 		"pull",
 		p.GetDisableContentTrust(),

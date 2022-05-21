@@ -1,10 +1,9 @@
 package main
 
 import (
+	"github.com/gookit/color"
 	"satellite/internal/commands"
 	"satellite/internal/updater"
-
-	"github.com/gookit/color"
 
 	"github.com/joho/godotenv"
 )
@@ -15,7 +14,5 @@ func main() {
 		color.Warn.Println("no .env file")
 	}
 
-	commands.InitServiceCommand()
-	commands.InitMacrosSubCommand()
-	commands.Execute()
+	commands.InitCommands()
 }

@@ -5,10 +5,10 @@ type docker struct {
 	Description string `yaml:"description"`
 }
 
-func (d *docker) GetName() string {
+func (d docker) GetName() string {
 	return d.Name
 }
 
-func (d *docker) GetDescription() string {
+func (d docker) GetDescription() string {
 	return d.Description
 }
