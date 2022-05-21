@@ -86,7 +86,13 @@ func InitServiceCommand() {
 
 				s := config.GetConfig().FindService(serviceName)
 
-				pkg.RunCommandAtPTY(Docker(s, args))
+				eCmd := Docker(s, args)
+				eCmd.Stderr = os.Stderr
+				eCmd.Stdout = os.Stdout
+
+				if err := eCmd.Run(); err != nil {
+					os.Exit(1)
+				}
 			},
 		})
 	}
