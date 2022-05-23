@@ -1,13 +1,10 @@
 package commands
 
 import (
-	"os"
-
-	"satellite/internal/config"
-	"satellite/pkg"
-
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
+	"os"
+	"satellite/internal/config"
 )
 
 var serviceCmd = &cobra.Command{
@@ -18,7 +15,13 @@ var serviceCmd = &cobra.Command{
 
 		s := config.GetConfig().FindService(serviceName)
 
-		pkg.RunCommandAtPTY(Docker(s, arguments))
+		eCmd := Docker(s, arguments)
+		eCmd.Stderr = os.Stderr
+		eCmd.Stdout = os.Stdout
+
+		if err := eCmd.Run(); err != nil {
+			os.Exit(1)
+		}
 	},
 }
 

@@ -11,7 +11,7 @@ import (
 
 const source = "https://api.github.com/repos/Mamau/satellite/releases/latest"
 
-//go:generate mockgen -destination=releaser_mock.go -package=updater github.com/mamau/satellite/internal/updater Releaser
+//go:generate mockgen -destination=releaser_mock.go -package=updater satellite/internal/updater Releaser
 
 type Releaser interface {
 	FetchRelease() *Release

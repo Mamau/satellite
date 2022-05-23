@@ -16,7 +16,7 @@ func TestExecToCommand(t *testing.T) {
 		"VAR2=VAL2",
 	}
 
-	e := "--file ./some/path exec -d -e VAR1=VAL1 -e VAR2=VAL2"
+	e := "--file ./some/path exec -T -d -e VAR1=VAL1 -e VAR2=VAL2"
 	assert.Equal(t, e, strings.Join(exec.ToCommand([]string{}), " "))
 }
 

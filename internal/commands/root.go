@@ -16,6 +16,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type CommandRunner interface {
+	Run() error
+}
+
+func newCommandRunner(name string, arg ...string) CommandRunner {
+	return exec.Command(name, arg...)
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "sat",
 	Short: "All command",
@@ -27,9 +35,41 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 	replacedPwd := pkg.ReplaceInternalVariables("\\$(\\(pwd\\))", pkg.GetPwd(), replacedEnv)
 	replaceGateWay := getReplaceGateWay(replacedPwd)
 
-	dcCommand := exec.Command(strategy.GetExecCommand(), replaceGateWay...)
+	cmd := strategy.GetExecCommand()
+	cmdName, collectionAttributes, err := checkDockerService(cmd, replaceGateWay, exec.LookPath, newCommandRunner)
+	if err != nil {
+		color.Red.Println(err)
+		os.Exit(1)
+	}
+
+	dcCommand := exec.Command(cmdName, collectionAttributes...)
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
+}
+
+func checkDockerService(
+	cmdName string,
+	collectionAttributes []string,
+	lookPath func(file string) (string, error),
+	command func(name string, arg ...string) CommandRunner,
+) (string, []string, error) {
+	if _, err := lookPath(cmdName); err == nil {
+		return cmdName, collectionAttributes, nil
+	}
+	color.Warn.Printf("You have no %s.\n", cmdName)
+	if cmdName == string(entity.DOCKER) {
+		return "", nil, fmt.Errorf("%s not found", cmdName)
+	}
+	color.Warn.Println("Checking for docker compose 2nd version...")
+
+	cmd := command("docker", "compose")
+	if err := cmd.Run(); err != nil {
+		return "", nil, fmt.Errorf("oops... you need to install %s", cmdName)
+	}
+
+	prependedAttrs := append([]string{"compose"}, collectionAttributes...)
+
+	return "docker", prependedAttrs, nil
 }
 
 func InitServiceCommand() {
@@ -46,7 +86,13 @@ func InitServiceCommand() {
 
 				s := config.GetConfig().FindService(serviceName)
 
-				pkg.RunCommandAtPTY(Docker(s, args))
+				eCmd := Docker(s, args)
+				eCmd.Stderr = os.Stderr
+				eCmd.Stdout = os.Stdout
+
+				if err := eCmd.Run(); err != nil {
+					os.Exit(1)
+				}
 			},
 		})
 	}

@@ -63,6 +63,7 @@ func (e *Exec) ToCommand(args []string) []string {
 		e.GetVerbose(),
 		e.GetProjectName(),
 		"exec",
+		"-T",
 		e.GetDetached(),
 		e.GetUserId(),
 		e.GetEnv(),
