@@ -25,6 +25,7 @@ type Run struct {
 	EnvFile       string   `yaml:"env-file"`
 	User          string   `yaml:"user"`
 	Beginning     string   `yaml:"beginning"`
+	Platform      string   `yaml:"platform"`
 	Detach        bool     `yaml:"detach"`
 	Interactive   bool     `yaml:"interactive"`
 	Tty           bool     `yaml:"tty"`
@@ -156,6 +157,13 @@ func (r *Run) GetVolumes() string {
 	return strings.Join(volumes, " ")
 }
 
+func (r *Run) GetPlatform() string {
+	if r.Platform != "" {
+		return fmt.Sprintf("--platform %s", r.Platform)
+	}
+	return r.Platform
+}
+
 func (r *Run) GetContainerName() string {
 	if r.ContainerName != "" {
 		return fmt.Sprintf("--name %s", r.ContainerName)
@@ -216,6 +224,7 @@ func (r *Run) ToCommand(args []string) []string {
 		r.GetHosts(),
 		r.GetPorts(),
 		r.GetDns(),
+		r.GetPlatform(),
 		r.GetWorkDir(),
 		r.GetVolumes(),
 		r.GetContainerName(),

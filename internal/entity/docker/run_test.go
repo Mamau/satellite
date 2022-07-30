@@ -157,6 +157,14 @@ func TestGetUserId(t *testing.T) {
 	assert.Equal(t, run.GetUserId(), "--user 501")
 }
 
+func TestGetPlatform(t *testing.T) {
+	run := Run{}
+	assert.Empty(t, run.GetPlatform())
+
+	run = Run{Platform: "linux/amd64"}
+	assert.Equal(t, run.GetPlatform(), "--platform linux/amd64")
+}
+
 func TestGetNetwork(t *testing.T) {
 	run := Run{}
 	assert.Empty(t, run.GetNetwork())
