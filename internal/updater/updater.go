@@ -12,7 +12,7 @@ import (
 	"satellite/pkg"
 )
 
-const Version = "v0.29"
+const Version = "v0.30"
 
 type SelfUpdater struct {
 	Name           string

@@ -1,13 +1,13 @@
 package commands
 
 import (
-	"os"
-
-	"satellite/internal/config"
-	"satellite/pkg"
-
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
+	"log"
+	"os"
+	"os/exec"
+	"satellite/internal/config"
+	"syscall"
 )
 
 var serviceCmd = &cobra.Command{
@@ -18,7 +18,27 @@ var serviceCmd = &cobra.Command{
 
 		s := config.GetConfig().FindService(serviceName)
 
-		pkg.RunCommandAtPTY(Docker(s, arguments))
+		eCmd := Docker(s, arguments)
+		eCmd.Stderr = os.Stderr
+		eCmd.Stdout = os.Stdout
+		eCmd.Stdin = os.Stdin
+
+		if err := eCmd.Start(); err != nil {
+			log.Fatalf("cmd.Start: %v", err)
+		}
+		if err := eCmd.Wait(); err != nil {
+			if exiterr, ok := err.(*exec.ExitError); ok {
+
+				if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+					if status.ExitStatus() == FAILURE {
+						os.Exit(FAILURE)
+					}
+				}
+
+			} else {
+				log.Fatalf("cmd.Wait: %v", err)
+			}
+		}
 	},
 }
 

@@ -64,7 +64,7 @@ func (e *Exec) GetPreCommands() []string {
 		return nil
 	}
 
-	commands := strings.Join(e.PreCommands, "; ")
+	commands := strings.Join(e.PreCommands, " && ")
 	return strings.Split(commands, " ")
 }
 
@@ -73,7 +73,7 @@ func (e *Exec) GetPostCommands() []string {
 		return nil
 	}
 
-	commands := strings.Join(e.PostCommands, "; ")
+	commands := strings.Join(e.PostCommands, " && ")
 	return strings.Split(commands, " ")
 }
 

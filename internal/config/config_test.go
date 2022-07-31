@@ -18,17 +18,18 @@ func TestGetMacros(t *testing.T) {
 func TestGetServices(t *testing.T) {
 	c := getConfig()
 	services := c.GetServices()
-	e := "php"
-	assert.Equal(t, e, services[0].Name)
 
-	ed := "some description"
-	assert.Equal(t, ed, services[0].Description)
-
-	e2 := "mysql"
-	assert.Equal(t, e2, services[1].Name)
-
-	ed2 := "some mysql description"
-	assert.Equal(t, ed2, services[1].Description)
+	if services[0].Name == "php" {
+		ed := "some description"
+		assert.Equal(t, ed, services[0].Description)
+		ed2 := "some mysql description"
+		assert.Equal(t, ed2, services[1].Description)
+	} else {
+		ed := "some mysql description"
+		assert.Equal(t, ed, services[0].Description)
+		ed2 := "some description"
+		assert.Equal(t, ed2, services[1].Description)
+	}
 }
 
 func getConfig() *Config {

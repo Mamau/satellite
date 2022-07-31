@@ -187,7 +187,7 @@ func (r *Run) GetPreCommands() []string {
 		return nil
 	}
 
-	commands := strings.Join(r.PreCommands, "; ")
+	commands := strings.Join(r.PreCommands, " && ")
 	return strings.Split(commands, " ")
 }
 
@@ -196,7 +196,7 @@ func (r *Run) GetPostCommands() []string {
 		return nil
 	}
 
-	commands := strings.Join(r.PostCommands, "; ")
+	commands := strings.Join(r.PostCommands, " && ")
 	return strings.Split(commands, " ")
 }
 

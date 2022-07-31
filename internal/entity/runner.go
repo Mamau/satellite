@@ -3,8 +3,9 @@ package entity
 type ExecCommand string
 
 const (
-	DOCKER         ExecCommand = "docker"
-	DOCKER_COMPOSE ExecCommand = "docker-compose"
+	DOCKER           ExecCommand = "docker"
+	DOCKER_COMPOSE   ExecCommand = "docker-compose"
+	DOCKER_COMPOSE_2 ExecCommand = "docker compose"
 )
 
 type Runner interface {

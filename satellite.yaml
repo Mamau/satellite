@@ -12,7 +12,7 @@ docker:
       description: "work with node dependencies"
 
 docker-compose:
-  run:
+  up:
     - name: "up"
       path: "./path/to/file/docker-compose"
       project-directory: "./path/to/file/docker-compose"
