@@ -1,12 +1,16 @@
 package commands
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"regexp"
 	"satellite/internal/entity"
 	"strings"
+	"syscall"
 
 	"satellite/pkg"
 
@@ -15,6 +19,8 @@ import (
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 )
+
+const FAILURE = 1
 
 type CommandRunner interface {
 	Run() error
@@ -39,10 +45,19 @@ func Docker(strategy entity.Runner, args []string) *exec.Cmd {
 	cmdName, collectionAttributes, err := checkDockerService(cmd, replaceGateWay, exec.LookPath, newCommandRunner)
 	if err != nil {
 		color.Red.Println(err)
-		os.Exit(1)
+		os.Exit(FAILURE)
 	}
 
-	dcCommand := exec.Command(cmdName, collectionAttributes...)
+	ctx, cancel := context.WithCancel(context.Background())
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		color.Info.Println("Stopping...")
+		cancel()
+	}()
+	dcCommand := exec.CommandContext(ctx, cmdName, collectionAttributes...)
+
 	color.Info.Printf("Running command: %v\n", dcCommand.String())
 	return dcCommand
 }
@@ -89,9 +104,22 @@ func InitServiceCommand() {
 				eCmd := Docker(s, args)
 				eCmd.Stderr = os.Stderr
 				eCmd.Stdout = os.Stdout
+				eCmd.Stdin = os.Stdin
 
-				if err := eCmd.Run(); err != nil {
-					os.Exit(1)
+				if err := eCmd.Start(); err != nil {
+					log.Fatalf("cmd.Start: %v", err)
+				}
+				if err := eCmd.Wait(); err != nil {
+					if exiterr, ok := err.(*exec.ExitError); ok {
+
+						if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+							if status.ExitStatus() == FAILURE {
+								os.Exit(FAILURE)
+							}
+						}
+					} else {
+						log.Fatalf("cmd.Wait: %v", err)
+					}
 				}
 			},
 		})
@@ -101,7 +129,7 @@ func InitServiceCommand() {
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		os.Exit(FAILURE)
 	}
 }
 

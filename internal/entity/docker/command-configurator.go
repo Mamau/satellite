@@ -46,11 +46,11 @@ func (c *commandConfigurator) GetClientCommand() []string {
 
 func (c *commandConfigurator) prepareCommand() []string {
 	if len(c.preCmd) > 0 {
-		c.preCmd[len(c.preCmd)-1] += ";"
+		c.preCmd[len(c.preCmd)-1] += " &&"
 	}
 
 	if len(c.postCmd) > 0 {
-		c.mainCmd[len(c.mainCmd)-1] += ";"
+		c.mainCmd[len(c.mainCmd)-1] += " &&"
 	}
 
 	startCmd := append(c.preCmd, c.mainCmd...)

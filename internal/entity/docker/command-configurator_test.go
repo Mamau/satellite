@@ -21,7 +21,7 @@ func TestGetClientCommand(t *testing.T) {
 	run.PreCommands = []string{"some command"}
 	cc = NewConfigConfigurator([]string{}, []string{"ls -la"}, &run)
 	result = strings.Join(cc.GetClientCommand(), " ")
-	assert.Equal(t, result, "/bin/bash -c some command; ls -la")
+	assert.Equal(t, result, "/bin/bash -c some command && ls -la")
 }
 
 func TestPrepareCommand(t *testing.T) {
@@ -32,13 +32,13 @@ func TestPrepareCommand(t *testing.T) {
 	run.PreCommands = []string{"some command"}
 	cc = NewConfigConfigurator([]string{}, []string{"ls -la"}, &run)
 	result := strings.Join(cc.prepareCommand(), " ")
-	e := "some command; ls -la"
+	e := "some command && ls -la"
 	assert.Equal(t, result, e)
 
 	run.PostCommands = []string{"some command 2"}
 	cc = NewConfigConfigurator([]string{}, []string{"ls -la"}, &run)
 	result = strings.Join(cc.prepareCommand(), " ")
-	e = "some command; ls -la; some command 2"
+	e = "some command && ls -la && some command 2"
 	assert.Equal(t, result, e)
 
 	run = Run{
@@ -46,13 +46,13 @@ func TestPrepareCommand(t *testing.T) {
 	}
 	cc = NewConfigConfigurator([]string{}, []string{"ls -la"}, &run)
 	result = strings.Join(cc.prepareCommand(), " ")
-	e = "ls -la; some command 2"
+	e = "ls -la && some command 2"
 	assert.Equal(t, result, e)
 
 	run.PostCommands = []string{"some command 2", "some command 3"}
 	cc = NewConfigConfigurator([]string{}, []string{"ls -la"}, &run)
 	result = strings.Join(cc.prepareCommand(), " ")
-	e = "ls -la; some command 2; some command 3"
+	e = "ls -la && some command 2 && some command 3"
 	assert.Equal(t, result, e)
 }
 

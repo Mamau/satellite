@@ -95,7 +95,7 @@ func TestExecGetPostCommands(t *testing.T) {
 	assert.Equal(t, strings.Join(exec.GetPostCommands(), " "), "composer --version")
 
 	exec.PostCommands = []string{"composer --version", "composer --version"}
-	assert.Equal(t, strings.Join(exec.GetPostCommands(), " "), "composer --version; composer --version")
+	assert.Equal(t, strings.Join(exec.GetPostCommands(), " "), "composer --version && composer --version")
 }
 
 func TestExecGetPreCommands(t *testing.T) {
@@ -106,7 +106,7 @@ func TestExecGetPreCommands(t *testing.T) {
 	assert.Equal(t, strings.Join(exec.GetPreCommands(), " "), "composer --version")
 
 	exec.PreCommands = []string{"composer --version", "composer --version"}
-	assert.Equal(t, strings.Join(exec.GetPreCommands(), " "), "composer --version; composer --version")
+	assert.Equal(t, strings.Join(exec.GetPreCommands(), " "), "composer --version && composer --version")
 }
 
 func TestExecToCommand(t *testing.T) {
@@ -120,13 +120,13 @@ func TestExecToCommand(t *testing.T) {
 	exec.WorkDir = "/some/work/dir"
 	exec.PreCommands = []string{"pre command", "pre command 2"}
 	result := strings.Join(exec.ToCommand([]string{"some", "command"}), " ")
-	e := "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command; pre command 2; some command"
+	e := "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command && pre command 2 && some command"
 	assert.Equal(t, result, e)
 
 	exec.Beginning = "php bin/console"
 	exec.PreCommands = []string{"pre command", "pre command 2"}
 	result = strings.Join(exec.ToCommand([]string{"cache", "clear"}), " ")
-	e = "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command; pre command 2; php bin/console cache clear"
+	e = "exec -it --workdir=/some/work/dir some-container-name /bin/bash -c pre command && pre command 2 && php bin/console cache clear"
 	assert.Equal(t, result, e)
 
 	exec.PreCommands = nil

@@ -22,7 +22,7 @@ func TestToCommand(t *testing.T) {
 	run.Dns = []string{"0.0.0.0"}
 
 	result = strings.Join(run.ToCommand([]string{"pwd"}), " ")
-	assert.Equal(t, result, "run -d --dns=0.0.0.0 --name some-name my-img:12 /bin/bash -c command --version; command -v; pwd; exit")
+	assert.Equal(t, result, "run -d --dns=0.0.0.0 --name some-name my-img:12 /bin/bash -c command --version && command -v && pwd && exit")
 
 	run = Run{
 		Image:   "test",
@@ -65,7 +65,7 @@ func TestGetPostCommands(t *testing.T) {
 	assert.Equal(t, strings.Join(run.GetPostCommands(), " "), "composer --version")
 
 	run.PostCommands = []string{"composer --version", "composer --version"}
-	assert.Equal(t, strings.Join(run.GetPostCommands(), " "), "composer --version; composer --version")
+	assert.Equal(t, strings.Join(run.GetPostCommands(), " "), "composer --version && composer --version")
 }
 
 func TestGetPreCommands(t *testing.T) {
@@ -76,7 +76,7 @@ func TestGetPreCommands(t *testing.T) {
 	assert.Equal(t, strings.Join(run.GetPreCommands(), " "), "composer --version")
 
 	run.PreCommands = []string{"composer --version", "composer --version"}
-	assert.Equal(t, strings.Join(run.GetPreCommands(), " "), "composer --version; composer --version")
+	assert.Equal(t, strings.Join(run.GetPreCommands(), " "), "composer --version && composer --version")
 }
 
 func TestGetImage(t *testing.T) {
